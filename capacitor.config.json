@@ -1,0 +1,11 @@
+{
+  "appId": "com.seedabyss.game",
+  "appName": "Seed of the Abyss",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}
