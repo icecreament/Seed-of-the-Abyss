@@ -19,6 +19,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.input.enabled = true;
     fadeInScene(this);
     drawAbyssBackdrop(this, { tileAlpha: 0.32 });
 
@@ -114,19 +115,19 @@ export class MenuScene extends Phaser.Scene {
       { width: 150, accent: UI.gold },
     );
 
-    createTextButton(this, GAME_WIDTH / 2, 470, t('menu_enter'), () => {
+    createTextButton(this, GAME_WIDTH / 2, 468, t('menu_enter'), () => {
       goScene(this, 'ClassSelect');
-    }, { width: 280, color: 0x3d1f4a, stroke: UI.accent });
+    }, { width: 280, height: 48, color: 0x3d1f4a, stroke: UI.accent });
 
-    createTextButton(this, GAME_WIDTH / 2, 526, t('menu_talents'), () => {
+    createTextButton(this, GAME_WIDTH / 2, 532, t('menu_talents'), () => {
       goScene(this, 'Talent');
-    }, { width: 280, color: 0x1f2d3d, stroke: UI.teal });
+    }, { width: 280, height: 48, color: 0x1f2d3d, stroke: UI.teal });
 
-    createTextButton(this, GAME_WIDTH / 2, 576, t('menu_reset'), () => {
+    createTextButton(this, GAME_WIDTH / 2, 592, t('menu_reset'), () => {
       saveSystem.resetAll();
       // restart keeps same scene instance — force re-enable input via fadeInScene path
       this.scene.restart();
-    }, { width: 160, height: 34, color: 0x2a1a1a, fontSize: '13px', stroke: 0x5a3038 });
+    }, { width: 160, height: 36, color: 0x2a1a1a, fontSize: '13px', stroke: 0x5a3038 });
 
     this.buildLanguageToggle();
 
@@ -160,14 +161,14 @@ export class MenuScene extends Phaser.Scene {
       const active = i18n.current === lang;
       const btn = this.add
         .text(x, 14, t(lang === 'zh' ? 'lang_zh' : 'lang_en'), {
-          fontSize: '13px',
+          fontSize: '14px',
           color: active ? UI.text : UI.textDim,
           fontFamily: UI_FONT,
           backgroundColor: active ? '#3d1f4a' : '#1a1428',
-          padding: { x: 8, y: 4 },
+          padding: { x: 12, y: 8 },
         })
         .setOrigin(1, 0)
-        .setDepth(40)
+        .setDepth(60)
         .setInteractive({ useHandCursor: true });
 
       btn.on('pointerup', () => {

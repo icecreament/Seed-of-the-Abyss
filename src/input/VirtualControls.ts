@@ -3,7 +3,6 @@ import { t } from '../i18n/i18n';
 
 /**
  * On-screen left stick + action buttons for touch devices.
- * Desktop can ignore this; it only activates when touch is used.
  */
 export class VirtualControls {
   private scene: Phaser.Scene;
@@ -17,7 +16,7 @@ export class VirtualControls {
   private stickPointerId: number | null = null;
   private stickOrigin = new Phaser.Math.Vector2();
   private stickVec = new Phaser.Math.Vector2(0, 0);
-  private maxRadius = 48;
+  private maxRadius = 56;
 
   attackHeld = false;
   dashPressed = false;
@@ -27,22 +26,26 @@ export class VirtualControls {
   private bound = false;
 
   private onDown = (p: Phaser.Input.Pointer) => {
-    if (!this.enabled) {
-      if (p.wasTouch) this.show();
-    }
+    // First touch enables mobile UI.
+    if (!this.enabled && p.wasTouch) this.show();
     if (!this.enabled) return;
 
-    if (p.x < this.scene.scale.width * 0.45 && this.stickPointerId === null) {
+    // Prefer screen/game coordinates (scrollFactor 0 UI).
+    const x = p.x;
+    const y = p.y;
+    const w = this.scene.scale.width;
+
+    if (x < w * 0.48 && this.stickPointerId === null) {
       this.stickPointerId = p.id;
-      this.stickOrigin.set(p.x, p.y);
-      this.base.setPosition(p.x, p.y);
-      this.knob.setPosition(p.x, p.y);
+      this.stickOrigin.set(x, y);
+      this.base.setPosition(x, y);
+      this.knob.setPosition(x, y);
       return;
     }
 
-    if (this.hit(this.attackBtn, p)) this.attackHeld = true;
-    if (this.hit(this.dashBtn, p)) this.dashPressed = true;
-    if (this.hit(this.skillBtn, p)) this.skillPressed = true;
+    if (this.hit(this.attackBtn, x, y)) this.attackHeld = true;
+    if (this.hit(this.dashBtn, x, y)) this.dashPressed = true;
+    if (this.hit(this.skillBtn, x, y)) this.skillPressed = true;
   };
 
   private onMove = (p: Phaser.Input.Pointer) => {
@@ -75,14 +78,15 @@ export class VirtualControls {
     const h = scene.scale.height;
     const w = scene.scale.width;
 
-    this.base = scene.add.circle(90, h - 90, 56, 0xffffff, 0.12).setStrokeStyle(2, 0xffffff, 0.25);
-    this.knob = scene.add.circle(90, h - 90, 26, 0xffffff, 0.28);
-    this.stickOrigin.set(90, h - 90);
+    // Bigger touch targets for phones.
+    this.base = scene.add.circle(100, h - 100, 64, 0xffffff, 0.14).setStrokeStyle(2, 0xffffff, 0.28);
+    this.knob = scene.add.circle(100, h - 100, 30, 0xffffff, 0.32);
+    this.stickOrigin.set(100, h - 100);
     this.root.add([this.base, this.knob]);
 
-    this.attackBtn = this.makeButton(w - 78, h - 78, 40, 0xff6b6b, t('btn_atk'));
-    this.dashBtn = this.makeButton(w - 150, h - 120, 32, 0x4ecdc4, t('btn_dash'));
-    this.skillBtn = this.makeButton(w - 150, h - 48, 32, 0xb794f6, t('btn_skill'));
+    this.attackBtn = this.makeButton(w - 90, h - 90, 48, 0xff6b6b, t('btn_atk'));
+    this.dashBtn = this.makeButton(w - 175, h - 140, 40, 0x4ecdc4, t('btn_dash'));
+    this.skillBtn = this.makeButton(w - 175, h - 55, 40, 0xb794f6, t('btn_skill'));
     this.root.add([this.attackBtn, this.dashBtn, this.skillBtn]);
 
     this.root.setVisible(false);
@@ -129,16 +133,17 @@ export class VirtualControls {
     label: string,
   ): Phaser.GameObjects.Container {
     const c = this.scene.add.container(x, y);
-    const circle = this.scene.add.circle(0, 0, r, color, 0.35).setStrokeStyle(2, color, 0.8);
+    const circle = this.scene.add.circle(0, 0, r, color, 0.38).setStrokeStyle(2, color, 0.85);
     const text = this.scene.add
       .text(0, 0, label, {
-        fontSize: '11px',
+        fontSize: '13px',
         color: '#ffffff',
         fontFamily: 'Segoe UI, Microsoft YaHei, sans-serif',
       })
       .setOrigin(0.5);
     c.add([circle, text]);
-    c.setSize(r * 2, r * 2);
+    // Inflated hit size
+    c.setSize(r * 2.4, r * 2.4);
     return c;
   }
 
@@ -158,13 +163,9 @@ export class VirtualControls {
     this.scene.input.off('pointerup', this.onUp);
   }
 
-  private hit(btn: Phaser.GameObjects.Container, p: Phaser.Input.Pointer): boolean {
-    const bounds = new Phaser.Geom.Rectangle(
-      btn.x - btn.width / 2,
-      btn.y - btn.height / 2,
-      btn.width,
-      btn.height,
-    );
-    return bounds.contains(p.x, p.y);
+  private hit(btn: Phaser.GameObjects.Container, x: number, y: number): boolean {
+    const halfW = btn.width / 2;
+    const halfH = btn.height / 2;
+    return x >= btn.x - halfW && x <= btn.x + halfW && y >= btn.y - halfH && y <= btn.y + halfH;
   }
 }

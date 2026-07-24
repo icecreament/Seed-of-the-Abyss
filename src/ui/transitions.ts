@@ -7,13 +7,13 @@ export function goScene(
   scene: Phaser.Scene,
   key: string,
   data?: object,
-  duration = 180,
+  duration = 160,
 ): void {
   const s = scene as SceneFlag;
   if (s.__leaving) return;
   s.__leaving = true;
 
-  // Stop gameplay input immediately so double-taps don't stack actions.
+  // Soft-disable only this scene's input; next scene will re-enable.
   scene.input.enabled = false;
 
   const cam = scene.cameras.main;
@@ -21,16 +21,17 @@ export function goScene(
   const jump = () => {
     if (jumped) return;
     jumped = true;
-    // Ensure next scene gets a clean camera / input state.
     try {
       cam.resetFX();
     } catch {
       /* ignore */
     }
+    // Always re-enable before leaving so a stuck scene doesn't poison global input.
+    scene.input.enabled = true;
+    s.__leaving = false;
     scene.scene.start(key, data);
   };
 
-  // If a previous fade left the camera mid-transition, force a clean fade.
   try {
     cam.fadeOut(duration, 8, 6, 14);
   } catch {
@@ -39,15 +40,22 @@ export function goScene(
   }
 
   cam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, jump);
-  // Fallback if FADE_OUT_COMPLETE is skipped (already faded / interrupted).
-  scene.time.delayedCall(duration + 80, jump);
+  scene.time.delayedCall(duration + 100, jump);
 }
 
 /** Call at the start of every scene create(). */
-export function fadeInScene(scene: Phaser.Scene, duration = 220): void {
+export function fadeInScene(scene: Phaser.Scene, duration = 200): void {
   const s = scene as SceneFlag;
   s.__leaving = false;
   scene.input.enabled = true;
+  scene.input.setTopOnly(true);
+
+  // Clear any stale pointer capture from previous scene.
+  try {
+    scene.input.resetPointers();
+  } catch {
+    /* ignore */
+  }
 
   const cam = scene.cameras.main;
   try {

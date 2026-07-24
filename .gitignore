@@ -53,3 +53,9 @@ android/app/src/main/assets/capacitor.plugins.json
 *.jks
 *.keystore
 google-services.json
+
+# install logs / electron builder cache
+npm-*-out.log
+npm-*-err.log
+.electron-builder*
+dist_electron/

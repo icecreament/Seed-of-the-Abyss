@@ -88,6 +88,11 @@ export class ClassSelectScene extends Phaser.Scene {
         this.selected = cls.id;
         this.refreshSelection();
       });
+      bg.on('pointerdown', (p: Phaser.Input.Pointer) => {
+        if (!p.wasTouch) return;
+        this.selected = cls.id;
+        this.refreshSelection();
+      });
 
       this.cards.push({ id: cls.id, bg, glow });
     });
@@ -138,3 +143,4 @@ export class ClassSelectScene extends Phaser.Scene {
     }
   }
 }
+

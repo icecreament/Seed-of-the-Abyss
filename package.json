@@ -12,7 +12,13 @@
     "android:open": "npx cap open android",
     "android:apk": "node scripts/build-apk.mjs",
     "share:lan": "node scripts/share-lan.mjs",
-    "pack:web": "node scripts/pack-web.mjs"
+    "pack:web": "node scripts/pack-web.mjs",
+    "electron:dev": "concurrently -k \"npm:dev\" \"wait-on http://127.0.0.1:5173 && cross-env VITE_DEV_SERVER_URL=http://127.0.0.1:5173 electron .\"",
+    "electron:build": "npm run build && electron-builder --win portable",
+    "desktop:exe": "npm run electron:build",
+    "ios:add": "npx cap add ios",
+    "ios:sync": "npm run build && npx cap sync ios",
+    "ios:open": "npx cap open ios"
   },
   "dependencies": {
     "@capacitor/android": "^6.2.1",
@@ -21,7 +27,50 @@
     "phaser": "^3.87.0"
   },
   "devDependencies": {
+    "concurrently": "^10.0.3",
+    "cross-env": "^10.1.0",
+    "electron": "^43.2.0",
+    "electron-builder": "^26.15.3",
     "typescript": "^5.7.3",
-    "vite": "^6.0.7"
+    "vite": "^6.0.7",
+    "wait-on": "^9.1.0"
+  },
+  "main": "electron/main.cjs",
+  "build": {
+    "appId": "com.seedabyss.game",
+    "productName": "Seed of the Abyss",
+    "copyright": "Copyright © Seed of the Abyss",
+    "directories": {
+      "output": "release"
+    },
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "SeedOfTheAbyss-${version}-${os}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Seed of the Abyss"
+    },
+    "portable": {
+      "artifactName": "SeedOfTheAbyss-${version}-portable.exe"
+    }
   }
 }

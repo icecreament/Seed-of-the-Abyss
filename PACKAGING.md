@@ -1,89 +1,99 @@
-# 低流量打包 / 分享（不装 Android Studio）
+# 三端打包指南（PC / Android / iOS）
 
-手机流量下 **不要下 Android Studio**（好几 GB）。用下面方案。
+本项目是 **Phaser 网页游戏**，一套代码三端壳：
+
+| 端 | 方案 | 产出 |
+|----|------|------|
+| PC Windows | Electron | `.exe`（portable / 安装包） |
+| Android | Capacitor | `.apk`（GitHub Actions 或本机） |
+| iOS | Capacitor | `.ipa`（**必须 Mac + Xcode**） |
 
 ---
 
-## 方案 1：局域网直玩（几乎不耗流量，最推荐）
+## PC：生成 .exe
 
-电脑连着手机热点时，手机和电脑本来就在同一局域网：
+### 依赖
+已内置：`electron` + `electron-builder`
 
+### 开发预览（窗口里跑游戏）
 ```bash
-npm run share:lan
+npm run electron:dev
 ```
 
-手机浏览器打开终端打印的地址，例如：
+### 一键打 Windows 可执行文件
+```bash
+npm run desktop:exe
+```
 
+成功后在：
 ```text
-http://192.168.x.x:4173
+release/SeedOfTheAbyss-<version>-portable.exe
+release/SeedOfTheAbyss-<version>-win-x64.exe   # 安装包(NSIS)
 ```
 
-游戏文件只在手机↔电脑之间传，**不走外网流量**（构建若已完成，几乎 0 额外流量）。
+把 **portable.exe** 发给朋友，双击就能玩（免安装）。
+
+> 首次打包会下载 Electron 二进制，需要能访问外网。
 
 ---
 
-## 方案 2：GitHub Actions 云端打 APK（不用本机装安卓环境）
+## Android：APK
 
-本仓库已带工作流：`.github/workflows/android-apk.yml`
+### 推荐：GitHub Actions 云端打
+1. push 到 `main`
+2. 仓库 → Actions → **Build Android APK**
+3. 下载 Artifact `SeedOfTheAbyss-debug` → 解压得到 `app-debug.apk`
 
-### 步骤
-
-1. 把项目推到 GitHub（新建一个私有/公开仓库均可）
-2. 打开仓库 → **Actions** → **Build Android APK** → **Run workflow**
-   - 或 push 到 `main`/`master` 自动跑
-3. 跑完后点那次运行 → **Artifacts** → 下载 `SeedOfTheAbyss-debug`
-4. 解压得到 `app-debug.apk`，发给朋友安装
-
-> 首次 push 会上传代码，大约几 MB 级（不含 node_modules）。  
-> APK 构建在 GitHub 服务器上完成，**不吃你手机流量打 Gradle**。
-
-本地可用这些命令准备：
-
-```bash
-git init
-git add .
-git commit -m "Seed of the Abyss"
-# 在 GitHub 建好仓库后：
-git remote add origin https://github.com/<你的用户名>/<仓库名>.git
-git branch -M main
-git push -u origin main
-```
-
----
-
-## 方案 3：打网页 zip（约 1～2MB）
-
-```bash
-npm run pack:web
-```
-
-输出：
-
-```text
-release/SeedOfTheAbyss-web.zip
-```
-
-可发给会架静态站的朋友，或丢到 Cloudflare Pages / Netlify / 任意静态空间后发链接。
-
----
-
-## 方案 4：本机一键 APK（需要 Android SDK，体积大）
-
-仅在你有 Wi‑Fi / 已装 SDK 时：
-
+### 本机（需 Android SDK）
 ```bash
 npm run android:apk
 ```
 
-输出：`release/SeedOfTheAbyss-debug.apk`
+---
+
+## iOS：必须用 Mac
+
+Windows 上 **不能** 编出可上架的 iOS 包。流程：
+
+```bash
+# 1) 在任意系统准备好代码后，到 Mac 上：
+npm install
+npm run build
+npm i @capacitor/ios@6
+npx cap add ios
+npx cap sync ios
+npx cap open ios
+```
+
+然后在 **Xcode** 里：
+1. 选真机/模拟器
+2. Signing & Capabilities 配置 Apple 开发者账号
+3. Product → Archive → 导出 ipa / TestFlight
+
+命令别名（Mac）：
+```bash
+npm run ios:sync
+npm run ios:open
+```
 
 ---
 
-## 命令一览
+## 三端适配原则（已落地）
 
-| 命令 | 流量/环境 | 结果 |
-|------|-----------|------|
-| `npm run share:lan` | 局域网，几乎 0 外网 | 手机浏览器玩 |
-| `npm run pack:web` | 很小 | `release/*-web.zip` |
-| GitHub Actions | 上传代码一次 | 云端 APK artifact |
-| `npm run android:apk` | 需本机 SDK | 本地 APK |
+1. **统一 1280×720 设计分辨率**
+2. **Scale.FIT**：保证 UI 完整、点击坐标与画面一致（PC/安卓/iOS 都用）
+3. **不要用 CSS 强行 width/height:100% 拉伸 canvas**（会导致点偏）
+4. 按钮命中区域 = 可见矩形，`setTopOnly(true)`，避免相邻按钮同时高亮
+5. 触屏：虚拟摇杆；PC：键鼠；Electron：独立窗口
+
+---
+
+## 常用命令
+
+```bash
+npm run dev              # 浏览器开发
+npm run share:lan        # 手机网页局域网试玩
+npm run desktop:exe      # 打 Windows exe
+npm run android:apk      # 本机打 APK（需 SDK）
+npm run electron:dev     # Electron 窗口开发
+```

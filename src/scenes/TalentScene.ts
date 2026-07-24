@@ -127,6 +127,10 @@ export class TalentScene extends Phaser.Scene {
             this.time.delayedCall(180, () => this.paintPanel(node.id));
           }
         });
+        panel.on('pointerdown', (p: Phaser.Input.Pointer) => {
+          if (!p.wasTouch) return;
+          if (saveSystem.unlockTalent(node.id)) this.refresh();
+        });
       });
     });
 
@@ -179,3 +183,4 @@ export class TalentScene extends Phaser.Scene {
     }
   }
 }
+
