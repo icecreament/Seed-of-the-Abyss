@@ -118,6 +118,9 @@ export class TalentScene extends Phaser.Scene {
         panel.on('pointerout', () => {
           this.paintPanel(node.id);
         });
+        // pointerup fires for both mouse and touch. There used to be a second
+        // touch-only pointerdown handler, which made every tap unlock TWICE
+        // (down + up) and drained double essence.
         panel.on('pointerup', () => {
           if (saveSystem.unlockTalent(node.id)) {
             this.refresh();
@@ -126,10 +129,6 @@ export class TalentScene extends Phaser.Scene {
             panel.setStrokeStyle(2, UI.accentHot, 0.9);
             this.time.delayedCall(180, () => this.paintPanel(node.id));
           }
-        });
-        panel.on('pointerdown', (p: Phaser.Input.Pointer) => {
-          if (!p.wasTouch) return;
-          if (saveSystem.unlockTalent(node.id)) this.refresh();
         });
       });
     });

@@ -31,7 +31,7 @@ export class ClassSelectScene extends Phaser.Scene {
     drawAbyssBackdrop(this, { tileAlpha: 0.22 });
 
     createSceneTitle(this, t('class_title'), 30, '26px');
-        CLASS_LIST.forEach((cls, i) => {
+    CLASS_LIST.forEach((cls, i) => {
       const x = GAME_WIDTH / 2 + (i - 1) * 300;
       const y = 230;
 
@@ -84,12 +84,9 @@ export class ClassSelectScene extends Phaser.Scene {
       bg.on('pointerout', () => {
         if (this.selected !== cls.id) bg.setFillStyle(UI.panel, 0.95);
       });
+      // pointerup covers mouse and touch; no touch-only pointerdown path
+      // (selection is idempotent, but keep one single fire path like Talent).
       bg.on('pointerup', () => {
-        this.selected = cls.id;
-        this.refreshSelection();
-      });
-      bg.on('pointerdown', (p: Phaser.Input.Pointer) => {
-        if (!p.wasTouch) return;
         this.selected = cls.id;
         this.refreshSelection();
       });

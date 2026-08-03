@@ -44,14 +44,70 @@
       #game-container canvas {
         display: block;
         margin: 0 auto;
-        image-rendering: pixelated;
+        /*
+          Last supported declaration wins. Chrome/Electron smooth-scales
+          `crisp-edges`, so it must come BEFORE `pixelated` (previously the
+          order was reversed and the canvas ended up blurry at 1.5x etc).
+        */
+        image-rendering: -webkit-optimize-contrast;
         image-rendering: crisp-edges;
+        image-rendering: pixelated;
         touch-action: none;
+      }
+      /* Portrait rotate hint — toggled from main.ts on touch devices. */
+      #rotate-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        background: rgba(7, 6, 13, 0.96);
+        color: #e8e0ff;
+        text-align: center;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+      #rotate-overlay.visible {
+        display: flex;
+      }
+      #rotate-overlay .rotate-icon {
+        width: 46px;
+        height: 78px;
+        border: 3px solid #a78bfa;
+        border-radius: 9px;
+        animation: rotate-device 1.6s ease-in-out infinite;
+      }
+      @keyframes rotate-device {
+        0%,
+        25% {
+          transform: rotate(0deg);
+        }
+        65%,
+        100% {
+          transform: rotate(90deg);
+        }
+      }
+      #rotate-overlay .rotate-title {
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 2px;
+      }
+      #rotate-overlay .rotate-hint {
+        font-size: 13px;
+        color: #9a90b0;
       }
     </style>
   </head>
   <body>
     <div id="game-container"></div>
+    <div id="rotate-overlay">
+      <div class="rotate-icon"></div>
+      <div class="rotate-title">请旋转设备</div>
+      <div class="rotate-hint">本游戏为横屏体验设计，旋转后继续</div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

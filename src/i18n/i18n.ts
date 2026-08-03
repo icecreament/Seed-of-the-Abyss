@@ -23,6 +23,27 @@ const zh: Dict = {
   menu_hp: '生命',
   menu_dmg: '伤害',
   menu_armor: '护甲',
+  menu_settings: '设置',
+
+  // Settings
+  settings_title: '设置',
+  settings_resolution: '渲染分辨率',
+  settings_display: '显示模式',
+  settings_fullscreen: '全屏',
+  settings_windowed: '窗口',
+  settings_window_size: '窗口大小',
+  settings_cycle: '切换',
+  settings_back: '返回',
+  settings_hint: '分辨率即时生效；窗口与全屏设置仅限桌面版',
+  settings_browser_hint: '浏览器：按 F11 切换全屏',
+  res_perf: '流畅',
+  res_standard: '标准',
+  res_hd: '高清',
+  res_ultra: '极致',
+
+  // Portrait overlay
+  rotate_title: '请旋转设备',
+  rotate_hint: '本游戏为横屏体验设计，旋转后继续',
 
   // Class select
   class_title: '选择职业路线',
@@ -140,6 +161,25 @@ const en: Dict = {
   menu_hp: 'HP',
   menu_dmg: 'DMG',
   menu_armor: 'Armor',
+  menu_settings: 'Settings',
+
+  settings_title: 'SETTINGS',
+  settings_resolution: 'Render Resolution',
+  settings_display: 'Display Mode',
+  settings_fullscreen: 'Fullscreen',
+  settings_windowed: 'Windowed',
+  settings_window_size: 'Window Size',
+  settings_cycle: 'Change',
+  settings_back: 'Back',
+  settings_hint: 'Resolution applies instantly. Window & fullscreen are desktop-only.',
+  settings_browser_hint: 'Browser: press F11 to toggle fullscreen',
+  res_perf: 'Performance',
+  res_standard: 'Standard',
+  res_hd: 'HD',
+  res_ultra: 'Ultra',
+
+  rotate_title: 'Rotate Your Device',
+  rotate_hint: 'Designed for landscape — rotate to continue',
 
   class_title: 'Choose Your Path',
   class_back: 'Back',
@@ -268,6 +308,10 @@ class I18n {
     this.lang = lang;
     if (typeof document !== 'undefined') {
       document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    }
+    if (typeof window !== 'undefined') {
+      // main.ts refreshes DOM overlays (rotate hint) with the new language.
+      window.dispatchEvent(new CustomEvent('seed:lang-changed'));
     }
   }
 

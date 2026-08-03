@@ -3,6 +3,7 @@ import { BootScene } from '../scenes/BootScene';
 import { MenuScene } from '../scenes/MenuScene';
 import { TalentScene } from '../scenes/TalentScene';
 import { ClassSelectScene } from '../scenes/ClassSelectScene';
+import { SettingsScene } from '../scenes/SettingsScene';
 import { RunScene } from '../scenes/RunScene';
 import { DeathScene } from '../scenes/DeathScene';
 
@@ -32,6 +33,43 @@ export function isElectronShell(): boolean {
   return /Electron/i.test(navigator.userAgent || '');
 }
 
+/** True when a touch device is held in portrait — main.ts shows the rotate overlay. */
+export function isPortraitBlocked(): boolean {
+  if (typeof window === 'undefined') return false;
+  return window.innerHeight > window.innerWidth && isTouchLikeDevice() && !isElectronShell();
+}
+
+/**
+ * Internal render-resolution steps (multiplier of the 1280×720 design space).
+ * <1 boosts performance on weak devices, >1 renders sharper on high-DPI screens.
+ */
+export const VIDEO_SCALE_STEPS: readonly number[] = [0.75, 1, 1.5, 2];
+
+let currentRenderScale = 1;
+
+export function getRenderScale(): number {
+  return currentRenderScale;
+}
+
+/**
+ * Renders at 1280×720 × scale without changing the visible world: the drawing
+ * buffer grows/shrinks via setGameSize, and every scene camera zooms by the
+ * same factor, so all world/UI layout code keeps working in design coords.
+ * (ScaleManager.setZoom is a no-op in FIT mode — verified in the Phaser source.)
+ */
+export function applyRenderScale(game: Phaser.Game, scale: number): void {
+  currentRenderScale = scale;
+  const w = Math.round(GAME_WIDTH * scale);
+  const h = Math.round(GAME_HEIGHT * scale);
+  if (game.scale.gameSize.width !== w || game.scale.gameSize.height !== h) {
+    game.scale.setGameSize(w, h);
+  }
+  for (const scene of game.scene.scenes) {
+    const cam = scene.cameras?.main;
+    if (cam && cam.zoom !== scale) cam.setZoom(scale);
+  }
+}
+
 export const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   parent: 'game-container',
@@ -55,7 +93,7 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
   input: {
     activePointers: 3,
   },
-  scene: [BootScene, MenuScene, TalentScene, ClassSelectScene, RunScene, DeathScene],
+  scene: [BootScene, MenuScene, TalentScene, ClassSelectScene, SettingsScene, RunScene, DeathScene],
   render: {
     pixelArt: true,
     antialias: false,

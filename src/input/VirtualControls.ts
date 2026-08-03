@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { GAME_HEIGHT, GAME_WIDTH } from '../game/config';
 import { t } from '../i18n/i18n';
 
 /**
@@ -14,6 +15,7 @@ export class VirtualControls {
   private root: Phaser.GameObjects.Container;
 
   private stickPointerId: number | null = null;
+  private attackPointerId: number | null = null;
   private stickOrigin = new Phaser.Math.Vector2();
   private stickVec = new Phaser.Math.Vector2(0, 0);
   private maxRadius = 56;
@@ -30,10 +32,12 @@ export class VirtualControls {
     if (!this.enabled && p.wasTouch) this.show();
     if (!this.enabled) return;
 
-    // Prefer screen/game coordinates (scrollFactor 0 UI).
-    const x = p.x;
-    const y = p.y;
-    const w = this.scene.scale.width;
+    // Pointer coords arrive in game-size space (1280×720 × render scale);
+    // the stick lives in design space (camera zoom maps the two), so convert.
+    const rs = this.scene.scale.width / GAME_WIDTH || 1;
+    const x = p.x / rs;
+    const y = p.y / rs;
+    const w = GAME_WIDTH;
 
     if (x < w * 0.48 && this.stickPointerId === null) {
       this.stickPointerId = p.id;
@@ -43,15 +47,19 @@ export class VirtualControls {
       return;
     }
 
-    if (this.hit(this.attackBtn, x, y)) this.attackHeld = true;
+    if (this.hit(this.attackBtn, x, y)) {
+      this.attackHeld = true;
+      this.attackPointerId = p.id;
+    }
     if (this.hit(this.dashBtn, x, y)) this.dashPressed = true;
     if (this.hit(this.skillBtn, x, y)) this.skillPressed = true;
   };
 
   private onMove = (p: Phaser.Input.Pointer) => {
     if (!this.enabled || p.id !== this.stickPointerId) return;
-    const dx = p.x - this.stickOrigin.x;
-    const dy = p.y - this.stickOrigin.y;
+    const rs = this.scene.scale.width / GAME_WIDTH || 1;
+    const dx = p.x / rs - this.stickOrigin.x;
+    const dy = p.y / rs - this.stickOrigin.y;
     const len = Math.hypot(dx, dy);
     const clamped = Math.min(len, this.maxRadius);
     const nx = len > 0 ? dx / len : 0;
@@ -66,7 +74,10 @@ export class VirtualControls {
       this.stickVec.set(0, 0);
       this.knob.setPosition(this.stickOrigin.x, this.stickOrigin.y);
     }
-    if (!this.scene.input.activePointer.isDown) {
+    // Track the exact finger that pressed attack — with multi-touch the old
+    // activePointer.isDown check cleared attackHeld when ANY finger lifted.
+    if (p.id === this.attackPointerId) {
+      this.attackPointerId = null;
       this.attackHeld = false;
     }
   };
@@ -75,8 +86,9 @@ export class VirtualControls {
     this.scene = scene;
     this.root = scene.add.container(0, 0).setScrollFactor(0).setDepth(1000);
 
-    const h = scene.scale.height;
-    const w = scene.scale.width;
+    // Fixed design space — the camera zoom handles the render scale.
+    const h = GAME_HEIGHT;
+    const w = GAME_WIDTH;
 
     // Bigger touch targets for phones.
     this.base = scene.add.circle(100, h - 100, 64, 0xffffff, 0.14).setStrokeStyle(2, 0xffffff, 0.28);
@@ -98,6 +110,10 @@ export class VirtualControls {
     return this.stickVec.clone();
   }
 
+  get isVisible(): boolean {
+    return this.enabled;
+  }
+
   consumePresses(): void {
     this.dashPressed = false;
     this.skillPressed = false;
@@ -116,6 +132,7 @@ export class VirtualControls {
     this.dashPressed = false;
     this.skillPressed = false;
     this.stickPointerId = null;
+    this.attackPointerId = null;
     this.knob.setPosition(this.stickOrigin.x, this.stickOrigin.y);
   }
 

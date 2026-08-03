@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME_HEIGHT, GAME_WIDTH } from '../game/config';
+import { GAME_HEIGHT, GAME_WIDTH, getRenderScale, isPortraitBlocked } from '../game/config';
 import { Player } from '../entities/Player';
 import { Enemy, type EnemyKind } from '../entities/Enemy';
 import { VirtualControls } from '../input/VirtualControls';
@@ -49,6 +49,9 @@ export class RunScene extends Phaser.Scene {
   private ended = false;
   private paused = false;
   private contactCd = 0;
+  private virtualVisibleBeforePause = false;
+  /** Set when the pause came from the portrait rotate overlay, not the user. */
+  private pausedByPortrait = false;
 
   private hpBar!: Phaser.GameObjects.Graphics;
   private cdBar!: Phaser.GameObjects.Graphics;
@@ -80,13 +83,15 @@ export class RunScene extends Phaser.Scene {
     this.spawnTimer = 0;
     this.floorTimer = 0;
     this.contactCd = 0;
+    this.virtualVisibleBeforePause = false;
+    this.pausedByPortrait = false;
     this.projectiles = [];
     this.pauseRoot = undefined;
 
     this.physics.world.setBounds(0, 0, this.mapW, this.mapH);
     this.cameras.main.setBounds(0, 0, this.mapW, this.mapH);
     this.cameras.main.setBackgroundColor(0x0b0914);
-    this.cameras.main.setZoom(1);
+    this.cameras.main.setZoom(getRenderScale());
     this.cameras.main.setRoundPixels(true);
     this.input.enabled = true;
     this.cameras.main.fadeIn(220, 8, 6, 14);
@@ -115,6 +120,8 @@ export class RunScene extends Phaser.Scene {
     attachRunVignette(this);
     this.spawnWave(6);
     this.showBanner(`${t('run_floor')} 1`, UI.teal);
+    // Device already in portrait: start paused behind the rotate overlay.
+    if (isPortraitBlocked()) this.pauseForPortrait();
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.shutdown());
   }
 
@@ -200,13 +207,21 @@ export class RunScene extends Phaser.Scene {
     this.player.moveIntent.set(mx, my);
 
     const pointer = this.input.activePointer;
-    const world = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
-    const adx = world.x - this.player.x;
-    const ady = world.y - this.player.y;
-    if (Math.hypot(adx, ady) > 4) {
-      this.player.aimIntent.set(adx, ady);
-    } else if (this.player.moveIntent.lengthSq() > 0.01) {
-      this.player.aimIntent.copy(this.player.moveIntent);
+    if (pointer.wasTouch) {
+      // Touch: the pointer sits on the stick/buttons, so aiming at it sends
+      // every attack toward the player's own finger. Aim along movement.
+      if (this.player.moveIntent.lengthSq() > 0.01) {
+        this.player.aimIntent.copy(this.player.moveIntent);
+      }
+    } else {
+      const world = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+      const adx = world.x - this.player.x;
+      const ady = world.y - this.player.y;
+      if (Math.hypot(adx, ady) > 4) {
+        this.player.aimIntent.set(adx, ady);
+      } else if (this.player.moveIntent.lengthSq() > 0.01) {
+        this.player.aimIntent.copy(this.player.moveIntent);
+      }
     }
 
     this.player.wantAttack =
@@ -414,7 +429,10 @@ export class RunScene extends Phaser.Scene {
   private cleanupEnemies(): void {
     const list = this.enemies.getChildren() as Enemy[];
     for (const e of list) {
-      if (!e.isAlive && e.active) e.destroy();
+      // takeDamage() calls disableBody(true, true) which sets active=false,
+      // so the old `!e.isAlive && e.active` guard never matched and corpses
+      // piled up in the group for the whole run.
+      if (!e.isAlive) e.destroy();
     }
   }
 
@@ -582,13 +600,32 @@ export class RunScene extends Phaser.Scene {
       this.physics.world.pause();
       // Avoid anims.pauseAll() — global and can break later scenes/UI.
       this.player.setVelocity(0, 0);
+      this.virtualVisibleBeforePause = this.virtual?.isVisible ?? false;
       this.virtual?.hide();
       this.buildPauseMenu();
     } else {
       this.physics.world.resume();
       this.destroyPauseMenu();
       this.input.enabled = true;
+      this.pausedByPortrait = false;
+      // Restore touch controls as they were — previously they stayed hidden
+      // after unpausing until the next touch.
+      if (this.virtualVisibleBeforePause) this.virtual?.show();
     }
+  }
+
+  /** Auto-pause when a touch device rotates to portrait (DOM overlay covers the game). */
+  pauseForPortrait(): void {
+    if (this.ended || this.paused) return;
+    this.pausedByPortrait = true;
+    this.togglePause();
+  }
+
+  /** Undo pauseForPortrait — never touches a pause the user asked for. */
+  resumeFromPortrait(): void {
+    if (!this.pausedByPortrait) return;
+    this.pausedByPortrait = false;
+    if (this.paused) this.togglePause();
   }
 
   private destroyPauseMenu(): void {

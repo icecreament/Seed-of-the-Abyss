@@ -114,7 +114,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   get isInvulnerable(): boolean {
-    return this.invulnTimer > 0 || this.dashActive > 0 || this.skillActive > 0;
+    // Skills are NOT invulnerability: warden reduces damage via hasBulwark in
+    // applyDamage, shade relies on stealth (enemies lose track). Previously
+    // skillActive here made every class fully invincible for the whole skill
+    // duration and turned the bulwark 75% reduction into dead code.
+    return this.invulnTimer > 0 || this.dashActive > 0;
   }
 
   get isDashing(): boolean {

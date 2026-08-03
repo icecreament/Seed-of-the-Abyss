@@ -14,6 +14,16 @@ export interface PermanentStats {
   critChance: number;
 }
 
+export interface VideoSettings {
+  /** Internal render-resolution multiplier of 1280×720 (0.75/1/1.5/2). */
+  renderScale: number;
+  /** Desktop: start fullscreen. */
+  fullscreen: boolean;
+  /** Desktop: window content size. */
+  winW: number;
+  winH: number;
+}
+
 export interface SaveData {
   essence: number;
   totalDeaths: number;
@@ -24,6 +34,7 @@ export interface SaveData {
   seedStage: number;
   /** Persisted UI language. null/undefined = auto-detect once. */
   language: Lang | null;
+  video: VideoSettings;
 }
 
 const DEFAULT_SAVE: SaveData = {
@@ -35,6 +46,7 @@ const DEFAULT_SAVE: SaveData = {
   unlockedClasses: ['warden', 'reaver', 'shade'],
   seedStage: 1,
   language: null,
+  video: { renderScale: 1, fullscreen: false, winW: 1280, winH: 720 },
 };
 
 export class SaveSystem {
@@ -75,6 +87,26 @@ export class SaveSystem {
 
   get language(): Lang {
     return this.data.language ?? detectDefaultLang();
+  }
+
+  get video(): VideoSettings {
+    return { ...this.data.video };
+  }
+
+  setRenderScale(scale: number): void {
+    this.data.video.renderScale = scale;
+    this.persist();
+  }
+
+  setFullscreen(flag: boolean): void {
+    this.data.video.fullscreen = flag;
+    this.persist();
+  }
+
+  setWindowSize(w: number, h: number): void {
+    this.data.video.winW = Math.round(w);
+    this.data.video.winH = Math.round(h);
+    this.persist();
   }
 
   setLanguage(lang: Lang): void {
@@ -170,8 +202,11 @@ export class SaveSystem {
 
   resetAll(): void {
     const keepLang = this.data.language;
+    // Video settings are device prefs, not progress — survive a save reset.
+    const keepVideo = this.data.video;
     this.data = structuredClone(DEFAULT_SAVE);
     this.data.language = keepLang;
+    this.data.video = keepVideo;
     this.applyLanguage();
     this.persist();
   }
@@ -199,6 +234,8 @@ export class SaveSystem {
         language,
         talentRanks: parsed.talentRanks ?? {},
         unlockedClasses: parsed.unlockedClasses ?? [...DEFAULT_SAVE.unlockedClasses],
+        // Old saves have no video block — merge over defaults.
+        video: { ...structuredClone(DEFAULT_SAVE.video), ...(parsed.video ?? {}) },
       };
     } catch {
       return structuredClone(DEFAULT_SAVE);

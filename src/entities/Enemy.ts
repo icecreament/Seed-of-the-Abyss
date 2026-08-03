@@ -203,6 +203,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       this.hp = 0;
       this.shadow.destroy();
       this.hpBar?.destroy();
+      this.hpBar = undefined;
       this.disableBody(true, true);
       return true;
     }

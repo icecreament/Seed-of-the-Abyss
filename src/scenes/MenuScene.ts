@@ -123,7 +123,11 @@ export class MenuScene extends Phaser.Scene {
       goScene(this, 'Talent');
     }, { width: 280, height: 48, color: 0x1f2d3d, stroke: UI.teal });
 
-    createTextButton(this, GAME_WIDTH / 2, 592, t('menu_reset'), () => {
+    createTextButton(this, GAME_WIDTH / 2 - 90, 592, t('menu_settings'), () => {
+      goScene(this, 'Settings');
+    }, { width: 160, height: 36, color: 0x1a1528, fontSize: '13px', stroke: UI.strokeBright });
+
+    createTextButton(this, GAME_WIDTH / 2 + 90, 592, t('menu_reset'), () => {
       saveSystem.resetAll();
       // restart keeps same scene instance — force re-enable input via fadeInScene path
       this.scene.restart();

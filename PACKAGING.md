@@ -15,6 +15,8 @@
 ### 依赖
 已内置：`electron` + `electron-builder`
 
+> 要求 **Node.js 18+**（推荐 20，可用 nvm 切换）。Node 14 及更早版本无法运行 electron-builder。
+
 ### 开发预览（窗口里跑游戏）
 ```bash
 npm run electron:dev
@@ -33,7 +35,13 @@ release/SeedOfTheAbyss-<version>-win-x64.exe   # 安装包(NSIS)
 
 把 **portable.exe** 发给朋友，双击就能玩（免安装）。
 
-> 首次打包会下载 Electron 二进制，需要能访问外网。
+> 首次打包会下载 Electron 二进制（约 115 MB）。脚本已内置 npmmirror 国内镜像，无需外网或代理。
+
+### 打包失败排查
+
+- **下载 Electron 超时（github.com）**：`desktop:exe` 脚本已内置 npmmirror 镜像，正常不会出现。若你绕过脚本直接调 `npx electron-builder`，请先设置环境变量 `ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/` 和 `ELECTRON_BUILDER_BINARIES_MIRROR=https://npmmirror.com/mirrors/electron-builder-binaries/`。
+- **winCodeSign 解压失败（exit status 2 / Cannot create symbolic link）**：该压缩包内含 macOS 符号链接，7-Zip 在无管理员权限且未开开发者模式时创建失败。`desktop:exe` 脚本会自动预置缓存（排除符号链接）规避此问题；若自动修复仍失败，请用管理员身份运行终端，或开启 Windows 开发者模式（设置 → 隐私和安全性 → 开发者选项）。
+- **缓存位置**：`%LOCALAPPDATA%\electron\Cache`（Electron 二进制）、`%LOCALAPPDATA%\electron-builder\Cache`（winCodeSign / nsis）。删除缓存后下次打包会重新下载。
 
 ---
 
