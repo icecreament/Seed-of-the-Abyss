@@ -4,6 +4,7 @@ import {
   GAME_WIDTH,
   getRenderScale,
   isPortraitBlocked,
+  isTouchLikeDevice,
   offsetFixedUi,
 } from '../game/config';
 import { Player } from '../entities/Player';
@@ -525,6 +526,27 @@ export class RunScene extends Phaser.Scene {
       .setDepth(520)
       .setAlpha(0);
     fixed.push(this.bannerText);
+
+    // Touch devices have no Esc key — give them a pause button next to the floor plate.
+    if (isTouchLikeDevice()) {
+      const pauseBg = this.add
+        .rectangle(GAME_WIDTH - 240, 30, 48, 48, 0x0b0914, 0.55)
+        .setStrokeStyle(1, UI.stroke, 0.5)
+        .setScrollFactor(0)
+        .setDepth(500);
+      const pauseIcon = this.add
+        .text(GAME_WIDTH - 240, 30, '❚❚', {
+          fontSize: '15px',
+          color: UI.textDim,
+          fontFamily: UI_FONT,
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0)
+        .setDepth(501);
+      pauseBg.setInteractive({ useHandCursor: true });
+      pauseBg.on('pointerup', () => this.togglePause());
+      fixed.push(pauseBg, pauseIcon);
+    }
 
     for (const obj of fixed) offsetFixedUi(obj);
   }

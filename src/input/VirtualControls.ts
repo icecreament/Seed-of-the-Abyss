@@ -12,6 +12,8 @@ export class VirtualControls {
   private attackBtn!: Phaser.GameObjects.Container;
   private dashBtn!: Phaser.GameObjects.Container;
   private skillBtn!: Phaser.GameObjects.Container;
+  /** Dot that slides along the drag direction while aiming with the attack button. */
+  private attackKnob!: Phaser.GameObjects.Arc;
   private root: Phaser.GameObjects.Container;
 
   private stickPointerId: number | null = null;
@@ -80,8 +82,14 @@ export class VirtualControls {
     if (p.id === this.attackPointerId) {
       const dx = x - this.attackBtn.x;
       const dy = y - this.attackBtn.y;
-      if (dx * dx + dy * dy > 14 * 14) {
+      const lenSq = dx * dx + dy * dy;
+      if (lenSq > 14 * 14) {
         this.attackAim.set(dx, dy);
+        // Slide the knob toward the drag so the aim is visible on screen.
+        const inv = 26 / Math.sqrt(lenSq);
+        this.attackKnob
+          .setPosition(this.attackBtn.x + dx * inv, this.attackBtn.y + dy * inv)
+          .setAlpha(1);
       }
     }
   };
@@ -97,7 +105,7 @@ export class VirtualControls {
     if (p.id === this.attackPointerId) {
       this.attackPointerId = null;
       this.attackHeld = false;
-      this.attackAim.set(0, 0);
+      this.resetAimKnob();
     }
   };
 
@@ -121,6 +129,12 @@ export class VirtualControls {
     this.dashBtn = this.makeButton(w - 175, h - 140, 40, 0x4ecdc4, t('btn_dash'));
     this.skillBtn = this.makeButton(w - 175, h - 55, 40, 0xb794f6, t('btn_skill'));
     this.root.add([this.attackBtn, this.dashBtn, this.skillBtn]);
+
+    this.attackKnob = scene.add
+      .circle(this.attackBtn.x, this.attackBtn.y, 13, 0xffffff, 0.35)
+      .setStrokeStyle(2, 0xffffff, 0.7)
+      .setAlpha(0);
+    this.root.add(this.attackKnob);
 
     this.root.setVisible(false);
     this.bind();
@@ -152,10 +166,17 @@ export class VirtualControls {
     this.attackHeld = false;
     this.dashPressed = false;
     this.skillPressed = false;
-    this.attackAim.set(0, 0);
+    this.resetAimKnob();
     this.stickPointerId = null;
     this.attackPointerId = null;
     this.knob.setPosition(this.stickOrigin.x, this.stickOrigin.y);
+  }
+
+  private resetAimKnob(): void {
+    this.attackAim.set(0, 0);
+    if (this.attackKnob) {
+      this.attackKnob.setPosition(this.attackBtn.x, this.attackBtn.y).setAlpha(0);
+    }
   }
 
   destroy(): void {
