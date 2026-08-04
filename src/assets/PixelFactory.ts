@@ -183,7 +183,7 @@ function drawWarden(pc: PixelCanvas, walk = 0): void {
     '....kttk....',
     '....kTTk....',
     '...kk..kk...',
-    `..kbk..kbk..`.replace(/k/g, 'k'),
+    '..kbk..kbk..',
   ], PAL_COMMON);
 
   // legs offset for walk

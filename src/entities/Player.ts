@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { CLASSES, type ClassId } from '../data/classes';
+import { CLASSES, HERO_TEXTURES, type ClassId } from '../data/classes';
 import type { PermanentStats } from '../systems/SaveSystem';
 
 export interface PlayerStats {
@@ -16,13 +16,23 @@ export interface PlayerStats {
   critChance: number;
 }
 
-const HERO_TEX: Record<ClassId, string> = {
-  warden: 'hero_warden',
-  reaver: 'hero_reaver',
-  shade: 'hero_shade',
-};
-
 const HERO_SCALE = 2;
+
+/** Dash tuning (ms / px·s⁻¹). Max speed cap must exceed the largest dash boost. */
+const DASH_DURATION_MS = 140;
+const DASH_BOOST = 420;
+const DASH_BOOST_SHADE = 520;
+/** Shade skill: a longer stealth-dash. */
+const SHADE_SKILL_DASH_MS = 160;
+const SHADE_SKILL_BOOST = 560;
+const SHADE_SKILL_STEALTH_MS = 1600;
+const WARDEN_SKILL_MS = 1800;
+const REAVER_SKILL_MS = 2200;
+/** White hit-flash shown on taking damage. */
+const HIT_FLASH_MS = 80;
+const HURT_INVULN_MS = 220;
+/** Well above every dash boost so Arcade never clamps a dash back to walk speed. */
+const BODY_MAX_SPEED = 640;
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   readonly classId: ClassId;
@@ -35,6 +45,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private invulnTimer = 0;
   private dashActive = 0;
   private skillActive = 0;
+  private hitFlashTimer = 0;
   private isDead = false;
   private texKey: string;
 
@@ -52,7 +63,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     permanent: PermanentStats,
   ) {
     const def = CLASSES[classId];
-    const texKey = HERO_TEX[classId];
+    const texKey = HERO_TEXTURES[classId];
     super(scene, x, y, texKey, 0);
     this.classId = classId;
     this.texKey = texKey;
@@ -74,7 +85,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setSize(14, 12);
     body.setOffset(9, 16);
-    body.setMaxSpeed(def.baseSpeed * (1 + permanent.moveSpeed) + 40);
+    // Cap must cover the fastest dash boost — previously this was base speed
+    // +40, so every dash got clamped back to walking speed the same frame.
+    body.setMaxSpeed(BODY_MAX_SPEED);
 
     this.stats = {
       maxHp: Math.floor(def.baseHp + permanent.maxHp),
@@ -133,7 +146,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     return this.classId === 'shade' && this.skillActive > 0;
   }
 
-  update(deltaMs: number): void {
+  /**
+   * Named updateEntity (not `update`) on purpose: GameObject.update has a
+   * (time, delta) signature under runChildUpdate groups, and this class only
+   * takes delta — keeping the names distinct avoids a future wiring trap.
+   */
+  updateEntity(deltaMs: number): void {
     if (this.isDead) {
       this.setVelocity(0, 0);
       this.shadow.setPosition(this.x, this.y + 6);
@@ -146,6 +164,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.invulnTimer = Math.max(0, this.invulnTimer - deltaMs);
     this.dashActive = Math.max(0, this.dashActive - deltaMs);
     this.skillActive = Math.max(0, this.skillActive - deltaMs);
+    this.hitFlashTimer = Math.max(0, this.hitFlashTimer - deltaMs);
 
     if (this.aimIntent.lengthSq() > 0.01) {
       this.facing.copy(this.aimIntent).normalize();
@@ -177,7 +196,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.play(idleKey, true);
     }
 
-    if (this.isStealthed) {
+    // Hit flash wins over every state tint for a few frames — previously
+    // applyDamage set the flash with a delayedCall, but this state machine
+    // cleared the tint on the very next frame so the flash never showed.
+    if (this.hitFlashTimer > 0) {
+      this.setAlpha(1);
+      this.setTintFill(0xffffff);
+    } else if (this.isStealthed) {
       this.setAlpha(0.4);
       this.clearTint();
     } else if (this.hasBulwark) {
@@ -231,11 +256,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.hasBulwark) amount = Math.floor(amount * 0.25);
     const reduced = Math.max(1, amount - this.stats.armor);
     this.stats.hp -= reduced;
-    this.invulnTimer = 220;
-    this.setTintFill(0xffffff);
-    this.scene.time.delayedCall(70, () => {
-      if (!this.isDead) this.clearTint();
-    });
+    this.invulnTimer = HURT_INVULN_MS;
+    this.hitFlashTimer = HIT_FLASH_MS;
     if (this.stats.hp <= 0) {
       this.stats.hp = 0;
       this.isDead = true;
@@ -265,33 +287,33 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   private performDash(): void {
     this.dashTimer = this.stats.dashCooldown;
-    this.dashActive = 140;
-    this.invulnTimer = Math.max(this.invulnTimer, 140);
+    this.dashActive = DASH_DURATION_MS;
+    this.invulnTimer = Math.max(this.invulnTimer, DASH_DURATION_MS);
     const dir =
       this.moveIntent.lengthSq() > 0.01
         ? this.moveIntent.clone().normalize()
         : this.facing.clone();
-    const boost = this.classId === 'shade' ? 520 : 420;
+    const boost = this.classId === 'shade' ? DASH_BOOST_SHADE : DASH_BOOST;
     this.setVelocity(dir.x * boost, dir.y * boost);
   }
 
   private performSkill(): void {
     this.skillTimer = this.stats.skillCooldown;
     if (this.classId === 'warden') {
-      this.skillActive = 1800;
+      this.skillActive = WARDEN_SKILL_MS;
       this.invulnTimer = Math.max(this.invulnTimer, 200);
     } else if (this.classId === 'reaver') {
-      this.skillActive = 2200;
+      this.skillActive = REAVER_SKILL_MS;
       this.heal(8);
     } else {
-      this.skillActive = 1600;
-      this.dashActive = 160;
+      this.skillActive = SHADE_SKILL_STEALTH_MS;
+      this.dashActive = SHADE_SKILL_DASH_MS;
       this.invulnTimer = Math.max(this.invulnTimer, 400);
       const dir =
         this.moveIntent.lengthSq() > 0.01
           ? this.moveIntent.clone().normalize()
           : this.facing.clone();
-      this.setVelocity(dir.x * 560, dir.y * 560);
+      this.setVelocity(dir.x * SHADE_SKILL_BOOST, dir.y * SHADE_SKILL_BOOST);
     }
   }
 }

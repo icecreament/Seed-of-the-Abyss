@@ -17,6 +17,7 @@ const zh: Dict = {
   menu_enter: '进入深渊',
   menu_talents: '天赋路线',
   menu_reset: '重置存档',
+  menu_reset_confirm: '再次点击确认重置',
   menu_language: '语言',
   menu_controls_pc: '键鼠：WASD 移动 · 左键/空格 攻击 · Shift 冲刺 · Q 技能',
   menu_controls_mobile: '触屏：左摇杆移动 · 按住攻击键拖动可瞄准任意方向',
@@ -73,7 +74,6 @@ const zh: Dict = {
   talent_cost: '消耗',
   talent_ready: '可升级',
   talent_need: '精华不足',
-  talent_rank: '等级',
 
   tree_growth: '滋生',
   tree_predation: '掠食',
@@ -110,7 +110,6 @@ const zh: Dict = {
   run_paused: '已暂停',
   run_resume: '继续 (Esc)',
   run_quit: '退出本局',
-  run_progress: '进度',
   run_elite: '精英',
 
   // Death
@@ -153,6 +152,7 @@ const en: Dict = {
   menu_enter: 'Enter the Abyss',
   menu_talents: 'Talent Trees',
   menu_reset: 'Reset Save',
+  menu_reset_confirm: 'Click again to CONFIRM reset',
   menu_language: 'Language',
   menu_controls_pc: 'PC: WASD move · LMB/Space attack · Shift dash · Q skill',
   menu_controls_mobile: 'Mobile: left stick to move · hold & drag ATK to aim any direction',
@@ -204,7 +204,6 @@ const en: Dict = {
   talent_cost: 'Cost',
   talent_ready: 'Ready',
   talent_need: 'Need essence',
-  talent_rank: 'Rank',
 
   tree_growth: 'Growth',
   tree_predation: 'Predation',
@@ -240,7 +239,6 @@ const en: Dict = {
   run_paused: 'PAUSED',
   run_resume: 'Resume (Esc)',
   run_quit: 'Abandon Run',
-  run_progress: 'Progress',
   run_elite: 'Elite',
 
   death_title: 'THE SEED FEEDS',

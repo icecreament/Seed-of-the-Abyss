@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../game/config';
-import { CLASS_LIST, type ClassId } from '../data/classes';
+import { CLASS_LIST, HERO_TEXTURES, type ClassId } from '../data/classes';
 import { saveSystem } from '../systems/SaveSystem';
 import { createTextButton } from '../ui/TextButton';
 import {
@@ -51,8 +51,7 @@ export class ClassSelectScene extends Phaser.Scene {
         .rectangle(x, y - 95, 246, 28, cls.color, 0.18)
         .setDepth(3);
 
-      const heroKey =
-        cls.id === 'warden' ? 'hero_warden' : cls.id === 'reaver' ? 'hero_reaver' : 'hero_shade';
+      const heroKey = HERO_TEXTURES[cls.id];
       const spr = this.add.sprite(x, y - 40, heroKey, 0).setScale(3).setDepth(4);
       if (this.anims.exists(`${heroKey}_idle`)) spr.play(`${heroKey}_idle`);
 

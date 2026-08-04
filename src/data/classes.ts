@@ -49,3 +49,10 @@ export const CLASSES: Record<ClassId, ClassDef> = {
 };
 
 export const CLASS_LIST = Object.values(CLASSES);
+
+/** Texture key per class — shared by Player, menu preview and class cards. */
+export const HERO_TEXTURES: Record<ClassId, string> = {
+  warden: 'hero_warden',
+  reaver: 'hero_reaver',
+  shade: 'hero_shade',
+};

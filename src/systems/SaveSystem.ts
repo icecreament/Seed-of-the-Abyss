@@ -26,6 +26,9 @@ export interface VideoSettings {
 
 export interface SaveData {
   essence: number;
+  /** Lifetime essence ever earned — seed stage grows from this, so spending
+   * essence on talents never regresses your stage. */
+  totalEssenceEarned: number;
   totalDeaths: number;
   deepestFloor: number;
   talentRanks: Record<string, number>;
@@ -39,6 +42,7 @@ export interface SaveData {
 
 const DEFAULT_SAVE: SaveData = {
   essence: 0,
+  totalEssenceEarned: 0,
   totalDeaths: 0,
   deepestFloor: 0,
   talentRanks: {},
@@ -55,10 +59,6 @@ export class SaveSystem {
   constructor() {
     this.data = this.load();
     this.applyLanguage();
-  }
-
-  get snapshot(): SaveData {
-    return structuredClone(this.data);
   }
 
   get essence(): number {
@@ -188,12 +188,15 @@ export class SaveSystem {
 
     const essenceBefore = this.data.essence;
     this.data.essence += gained;
+    this.data.totalEssenceEarned += gained;
     this.data.totalDeaths += 1;
     this.data.deepestFloor = Math.max(this.data.deepestFloor, run.floor);
 
+    // Stage follows lifetime earnings, not the current balance — previously
+    // buying talents (spending essence) could drag your stage back down.
     const stageBefore = this.data.seedStage;
     this.data.seedStage =
-      1 + Math.floor(this.data.totalDeaths / 3) + Math.floor(this.data.essence / 40);
+      1 + Math.floor(this.data.totalDeaths / 3) + Math.floor(this.data.totalEssenceEarned / 40);
     const newStage = this.data.seedStage > stageBefore;
 
     this.persist();
@@ -232,6 +235,12 @@ export class SaveSystem {
         ...structuredClone(DEFAULT_SAVE),
         ...parsed,
         language,
+        // Migrate old saves: unknown lifetime earnings -> at least the
+        // current balance, so the stage never drops on upgrade.
+        totalEssenceEarned: Math.max(
+          parsed.totalEssenceEarned ?? 0,
+          parsed.essence ?? 0,
+        ),
         talentRanks: parsed.talentRanks ?? {},
         unlockedClasses: parsed.unlockedClasses ?? [...DEFAULT_SAVE.unlockedClasses],
         // Old saves have no video block — merge over defaults.
@@ -243,7 +252,11 @@ export class SaveSystem {
   }
 
   private persist(): void {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(this.data));
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify(this.data));
+    } catch {
+      // Private mode / quota — the session keeps running without persistence.
+    }
   }
 }
 

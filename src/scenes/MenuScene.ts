@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../game/config';
+import { HERO_TEXTURES } from '../data/classes';
 import { saveSystem } from '../systems/SaveSystem';
 import { createTextButton } from '../ui/TextButton';
 import {
@@ -58,8 +59,7 @@ export class MenuScene extends Phaser.Scene {
 
     const clsId = saveSystem.selectedClass;
     const stats = saveSystem.computePermanentStats();
-    const heroKey =
-      clsId === 'warden' ? 'hero_warden' : clsId === 'reaver' ? 'hero_reaver' : 'hero_shade';
+    const heroKey = HERO_TEXTURES[clsId];
     const preview = this.add.sprite(GAME_WIDTH / 2, 230, heroKey, 0).setScale(3).setDepth(3);
     if (this.anims.exists(`${heroKey}_walk`)) preview.play(`${heroKey}_walk`);
 
@@ -127,11 +127,28 @@ export class MenuScene extends Phaser.Scene {
       goScene(this, 'Settings');
     }, { width: 160, height: 36, color: 0x1a1528, fontSize: '13px', stroke: UI.strokeBright });
 
-    createTextButton(this, GAME_WIDTH / 2 + 90, 592, t('menu_reset'), () => {
+    // Two-step reset: first tap arms it, second tap within 3s wipes the save.
+    // A single stray tap used to erase everything with no confirmation.
+    let resetArmed = false;
+    let resetTimer: Phaser.Time.TimerEvent | undefined;
+    let resetLabel: Phaser.GameObjects.Text | undefined;
+    const resetBtn = createTextButton(this, GAME_WIDTH / 2 + 90, 592, t('menu_reset'), () => {
+      if (!resetArmed) {
+        resetArmed = true;
+        resetLabel?.setText(t('menu_reset_confirm'));
+        resetTimer?.remove(false);
+        resetTimer = this.time.delayedCall(3000, () => {
+          resetArmed = false;
+          resetLabel?.setText(t('menu_reset'));
+        });
+        return;
+      }
+      resetTimer?.remove(false);
       saveSystem.resetAll();
       // restart keeps same scene instance — force re-enable input via fadeInScene path
       this.scene.restart();
     }, { width: 160, height: 36, color: 0x2a1a1a, fontSize: '13px', stroke: 0x5a3038 });
+    resetLabel = resetBtn.getAll('type', 'Text')[0] as Phaser.GameObjects.Text | undefined;
 
     this.buildLanguageToggle();
 

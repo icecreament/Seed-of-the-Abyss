@@ -30,6 +30,18 @@ const TILE = 32;
 const MAX_ENEMIES = 28;
 const FLOOR_DURATION_MS = 45000;
 
+/** Inner pillars in tile units [tx, ty, w, h]. The border ring is derived. */
+const PILLARS: ReadonlyArray<readonly [number, number, number, number]> = [
+  [10, 8, 3, 6],
+  [22, 18, 5, 2],
+  [34, 7, 3, 7],
+  [15, 24, 6, 2],
+  [30, 22, 2, 5],
+  [8, 16, 2, 4],
+  [40, 14, 4, 3],
+  [26, 10, 2, 2],
+];
+
 export class RunScene extends Phaser.Scene {
   private player!: Player;
   private enemies!: Phaser.Physics.Arcade.Group;
@@ -55,7 +67,6 @@ export class RunScene extends Phaser.Scene {
   private floorTimer = 0;
   private ended = false;
   private paused = false;
-  private contactCd = 0;
   private virtualVisibleBeforePause = false;
   /** Set when the pause came from the portrait rotate overlay, not the user. */
   private pausedByPortrait = false;
@@ -69,6 +80,11 @@ export class RunScene extends Phaser.Scene {
   private pauseRoot?: Phaser.GameObjects.Container;
   private projectiles: Projectile[] = [];
   private groundImage?: Phaser.GameObjects.Image;
+  private wallRects: Phaser.Geom.Rectangle[] = [];
+  private lastHudLine = '';
+  private lastFloorLine = '';
+  /** Reused for pointer -> world conversion to avoid a per-frame allocation. */
+  private readonly aimPoint = new Phaser.Math.Vector2();
 
   private readonly mapCols = 56;
   private readonly mapRows = 38;
@@ -89,7 +105,8 @@ export class RunScene extends Phaser.Scene {
     this.timeAlive = 0;
     this.spawnTimer = 0;
     this.floorTimer = 0;
-    this.contactCd = 0;
+    this.lastHudLine = '';
+    this.lastFloorLine = '';
     this.virtualVisibleBeforePause = false;
     this.pausedByPortrait = false;
     this.projectiles = [];
@@ -143,10 +160,9 @@ export class RunScene extends Phaser.Scene {
     this.timeAlive += delta / 1000;
     this.floorTimer += delta;
     this.spawnTimer += delta;
-    this.contactCd = Math.max(0, this.contactCd - delta);
 
     this.readInput();
-    this.player.update(delta);
+    this.player.updateEntity(delta);
 
     if (this.player.wantAttack) {
       this.tryPlayerAttack();
@@ -224,7 +240,7 @@ export class RunScene extends Phaser.Scene {
         this.player.aimIntent.copy(this.player.moveIntent);
       }
     } else {
-      const world = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+      const world = this.cameras.main.getWorldPoint(pointer.x, pointer.y, this.aimPoint);
       const adx = world.x - this.player.x;
       const ady = world.y - this.player.y;
       if (Math.hypot(adx, ady) > 4) {
@@ -286,7 +302,7 @@ export class RunScene extends Phaser.Scene {
       if (killed) {
         this.kills += 1;
         this.floorKills += 1;
-        this.spawnEssencePickup(enemy.x, enemy.y);
+        this.spawnEssenceFx(enemy.x, enemy.y);
         if (enemy.elite) {
           this.floatText(enemy.x, enemy.y - 36, t('run_elite'), '#ffc4a8');
           this.player.heal(Math.floor(this.player.stats.maxHp * 0.08));
@@ -295,7 +311,8 @@ export class RunScene extends Phaser.Scene {
     }
   }
 
-  private spawnEssencePickup(x: number, y: number): void {
+  /** Kill feedback only — essence is settled on death, nothing to pick up. */
+  private spawnEssenceFx(x: number, y: number): void {
     const orb = this.add.sprite(x, y, 'icon_essence', 0).setScale(2).setDepth(11);
     if (this.anims.exists('icon_essence_spin')) orb.play('icon_essence_spin');
     this.tweens.add({
@@ -310,14 +327,13 @@ export class RunScene extends Phaser.Scene {
   private onPlayerTouchEnemy(enemy: Enemy): void {
     if (!enemy.isAlive || this.player.dead) return;
     if (this.player.isDashing) return;
-    if (this.contactCd > 0) return;
-    if (!this.player.isInvulnerable) {
-      const dealt = this.player.applyDamage(enemy.damage);
-      if (dealt > 0) {
-        this.contactCd = 280;
-        this.cameras.main.shake(80, 0.004);
-        this.floatText(this.player.x, this.player.y - 20, `-${dealt}`, '#ff6b6b');
-      }
+    // The hurt-invulnerability window inside applyDamage is the throttle —
+    // a separate scene-level contact cooldown did the same job twice.
+    if (this.player.isInvulnerable) return;
+    const dealt = this.player.applyDamage(enemy.damage);
+    if (dealt > 0) {
+      this.cameras.main.shake(80, 0.004);
+      this.floatText(this.player.x, this.player.y - 20, `-${dealt}`, '#ff6b6b');
     }
   }
 
@@ -348,6 +364,8 @@ export class RunScene extends Phaser.Scene {
     for (let i = 0; i < 24; i++) {
       const x = Phaser.Math.Between(TILE * 2, this.mapW - TILE * 2);
       const y = Phaser.Math.Between(TILE * 2, this.mapH - TILE * 2);
+      // Never inside a pillar — physics would shove them out or wedge them in.
+      if (this.pointInWall(x, y)) continue;
       if (Phaser.Math.Distance.Between(x, y, this.player.x, this.player.y) >= minDist) {
         return { x, y };
       }
@@ -425,6 +443,8 @@ export class RunScene extends Phaser.Scene {
       if (
         p.life <= 0 ||
         hit ||
+        // Spitters can no longer snipe through pillars.
+        this.pointInWall(p.sprite.x, p.sprite.y) ||
         p.sprite.x < 0 ||
         p.sprite.y < 0 ||
         p.sprite.x > this.mapW ||
@@ -587,14 +607,21 @@ export class RunScene extends Phaser.Scene {
 
     const ready = t('run_ready');
     const cool = '..';
-    this.hudText.setText(
-      `${t('menu_hp')} ${Math.ceil(s.hp)}/${s.maxHp}   ${t('run_kills')} ${this.kills}   ${t('run_atk')} ${
-        this.player.attackReady ? ready : cool
-      }  ${t('run_dash')} ${this.player.dashReady ? ready : cool}  ${t('run_skill')} ${
-        this.player.skillReady ? ready : cool
-      }`,
-    );
-    this.floorText.setText(`${t('run_floor')} ${this.floor}`);
+    // setText forces a full texture re-upload — only touch it on change.
+    const line = `${t('menu_hp')} ${Math.ceil(s.hp)}/${s.maxHp}   ${t('run_kills')} ${this.kills}   ${t('run_atk')} ${
+      this.player.attackReady ? ready : cool
+    }  ${t('run_dash')} ${this.player.dashReady ? ready : cool}  ${t('run_skill')} ${
+      this.player.skillReady ? ready : cool
+    }`;
+    if (line !== this.lastHudLine) {
+      this.lastHudLine = line;
+      this.hudText.setText(line);
+    }
+    const floorLine = `${t('run_floor')} ${this.floor}`;
+    if (floorLine !== this.lastFloorLine) {
+      this.lastFloorLine = floorLine;
+      this.floorText.setText(floorLine);
+    }
   }
 
   private showBanner(msg: string, color: number): void {
@@ -645,17 +672,32 @@ export class RunScene extends Phaser.Scene {
       this.physics.world.pause();
       // Avoid anims.pauseAll() — global and can break later scenes/UI.
       this.player.setVelocity(0, 0);
+      this.setActorsAnimsPaused(true);
       this.virtualVisibleBeforePause = this.virtual?.isVisible ?? false;
       this.virtual?.hide();
       this.buildPauseMenu();
     } else {
       this.physics.world.resume();
+      this.setActorsAnimsPaused(false);
       this.destroyPauseMenu();
       this.input.enabled = true;
       this.pausedByPortrait = false;
       // Restore touch controls as they were — previously they stayed hidden
       // after unpausing until the next touch.
       if (this.virtualVisibleBeforePause) this.virtual?.show();
+    }
+  }
+
+  /** Freeze walk cycles while paused (per-sprite, never the global manager). */
+  private setActorsAnimsPaused(flag: boolean): void {
+    if (this.player) {
+      if (flag) this.player.anims.pause();
+      else this.player.anims.resume();
+    }
+    for (const e of this.enemies.getChildren() as Enemy[]) {
+      if (!e.active) continue;
+      if (flag) e.anims.pause();
+      else e.anims.resume();
     }
   }
 
@@ -751,77 +793,77 @@ export class RunScene extends Phaser.Scene {
   }
 
   private drawFloor(): void {
-    // Single baked ground texture instead of ~2k Image objects.
+    // Ground AND wall visuals baked into one texture — thousands of tile
+    // Images become a single draw. Baked once per boot (tile art never
+    // changes between runs), scene restarts just reuse it.
     const key = 'run_ground_baked';
-    if (this.textures.exists(key)) {
-      this.textures.remove(key);
-    }
+    if (!this.textures.exists(key)) {
+      const canvas = document.createElement('canvas');
+      canvas.width = this.mapW;
+      canvas.height = this.mapH;
+      const ctx = canvas.getContext('2d')!;
+      ctx.imageSmoothingEnabled = false;
 
-    const canvas = document.createElement('canvas');
-    canvas.width = this.mapW;
-    canvas.height = this.mapH;
-    const ctx = canvas.getContext('2d')!;
-    ctx.imageSmoothingEnabled = false;
-
-    for (let ty = 0; ty < this.mapRows; ty++) {
-      for (let tx = 0; tx < this.mapCols; tx++) {
-        const variant = (tx * 3 + ty * 7) % 4;
-        const src = this.textures.get(`tile_floor_${variant}`).getSourceImage() as
-          | HTMLCanvasElement
-          | HTMLImageElement;
-        ctx.drawImage(src, 0, 0, 16, 16, tx * TILE, ty * TILE, TILE, TILE);
-        if ((tx + ty) % 17 === 0) {
-          ctx.fillStyle = 'rgba(196, 181, 253, 0.18)';
-          ctx.fillRect(tx * TILE, ty * TILE, TILE, TILE);
+      for (let ty = 0; ty < this.mapRows; ty++) {
+        for (let tx = 0; tx < this.mapCols; tx++) {
+          const variant = (tx * 3 + ty * 7) % 4;
+          const src = this.textures.get(`tile_floor_${variant}`).getSourceImage() as
+            | HTMLCanvasElement
+            | HTMLImageElement;
+          ctx.drawImage(src, 0, 0, 16, 16, tx * TILE, ty * TILE, TILE, TILE);
+          if ((tx + ty) % 17 === 0) {
+            ctx.fillStyle = 'rgba(196, 181, 253, 0.18)';
+            ctx.fillRect(tx * TILE, ty * TILE, TILE, TILE);
+          }
         }
       }
-    }
 
-    this.textures.addCanvas(key, canvas);
+      const wallSrc = this.textures.get('tile_wall').getSourceImage() as
+        | HTMLCanvasElement
+        | HTMLImageElement;
+      for (const [tx, ty, w, h] of this.getWallBlocks()) {
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            ctx.drawImage(wallSrc, 0, 0, 16, 16, (tx + x) * TILE, (ty + y) * TILE, TILE, TILE);
+          }
+        }
+      }
+
+      this.textures.addCanvas(key, canvas);
+    }
     this.groundImage = this.add.image(0, 0, key).setOrigin(0, 0).setDepth(0);
+  }
+
+  /** Wall layout in tile units [tx, ty, w, h]: border ring + inner pillars. */
+  private getWallBlocks(): Array<readonly [number, number, number, number]> {
+    return [
+      [0, 0, this.mapCols, 1],
+      [0, this.mapRows - 1, this.mapCols, 1],
+      [0, 0, 1, this.mapRows],
+      [this.mapCols - 1, 0, 1, this.mapRows],
+      ...PILLARS,
+    ];
   }
 
   private buildWalls(): void {
     this.walls = this.physics.add.staticGroup();
-
-    const placeWallBlock = (cx: number, cy: number, wTiles: number, hTiles: number) => {
+    this.wallRects = [];
+    // Physics only — the visuals are baked into the ground texture above.
+    for (const [tx, ty, wTiles, hTiles] of this.getWallBlocks()) {
       const w = wTiles * TILE;
       const h = hTiles * TILE;
-      for (let ty = 0; ty < hTiles; ty++) {
-        for (let tx = 0; tx < wTiles; tx++) {
-          this.add
-            .image(
-              cx - w / 2 + tx * TILE + TILE / 2,
-              cy - h / 2 + ty * TILE + TILE / 2,
-              'tile_wall',
-            )
-            .setScale(2)
-            .setDepth(2);
-        }
-      }
-      const body = this.add.rectangle(cx, cy, w, h, 0x000000, 0);
+      const body = this.add.rectangle(tx * TILE + w / 2, ty * TILE + h / 2, w, h, 0x000000, 0);
       this.physics.add.existing(body, true);
       this.walls.add(body);
-    };
-
-    placeWallBlock(this.mapW / 2, TILE / 2, this.mapCols, 1);
-    placeWallBlock(this.mapW / 2, this.mapH - TILE / 2, this.mapCols, 1);
-    placeWallBlock(TILE / 2, this.mapH / 2, 1, this.mapRows);
-    placeWallBlock(this.mapW - TILE / 2, this.mapH / 2, 1, this.mapRows);
-
-    const pillars: Array<[number, number, number, number]> = [
-      [10, 8, 3, 6],
-      [22, 18, 5, 2],
-      [34, 7, 3, 7],
-      [15, 24, 6, 2],
-      [30, 22, 2, 5],
-      [8, 16, 2, 4],
-      [40, 14, 4, 3],
-      [26, 10, 2, 2],
-    ];
-    for (const [tx, ty, w, h] of pillars) {
-      placeWallBlock(tx * TILE + (w * TILE) / 2, ty * TILE + (h * TILE) / 2, w, h);
+      this.wallRects.push(new Phaser.Geom.Rectangle(tx * TILE, ty * TILE, w, h));
     }
+  }
+
+  private pointInWall(x: number, y: number): boolean {
+    for (const rect of this.wallRects) {
+      if (rect.contains(x, y)) return true;
+    }
+    return false;
   }
 
   private endRun(abandoned: boolean): void {
@@ -846,13 +888,16 @@ export class RunScene extends Phaser.Scene {
       damageDealt: this.damageDealt,
       classId: this.player.classId,
     };
-    void abandoned;
 
-    this.showBanner(t('death_title'), UI.accentHot);
-    this.cameras.main.fadeOut(500, 8, 4, 12);
-    this.time.delayedCall(650, () => {
-      this.scene.start('Death');
-    });
+    if (abandoned) {
+      // Manual quit — skip the death ceremony, settle fast.
+      this.cameras.main.fadeOut(250, 8, 4, 12);
+      this.time.delayedCall(300, () => this.scene.start('Death'));
+    } else {
+      this.showBanner(t('death_title'), UI.accentHot);
+      this.cameras.main.fadeOut(500, 8, 4, 12);
+      this.time.delayedCall(650, () => this.scene.start('Death'));
+    }
   }
 
   private shutdown(): void {
