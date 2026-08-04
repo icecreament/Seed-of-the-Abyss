@@ -1,5 +1,11 @@
 import Phaser from 'phaser';
-import { GAME_HEIGHT, GAME_WIDTH, getRenderScale, isPortraitBlocked } from '../game/config';
+import {
+  GAME_HEIGHT,
+  GAME_WIDTH,
+  getRenderScale,
+  isPortraitBlocked,
+  offsetFixedUi,
+} from '../game/config';
 import { Player } from '../entities/Player';
 import { Enemy, type EnemyKind } from '../entities/Enemy';
 import { VirtualControls } from '../input/VirtualControls';
@@ -437,22 +443,29 @@ export class RunScene extends Phaser.Scene {
   }
 
   private createHud(): void {
+    // Camera zoom would push scrollFactor(0) layers off-center — every fixed
+    // HUD piece is collected here and shifted back at the end.
+    const fixed: Phaser.GameObjects.Components.Transform[] = [];
+
     const plate = this.add.graphics().setScrollFactor(0).setDepth(490);
     plate.fillStyle(0x0b0914, 0.55);
     plate.fillRoundedRect(8, 8, 320, 72, 6);
     plate.lineStyle(1, UI.stroke, 0.5);
     plate.strokeRoundedRect(8, 8, 320, 72, 6);
+    fixed.push(plate);
 
-    this.add
+    const heart = this.add
       .image(18, 16, 'ui_heart')
       .setOrigin(0, 0)
       .setScale(2)
       .setScrollFactor(0)
       .setDepth(500);
+    fixed.push(heart);
 
     this.hpBar = this.add.graphics().setScrollFactor(0).setDepth(500);
     this.cdBar = this.add.graphics().setScrollFactor(0).setDepth(500);
     this.progressBar = this.add.graphics().setScrollFactor(0).setDepth(500);
+    fixed.push(this.hpBar, this.cdBar, this.progressBar);
 
     this.hudText = this.add
       .text(18, 52, '', {
@@ -462,12 +475,14 @@ export class RunScene extends Phaser.Scene {
       })
       .setScrollFactor(0)
       .setDepth(500);
+    fixed.push(this.hudText);
 
     const rightPlate = this.add.graphics().setScrollFactor(0).setDepth(490);
     rightPlate.fillStyle(0x0b0914, 0.55);
     rightPlate.fillRoundedRect(GAME_WIDTH - 188, 8, 180, 44, 6);
     rightPlate.lineStyle(1, UI.stroke, 0.5);
     rightPlate.strokeRoundedRect(GAME_WIDTH - 188, 8, 180, 44, 6);
+    fixed.push(rightPlate);
 
     this.floorText = this.add
       .text(GAME_WIDTH - 20, 14, '', {
@@ -478,8 +493,9 @@ export class RunScene extends Phaser.Scene {
       .setOrigin(1, 0)
       .setScrollFactor(0)
       .setDepth(500);
+    fixed.push(this.floorText);
 
-    this.add
+    const classLabel = this.add
       .text(
         16,
         GAME_HEIGHT - 22,
@@ -492,6 +508,7 @@ export class RunScene extends Phaser.Scene {
       )
       .setScrollFactor(0)
       .setDepth(500);
+    fixed.push(classLabel);
 
     this.bannerText = this.add
       .text(GAME_WIDTH / 2, 90, '', {
@@ -504,6 +521,9 @@ export class RunScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(520)
       .setAlpha(0);
+    fixed.push(this.bannerText);
+
+    for (const obj of fixed) offsetFixedUi(obj);
   }
 
   private updateHud(): void {
@@ -696,6 +716,10 @@ export class RunScene extends Phaser.Scene {
       { width: 220, height: 42, color: 0x3a1a22, stroke: UI.accentHot, depth: 920 },
     );
     quit.setScrollFactor(0);
+
+    offsetFixedUi(root);
+    offsetFixedUi(resume);
+    offsetFixedUi(quit);
 
     root.setData('extra', [resume, quit]);
     this.pauseRoot = root;

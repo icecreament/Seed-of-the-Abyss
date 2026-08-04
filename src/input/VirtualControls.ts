@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME_HEIGHT, GAME_WIDTH } from '../game/config';
+import { GAME_HEIGHT, GAME_WIDTH, offsetFixedUi } from '../game/config';
 import { t } from '../i18n/i18n';
 
 /**
@@ -85,6 +85,8 @@ export class VirtualControls {
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
     this.root = scene.add.container(0, 0).setScrollFactor(0).setDepth(1000);
+    // Camera zoom pushes scrollFactor(0) layers off-center — shift the root back.
+    offsetFixedUi(this.root);
 
     // Fixed design space — the camera zoom handles the render scale.
     const h = GAME_HEIGHT;

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME_HEIGHT, GAME_WIDTH } from '../game/config';
+import { GAME_HEIGHT, GAME_WIDTH, offsetFixedUi } from '../game/config';
 import { UI, UI_FONT, bodyStyle, titleStyle } from './theme';
 
 /**
@@ -125,5 +125,6 @@ export function attachRunVignette(scene: Phaser.Scene): Phaser.GameObjects.Graph
   g.fillRect(0, h - 10, w, 10);
   g.fillRect(0, 0, 10, h);
   g.fillRect(w - 10, 0, 10, h);
+  offsetFixedUi(g);
   return g;
 }

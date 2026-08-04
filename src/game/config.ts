@@ -52,10 +52,40 @@ export function getRenderScale(): number {
 }
 
 /**
+ * scrollFactor(0) layers are zoomed around the buffer center by the camera,
+ * which throws fixed HUD elements off-screen at renderScale ≠ 1. Shifting the
+ * layer root by center × (z − 1) maps design coords back onto the buffer.
+ * Container children multiply in the parent's scrollFactor (see Phaser's
+ * ContainerWebGLRenderer), so offsetting the root fixes the whole subtree.
+ */
+export function offsetFixedUi(obj: Phaser.GameObjects.Components.Transform): void {
+  const z = currentRenderScale;
+  if (z === 1) return;
+  obj.setPosition(obj.x + (GAME_WIDTH / 2) * (z - 1), obj.y + (GAME_HEIGHT / 2) * (z - 1));
+}
+
+const hookedScenes = new WeakSet<Phaser.Scene>();
+
+/** Apply the current render scale to a scene camera, now and on every restart. */
+function hookSceneCamera(scene: Phaser.Scene): void {
+  if (hookedScenes.has(scene)) return;
+  hookedScenes.add(scene);
+  scene.sys.events.on(Phaser.Scenes.Events.START, () => {
+    const cam = scene.cameras?.main;
+    if (!cam) return;
+    if (cam.zoom !== currentRenderScale) cam.setZoom(currentRenderScale);
+    cam.centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+  });
+}
+
+/**
  * Renders at 1280×720 × scale without changing the visible world: the drawing
  * buffer grows/shrinks via setGameSize, and every scene camera zooms by the
  * same factor, so all world/UI layout code keeps working in design coords.
  * (ScaleManager.setZoom is a no-op in FIT mode — verified in the Phaser source.)
+ * setGameSize shifts the camera view, so the view is re-centered on the design
+ * space; scenes started later get the same treatment via the START hook above.
+ * RunScene overrides scroll with setBounds + startFollow right after, harmless.
  */
 export function applyRenderScale(game: Phaser.Game, scale: number): void {
   currentRenderScale = scale;
@@ -65,8 +95,11 @@ export function applyRenderScale(game: Phaser.Game, scale: number): void {
     game.scale.setGameSize(w, h);
   }
   for (const scene of game.scene.scenes) {
+    hookSceneCamera(scene);
     const cam = scene.cameras?.main;
-    if (cam && cam.zoom !== scale) cam.setZoom(scale);
+    if (!cam) continue;
+    if (cam.zoom !== scale) cam.setZoom(scale);
+    cam.centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
   }
 }
 
