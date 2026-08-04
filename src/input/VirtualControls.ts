@@ -23,6 +23,8 @@ export class VirtualControls {
   attackHeld = false;
   dashPressed = false;
   skillPressed = false;
+  /** Drag direction of the held attack button (design coords). Zero = no manual aim. */
+  readonly attackAim = new Phaser.Math.Vector2(0, 0);
 
   private enabled = false;
   private bound = false;
@@ -56,16 +58,32 @@ export class VirtualControls {
   };
 
   private onMove = (p: Phaser.Input.Pointer) => {
-    if (!this.enabled || p.id !== this.stickPointerId) return;
+    if (!this.enabled) return;
     const rs = this.scene.scale.width / GAME_WIDTH || 1;
-    const dx = p.x / rs - this.stickOrigin.x;
-    const dy = p.y / rs - this.stickOrigin.y;
-    const len = Math.hypot(dx, dy);
-    const clamped = Math.min(len, this.maxRadius);
-    const nx = len > 0 ? dx / len : 0;
-    const ny = len > 0 ? dy / len : 0;
-    this.knob.setPosition(this.stickOrigin.x + nx * clamped, this.stickOrigin.y + ny * clamped);
-    this.stickVec.set(nx * (clamped / this.maxRadius), ny * (clamped / this.maxRadius));
+    const x = p.x / rs;
+    const y = p.y / rs;
+
+    if (p.id === this.stickPointerId) {
+      const dx = x - this.stickOrigin.x;
+      const dy = y - this.stickOrigin.y;
+      const len = Math.hypot(dx, dy);
+      const clamped = Math.min(len, this.maxRadius);
+      const nx = len > 0 ? dx / len : 0;
+      const ny = len > 0 ? dy / len : 0;
+      this.knob.setPosition(this.stickOrigin.x + nx * clamped, this.stickOrigin.y + ny * clamped);
+      this.stickVec.set(nx * (clamped / this.maxRadius), ny * (clamped / this.maxRadius));
+      return;
+    }
+
+    // The attack button doubles as an aim stick: drag past the dead zone
+    // (any direction) to aim attacks there; a plain tap keeps movement aim.
+    if (p.id === this.attackPointerId) {
+      const dx = x - this.attackBtn.x;
+      const dy = y - this.attackBtn.y;
+      if (dx * dx + dy * dy > 14 * 14) {
+        this.attackAim.set(dx, dy);
+      }
+    }
   };
 
   private onUp = (p: Phaser.Input.Pointer) => {
@@ -79,6 +97,7 @@ export class VirtualControls {
     if (p.id === this.attackPointerId) {
       this.attackPointerId = null;
       this.attackHeld = false;
+      this.attackAim.set(0, 0);
     }
   };
 
@@ -133,6 +152,7 @@ export class VirtualControls {
     this.attackHeld = false;
     this.dashPressed = false;
     this.skillPressed = false;
+    this.attackAim.set(0, 0);
     this.stickPointerId = null;
     this.attackPointerId = null;
     this.knob.setPosition(this.stickOrigin.x, this.stickOrigin.y);

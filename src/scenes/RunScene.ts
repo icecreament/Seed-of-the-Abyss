@@ -214,9 +214,12 @@ export class RunScene extends Phaser.Scene {
 
     const pointer = this.input.activePointer;
     if (pointer.wasTouch) {
-      // Touch: the pointer sits on the stick/buttons, so aiming at it sends
-      // every attack toward the player's own finger. Aim along movement.
-      if (this.player.moveIntent.lengthSq() > 0.01) {
+      // Touch: dragging the attack button aims in any direction; a plain tap
+      // aims along movement. (The pointer sits on the controls, so aiming at
+      // it would fire at the player's own finger.)
+      if (this.virtual.attackAim.lengthSq() > 0.01) {
+        this.player.aimIntent.copy(this.virtual.attackAim);
+      } else if (this.player.moveIntent.lengthSq() > 0.01) {
         this.player.aimIntent.copy(this.player.moveIntent);
       }
     } else {
