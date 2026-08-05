@@ -291,7 +291,7 @@ export class RunScene extends Phaser.Scene {
         (rangePx / speed) * 1000,
         atk.crit,
       );
-      const flash = this.add.image(sx, sy, 'proj_seed').setScale(4).setDepth(12).setAlpha(0.85);
+      const flash = this.add.image(sx, sy, 'proj_seed').setScale(2.5).setDepth(12).setAlpha(0.85);
       this.tweens.add({
         targets: flash,
         alpha: 0,
@@ -306,11 +306,11 @@ export class RunScene extends Phaser.Scene {
     const cx = this.player.x + atk.dir.x * reach * 0.55;
     const cy = this.player.y + atk.dir.y * reach * 0.55;
 
-    const slash = this.add.sprite(cx, cy, 'fx_slash', 0);
+    const slash = this.add.sprite(cx, cy, `fx_slash_${this.player.classId}`, 0);
     slash.setDepth(12);
     slash.setScale(2);
     slash.setRotation(Math.atan2(atk.dir.y, atk.dir.x));
-    slash.play('fx_slash_play');
+    slash.play(`fx_slash_${this.player.classId}_play`);
     slash.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => slash.destroy());
 
     const list = this.enemies.getChildren() as Enemy[];
@@ -389,6 +389,12 @@ export class RunScene extends Phaser.Scene {
         lifeMs,
       );
     }
+    const ring = this.add
+      .sprite(this.player.x, this.player.y, 'fx_nova', 0)
+      .setDepth(12)
+      .setScale(2);
+    ring.play('fx_nova_play');
+    ring.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => ring.destroy());
     this.cameras.main.flash(90, 107, 203, 119);
   }
 
@@ -486,7 +492,7 @@ export class RunScene extends Phaser.Scene {
     crit = false,
   ): void {
     const key = fromEnemy ? 'proj_ember' : 'proj_seed';
-    const sprite = this.add.image(x, y, key).setScale(3).setDepth(11);
+    const sprite = this.add.image(x, y, key).setScale(2).setDepth(11);
     sprite.setRotation(Math.atan2(dy, dx));
     this.projectiles.push({
       sprite,

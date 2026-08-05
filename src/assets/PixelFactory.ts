@@ -163,265 +163,308 @@ const PAL_COMMON = {
 } as const;
 
 function drawWarden(pc: PixelCanvas, walk = 0): void {
-  // 32x32 knight with teal seed core
+  // Templar of the Seed: T-visor helm, wide pauldrons, glowing seed core.
   const foot = walk === 1 ? 1 : walk === 2 ? -1 : 0;
-  pc.blit(4, 2 + (walk ? 0 : 0), [
-    '............',
-    '....kkkk....',
-    '...kbbbbk...',
-    '..kbwwbbbk..',
-    '..kbbbbbbk..',
-    '...kbbbbk...',
-    '....kTTk....',
-    '...kttttk...',
-    '..kTttttTk..',
-    '..kttttttk..',
-    '.kkTttttTkk.',
-    'kbbkttttkbbk',
-    'kbbkkkkkkbbk',
-    '.kk.kttk.kk.',
-    '....kttk....',
-    '....kTTk....',
-    '...kk..kk...',
-    '..kbk..kbk..',
+  pc.blit(8, 4, [
+    '....kkkkkk....',
+    '...kssssssk...',
+    '..kssssssssk..',
+    '..ksttttttsk..',
+    '..ksssttsssk..',
+    '..kssssssssk..',
+    '.kkkkkkkkkkkk.',
+    '.ksssktttksssk.',
+    '.ksskttwttkssk.',
+    'ksssktttttksssk',
+    'ksssktttttksssk',
+    '.ksssktttksssk.',
+    '.ksskkkkkkkssk.',
+    '..kssssssssk..',
+    '..kssskkkssk..',
+    '..kssk..kssk..',
+    '..kssk..kssk..',
+    '..kssk..kssk..',
+  ], PAL_COMMON);
+  // sabatons flush with the greaves, alternate while walking
+  pc.rect(10, 22, 4, 5, P.ink);
+  pc.rect(16, 22, 4, 5, P.ink);
+  pc.rect(11 + foot, 23, 2, 3, P.stone);
+  pc.rect(17 - foot, 23, 2, 3, P.stone);
+
+  // tower shield with seed sigil
+  pc.blit(1, 13, [
+    'kkkkkk.',
+    'ktttttk',
+    'ktwwwtk',
+    'ktwtwtk',
+    'ktwwwtk',
+    'ktttttk',
+    'kTTTTTk',
+    '.kkkkkk',
   ], PAL_COMMON);
 
-  // legs offset for walk
-  pc.rect(10, 26, 4, 4, P.ink);
-  pc.rect(18, 26, 4, 4, P.ink);
-  pc.rect(11 + foot, 27, 2, 3, P.stoneHi);
-  pc.rect(19 - foot, 27, 2, 3, P.stoneHi);
-
-  // shield
-  pc.blit(1, 12, [
-    '.kkkk.',
-    'ktttTk',
-    'ktwwtk',
-    'ktttTk',
-    'kTTTTk',
-    '.kkkk.',
-  ], PAL_COMMON);
-
-  // sword
-  pc.blit(24, 8, [
-    '..g.',
-    '.gGg',
-    '..g.',
-    '..d.',
-    '..d.',
-    '..d.',
-    '.ddd',
-    '..k.',
+  // longsword with bright fuller
+  pc.blit(26, 6, [
+    '.ww.',
+    '.ws.',
+    '.ws.',
+    '.ws.',
+    '.ws.',
+    '.ws.',
+    '.ws.',
+    '.ws.',
+    'gddg',
+    '.kk.',
   ], PAL_COMMON);
 }
 
 function drawReaver(pc: PixelCanvas, walk = 0): void {
+  // Abyss berserker: jagged mane, war paint, bare torso, bone cleavers.
   const foot = walk === 1 ? 1 : walk === 2 ? -1 : 0;
-  pc.blit(6, 3, [
-    '..........',
-    '...kkkk...',
-    '..kRrrRk..',
-    '.krrrrrrk.',
-    '.krwwrrrk.',
-    '.krrrrrrk.',
-    '..krrrrk..',
-    '...kRRk...',
-    '..krrrrk..',
-    '.krrrrrrk.',
-    'kRrrrrrrRk',
-    'krrkkkkrrk',
-    '.kk.rr.kk.',
-    '....rr....',
-    '...kRRk...',
-    '..kk..kk..',
+  pc.blit(8, 4, [
+    '..kk..kk..kk..',
+    '..kRRRRRRRRRRk..',
+    '..kRRrrRRrrRRk..',
+    '...kbbbbbbbbk...',
+    '...kbwwbbwwbk...',
+    '...kbbRRRRbbk...',
+    '....kbbbbbbk....',
+    '...kkkkkkkkkk...',
+    '..kbbRRRRRRbbk..',
+    '..kbRRbbbbRRbk..',
+    '.kbbRbbbbbbRbbk.',
+    '.kbk.RbbbbbR.kbk.',
+    '..kk..kRRRk..kk..',
+    '....kbbRRbbk....',
+    '....kkRRRRkk....',
+    '....kRRkkRRk....',
+    '....kbk..kbk....',
+    '....kbk..kbk....',
   ], PAL_COMMON);
-  pc.rect(11 + foot, 27, 3, 3, P.bloodDark);
-  pc.rect(18 - foot, 27, 3, 3, P.bloodDark);
+  pc.rect(12, 22, 4, 5, P.ink);
+  pc.rect(17, 22, 4, 5, P.ink);
+  pc.rect(13 + foot, 23, 2, 3, P.bloodDark);
+  pc.rect(18 - foot, 23, 2, 3, P.bloodDark);
 
-  // dual blades
-  pc.blit(0, 10, [
-    'r.',
-    'Rr',
-    'r.',
-    'd.',
-    'd.',
-    'k.',
+  // twin bone cleavers, hooked edge outward
+  pc.blit(2, 10, [
+    '...dd',
+    '..dbd',
+    '.dbbd',
+    '.db.d',
+    'db..d',
+    'db.d.',
+    '.bb..',
+    '.Rk..',
   ], PAL_COMMON);
-  pc.blit(28, 10, [
-    '.r',
-    'rR',
-    '.r',
-    '.d',
-    '.d',
-    '.k',
+  pc.blit(25, 10, [
+    'dd...',
+    'dbd..',
+    'dbbd.',
+    'd.bd.',
+    'd..bd',
+    '.d.bd',
+    '..bb.',
+    '..kR.',
   ], PAL_COMMON);
-
-  // seed scar
-  pc.p(15, 14, P.violet);
-  pc.p(16, 15, P.violetDark);
 }
 
 function drawShade(pc: PixelCanvas, walk = 0): void {
-  const foot = walk === 1 ? 1 : walk === 2 ? -1 : 0;
-  pc.blit(7, 2, [
-    '........',
-    '..kkkk..',
-    '.kppppk.',
-    'kpPwwPpk',
-    'kppppppk',
-    '.kppppk.',
-    '..kPPk..',
-    '.kppppk.',
-    'kppppppk',
-    'kpPppPpk',
-    'kppkkppk',
-    '.kk..kk.',
-    '..p..p..',
-    '.kP..Pk.',
-    'kk....kk',
+  // Void assassin: lightless hood, glowing eyes, scarf, split cloak hem.
+  pc.blit(9, 4, [
+    '.....kkkk.....',
+    '...kkppppkk...',
+    '..kppppppppk..',
+    '..kppvvvvppk..',
+    '..kvvvvvvvvk..',
+    '..kvPPvvPPvk..',
+    '..kvvvvvvvvk..',
+    '...kvvvvvvk...',
+    '..kkkkkkkkkk..',
+    '.kpppkkkkpppk.',
+    '.kppkppppkppk.',
+    'kpppkppppkpppk',
+    'kpk.kppppk.kpk',
+    '.kk.kppppk.kk.',
+    '....kppppk....',
+    '...kppPPppk...',
   ], PAL_COMMON);
-  pc.rect(11 + foot, 26, 3, 4, P.violetDark);
-  pc.rect(18 - foot, 26, 3, 4, P.violetDark);
-
-  // dagger trail
-  pc.blit(22, 12, [
-    '.p.',
-    'pPp',
-    '.p.',
-    '.d.',
-    '.k.',
-  ], PAL_COMMON);
-  // cloak flick
+  // cloak hem stands in for feet; spreads while walking
   if (walk) {
-    pc.p(6, 14, P.violetDark);
-    pc.p(5, 15, P.violet);
-    pc.p(25, 15, P.violetDark);
+    pc.blit(9, 20, [
+      '..kPp....pPk..',
+      '..kp......pk..',
+      '..kk......kk..',
+    ], PAL_COMMON);
+  } else {
+    pc.blit(9, 20, [
+      '...kPp..pPk...',
+      '...kp....pk...',
+      '...kk....kk...',
+    ], PAL_COMMON);
   }
+
+  // scarf streams behind; lifts while walking
+  if (walk) {
+    pc.blit(24, 7, [
+      'ppp...',
+      '..pppP',
+      '...ppp',
+    ], PAL_COMMON);
+  } else {
+    pc.blit(24, 9, [
+      'pp....',
+      '.ppp..',
+      '..ppP.',
+      '...pP.',
+    ], PAL_COMMON);
+  }
+  // reversed dagger, blade down
+  pc.blit(6, 15, [
+    '.k.',
+    'pd.',
+    'pd.',
+    'dp.',
+  ], PAL_COMMON);
 }
 
 function drawThorn(pc: PixelCanvas, walk = 0): void {
+  // Gardener of the Seed: flower crown, vine mail, great seed staff.
   const foot = walk === 1 ? 1 : walk === 2 ? -1 : 0;
-  // Sprig-keeper: leaf-crowned hood, seed pendant, thorn staff.
-  pc.blit(6, 2, [
-    '....ll....',
-    '...kllk...',
-    '..kllllk..',
-    '..kLllLk..',
-    '..kbbbbk..',
-    '..kbwwbk..',
-    '..kbbbbk..',
-    '...kLLk...',
-    '..kllllk..',
-    '.kllllllk.',
-    '.kllggllk.',
-    'kLllgLglLk',
-    'kLllllllLk',
-    '.klLkkLlk.',
-    '..kllLlk..',
-    '...kLLk...',
-    '..kk..kk..',
+  pc.blit(9, 4, [
+    '...l.lggl.l...',
+    '..kllllllllk..',
+    '..kbbbbbbbbk..',
+    '..kbllbbllbk..',
+    '..kbbbbbbbbk..',
+    '...kbbbbbbk...',
+    '...kkllllkk...',
+    '..kkllllllkk..',
+    '.kllLllllLllk.',
+    '.klLkggggkLlk.',
+    'kllLkggggkLllk',
+    'klk.LlgglL.klk',
+    '.kk.kLllLk.kk.',
+    '....kLllLk....',
+    '...kLllllLk...',
+    '...kllllllk...',
+    '...kLkllkLk...',
+    '...kk....kk...',
   ], PAL_COMMON);
-  pc.rect(10, 26, 4, 4, P.ink);
-  pc.rect(18, 26, 4, 4, P.ink);
-  pc.rect(11 + foot, 27, 2, 3, P.slimeDark);
-  pc.rect(19 - foot, 27, 2, 3, P.slimeDark);
+  pc.rect(12, 22, 4, 5, P.ink);
+  pc.rect(17, 22, 4, 5, P.ink);
+  pc.rect(13 + foot, 23, 2, 3, P.slimeDark);
+  pc.rect(18 - foot, 23, 2, 3, P.slimeDark);
 
-  // thorn staff with a seed tip
-  pc.blit(24, 6, [
-    '..g.',
-    '.gwg',
-    '..gG',
-    '..L.',
-    '..L.',
-    '..L.',
-    '.lL.',
-    '..L.',
-    '..k.',
+  // thorn staff: vine-wrapped shaft, great golden seed on top
+  pc.blit(22, 5, [
+    '..gg.',
+    '.gwwg.',
+    '.gGGg.',
+    '..gg.',
+    '..L..',
+    '.lL..',
+    '..L.l',
+    '..L..',
+    '.lL..',
+    '..L..',
+    '..L..',
+    '..kk.',
   ], PAL_COMMON);
-  // robe flick while walking
-  if (walk) {
-    pc.p(5, 15, P.slimeDark);
-    pc.p(16, 15, P.slimeDark);
-  }
 }
 
 function drawCrawler(pc: PixelCanvas, frame = 0): void {
-  const bob = frame === 1 ? 1 : 0;
-  pc.blit(4, 8 + bob, [
-    '........................',
-    '......kkkkkk............',
-    '....kkRRRRkk............',
-    '...kRrrrrrrRk...........',
-    '..kRrwwrrwwrRk..........',
-    '..kRrrrrrrrrRk..........',
-    '.kRrrrrrrrrrrRk.........',
-    '.kRRrrkkkkrrRRk.........',
-    '..kkRRk..kRRkk..........',
-    '..k..k....k..k..........',
-    '.kL..k....k..Lk.........',
-    'kL....k..k....Lk........',
+  // Abyss scavenger bug: segmented shell, back spikes, big compound eyes.
+  pc.blit(3, 9, [
+    '......kk...kk...kk........',
+    '....kkRRkkRRRkkRRkk......',
+    '..kkRrrrRRrrrRRrrrRkk....',
+    '.kRrrrrRrrrrRrrrrRrrkkkk.',
+    'kRrrrrrRrrrrRrrrrRrrkwwwwk',
+    'kRrrrrRrrrrRrrrrRrrkwkwwkk',
+    '.kRrrrrRrrrrRrrrrRrkwwwwk.',
+    '..kRrrrrRrrrrRrrrrk.kk.k..',
+    '...kkkkkkkkkkkkkkkk...k.k.',
   ], PAL_COMMON);
-  // legs cycle
-  if (frame === 1) {
-    pc.p(8, 24, P.ink);
-    pc.p(22, 24, P.ink);
-  } else {
-    pc.p(10, 25, P.ink);
-    pc.p(20, 25, P.ink);
+  // six alternating legs
+  for (let i = 0; i < 3; i++) {
+    const phase = (i + frame) % 2;
+    pc.rect(6 + i * 5 + phase * 2, 18, 2, 4, P.ink);
+    pc.rect(9 + i * 5 + (1 - phase) * 2, 19, 2, 3, P.ink);
   }
 }
 
 function drawSpitter(pc: PixelCanvas, frame = 0): void {
-  pc.blit(6, 6, [
-    '....................',
-    '.....kkkkkk.........',
-    '...kkGeeeeGkk.......',
-    '..kGeeeeeewGek......',
-    '.kGeeeeeewwwek......',
-    '.kGeeeeeeeeeeGk.....',
-    '..kGGeeeeeeGGk......',
-    '...kkGGkkGGkk.......',
-    '....k..kk..k........',
-    '...kL......Lk.......',
-    '..kL........Lk......',
+  // Bloated acid sac: ember glow through taut skin, charging spout.
+  pc.blit(8, 6, [
+    '....kkkkkkkk....',
+    '..kkGGGGGGGGkk..',
+    '.kGGeeeeeeeeGGk.',
+    '.kGeeewweeeeGGk',
+    'kGeeeewwwweeeeGk',
+    'kGeewwGGwweeeGGk',
+    'kGeeewwwweeeeGGk',
+    '.kGeeeeeeeeGGk..',
+    '..kkGGGGGGkk....',
+    '...kkkkkkkk......',
   ], PAL_COMMON);
+  // stubby legs
+  pc.rect(10, 16, 2, 3, P.ink);
+  pc.rect(14, 17, 2, 2, P.ink);
+  pc.rect(18, 17, 2, 2, P.ink);
+  pc.rect(22, 16, 2, 3, P.ink);
+  // spout on the right: shut normally, swollen and glowing when charging
   if (frame === 1) {
-    // spit charge
-    pc.p(22, 12, P.ember);
-    pc.p(23, 12, P.gold);
-    pc.p(24, 13, P.ember);
+    pc.blit(22, 9, [
+      'eek',
+      'ewwk',
+      'eek',
+    ], PAL_COMMON);
+  } else {
+    pc.blit(23, 9, [
+      'kk',
+      'kG',
+      'kk',
+    ], PAL_COMMON);
   }
 }
 
 function drawBrute(pc: PixelCanvas, frame = 0): void {
+  // Stone-plated juggernaut: hunched shell, low head with tusks, heavy club.
   const swing = frame === 1 ? 1 : 0;
-  pc.blit(2, 2, [
-    '............................',
-    '........kkkkkkkk............',
-    '......kkPPPPPPkk............',
-    '.....kPPppppppPPk...........',
-    '....kPppwwppwwppPk..........',
-    '....kPppppppppppPk..........',
-    '....kPPppppppppPPk..........',
-    '.....kPPkkkkkkPPk...........',
-    '....kkPPppppppPPkk..........',
-    '...kPPppppppppppPPk.........',
-    '..kPPppkkkkkkkkppPPk........',
-    '..kPPk..........kPPk........',
-    '..kPk............kPk........',
-    '.kPk..............kPk.......',
-    'kPk................kPk......',
-    'kk..................kk......',
+  pc.blit(3, 4, [
+    '........kkkkkkkk........',
+    '......kksssssssskk......',
+    '.....ksshhhhhhhhssk.....',
+    '....ksshsssssssshssk....',
+    '...kssssksssssskssssk...',
+    '..kssssskkkkkkksssssk..',
+    '..kssskPPPPPPPPPksssk..',
+    '.kssskPpwwpppwwpPksssk.',
+    '.ksskPpppppppppPkssk...',
+    '..kkkPbbPkkkPbbPkkk....',
+    '....kkPPPPPPPPPkk......',
+    '...kPPk.......kPPk......',
+    '..kPPk.........kPPk.....',
+    '..kPk...........kPk.....',
+    '.kPk.............kPk....',
+    '.kk...............kk....',
   ], PAL_COMMON);
-  // club
-  pc.blit(22 + swing, 8, [
-    '..kkkk',
-    '.ksssk',
-    'khsshk',
-    '.kssk.',
-    '..dd..',
-    '..dd..',
-    '..kk..',
+  // trunk legs flush with the shell
+  pc.rect(9, 21, 5, 5, P.ink);
+  pc.rect(19, 21, 5, 5, P.ink);
+  pc.rect(10 + swing, 22, 3, 3, P.violetDark);
+  pc.rect(20 - swing, 22, 3, 3, P.violetDark);
+  // massive stone club, drags and swings with the walk cycle
+  pc.blit(24 + swing, 8, [
+    '..kkkk.',
+    '.khsshk',
+    'khssshk',
+    'khssshk',
+    '.ksssk.',
+    '..dd...',
+    '..dd...',
+    '..kk...',
   ], PAL_COMMON);
 }
 
@@ -471,64 +514,101 @@ function drawWallTile(pc: PixelCanvas): void {
   pc.p(11, 10, P.tealDark);
 }
 
-function drawSlash(pc: PixelCanvas, frame: number): void {
-  // arc slash 32x32
-  const arcs = [
-    [
-      '................................',
-      '................................',
-      '.....................ww.........',
-      '...................wtTw.........',
-      '.................wtTTtw.........',
-      '...............wtTTttw..........',
-      '.............wtTTttw............',
-      '...........wtTTttw..............',
-      '.........wtTTttw................',
-      '.......wtTTttw..................',
-      '.....wtTTttw....................',
-      '...wtTTttw......................',
-      '.wtTTttw........................',
-      'wtTttw..........................',
-      'wTtw............................',
-      'ww..............................',
-    ],
-    [
-      '................................',
-      '................................',
-      '................................',
-      '..........wwwwww................',
-      '........wtTTTTTtw...............',
-      '......wtTTtttttTTw..............',
-      '....wtTTtt.....tTTw.............',
-      '..wtTTtt.........tTTw...........',
-      '.wTTtt.............tTTw.........',
-      'wTtw.................tTw........',
-      'ww.....................w........',
-      '................................',
-      '................................',
-      '................................',
-      '................................',
-      '................................',
-    ],
-  ];
-  pc.blit(0, 0, arcs[frame % arcs.length], PAL_COMMON);
+/**
+ * Crescent slash sweep around the +x axis (the scene rotates the sprite to
+ * aim). Frame 0: short draw-in arc; frame 1: full crescent, bright outer
+ * edge; frame 2: shattering motes. Procedural so the arc stays smooth.
+ */
+function drawSlash(pc: PixelCanvas, frame: number, hi: Hex, mid: Hex, dark: Hex): void {
+  const cx = 16;
+  const cy = 16;
+  if (frame === 0) {
+    for (let deg = -50; deg <= 10; deg += 4) {
+      const a = (deg * Math.PI) / 180;
+      for (let r = 9; r <= 14; r++) {
+        pc.p(
+          Math.round(cx + Math.cos(a) * r),
+          Math.round(cy + Math.sin(a) * r),
+          r > 12 ? hi : mid,
+        );
+      }
+    }
+    return;
+  }
+  if (frame === 1) {
+    for (let deg = -60; deg <= 60; deg += 3) {
+      const a = (deg * Math.PI) / 180;
+      for (let r = 7; r <= 15; r++) {
+        const x = Math.round(cx + Math.cos(a) * r);
+        const y = Math.round(cy + Math.sin(a) * r);
+        const color = Math.abs(deg) > 50 ? dark : r >= 14 ? hi : r >= 11 ? mid : dark;
+        pc.p(x, y, color);
+      }
+    }
+    return;
+  }
+  for (let deg = -60; deg <= 60; deg += 6) {
+    const a = (deg * Math.PI) / 180;
+    const r = 10 + (((deg + 60) * 7) % 5);
+    pc.p(Math.round(cx + Math.cos(a) * r), Math.round(cy + Math.sin(a) * r), mid);
+    pc.p(Math.round(cx + Math.cos(a) * (r + 4)), Math.round(cy + Math.sin(a) * (r + 4)), dark);
+  }
 }
 
+/** 8x8 projectile with a colored halo around a bright core. */
 function drawProjectile(pc: PixelCanvas, kind: 'ember' | 'seed'): void {
   if (kind === 'ember') {
     pc.blit(0, 0, [
-      '..e.',
-      '.ewe',
-      'eGee',
-      '.ee.',
+      '...ee...',
+      '..egge..',
+      '.egwwge.',
+      'egwwwwge',
+      'egwwwwge',
+      '.egwwge.',
+      '..egge..',
+      '...ee...',
     ], PAL_COMMON);
   } else {
     pc.blit(0, 0, [
-      '.p.',
-      'pwp',
-      'PpP',
-      '.p.',
+      '...ll...',
+      '..lggl..',
+      '.lgwwgl.',
+      'lgwwwwgl',
+      'lgwwwwgl',
+      '.lgwwgl.',
+      '..lggl..',
+      '...ll...',
     ], PAL_COMMON);
+  }
+}
+
+/** Orbiting motes for sustained skills (24x24, 2-frame pulse). */
+function drawSkillRing(pc: PixelCanvas, frame: number, hi: Hex, mid: Hex): void {
+  const r = frame === 0 ? 8 : 10;
+  const rot = frame === 1 ? Math.PI / 8 : 0;
+  for (let i = 0; i < 8; i++) {
+    const a = (Math.PI * 2 * i) / 8 + rot;
+    const x = Math.round(11.5 + Math.cos(a) * r);
+    const y = Math.round(11.5 + Math.sin(a) * r);
+    pc.p(x, y, i % 2 === 0 ? hi : mid);
+  }
+}
+
+/** Thorn nova: expanding ring of thorn spikes (48x48, 3 frames). */
+function drawNovaRing(pc: PixelCanvas, frame: number): void {
+  const r = [9, 16, 22][frame] ?? 22;
+  for (let i = 0; i < 12; i++) {
+    const a = (Math.PI * 2 * i) / 12;
+    const x = Math.round(23.5 + Math.cos(a) * r);
+    const y = Math.round(23.5 + Math.sin(a) * r);
+    pc.p(x, y, frame === 2 ? P.slimeDark : P.slime);
+    if (frame < 2) {
+      pc.p(
+        Math.round(23.5 + Math.cos(a) * (r + 2)),
+        Math.round(23.5 + Math.sin(a) * (r + 2)),
+        P.gold,
+      );
+    }
   }
 }
 
@@ -652,17 +732,23 @@ export function generateAllPixelTextures(scene: Phaser.Scene): void {
   }
 
   // --- FX ---
-  sheet(32, 32, [(pc) => drawSlash(pc, 0), (pc) => drawSlash(pc, 1)]).toTexture(
-    scene,
-    'fx_slash',
-  );
+  // Per-class slash arcs (3 frames each).
+  sheet(32, 32, [0, 1, 2].map((f) => (pc: PixelCanvas) => drawSlash(pc, f, P.white, P.teal, P.tealDark))).toTexture(scene, 'fx_slash_warden');
+  sheet(32, 32, [0, 1, 2].map((f) => (pc: PixelCanvas) => drawSlash(pc, f, P.white, P.blood, P.bloodDark))).toTexture(scene, 'fx_slash_reaver');
+  sheet(32, 32, [0, 1, 2].map((f) => (pc: PixelCanvas) => drawSlash(pc, f, P.white, P.violet, P.violetDark))).toTexture(scene, 'fx_slash_shade');
+  sheet(32, 32, [0, 1, 2].map((f) => (pc: PixelCanvas) => drawSlash(pc, f, P.white, P.slime, P.slimeDark))).toTexture(scene, 'fx_slash_thorn');
+  // Sustained-skill orbit rings (thorn has no sustained skill — nova is instant).
+  sheet(24, 24, [0, 1].map((f) => (pc: PixelCanvas) => drawSkillRing(pc, f, P.white, P.teal))).toTexture(scene, 'fx_ring_warden');
+  sheet(24, 24, [0, 1].map((f) => (pc: PixelCanvas) => drawSkillRing(pc, f, P.ember, P.blood))).toTexture(scene, 'fx_ring_reaver');
+  sheet(24, 24, [0, 1].map((f) => (pc: PixelCanvas) => drawSkillRing(pc, f, P.violet, P.violetDark))).toTexture(scene, 'fx_ring_shade');
+  sheet(48, 48, [0, 1, 2].map((f) => (pc: PixelCanvas) => drawNovaRing(pc, f))).toTexture(scene, 'fx_nova');
   {
-    const t = new PixelCanvas(4, 4);
+    const t = new PixelCanvas(8, 8);
     drawProjectile(t, 'ember');
     t.toTexture(scene, 'proj_ember');
   }
   {
-    const t = new PixelCanvas(4, 4);
+    const t = new PixelCanvas(8, 8);
     drawProjectile(t, 'seed');
     t.toTexture(scene, 'proj_seed');
   }
@@ -746,8 +832,18 @@ export function registerPixelAnimations(scene: Phaser.Scene): void {
   mk('enemy_spitter_walk', 'enemy_spitter', [0, 1], 5);
   mk('enemy_brute_walk', 'enemy_brute', [0, 1], 4);
 
-  ensureSheetFrames('fx_slash', 32, 32);
-  mk('fx_slash_play', 'fx_slash', [0, 1], 18, 0);
+  const slashClasses = ['warden', 'reaver', 'shade', 'thorn'] as const;
+  for (const c of slashClasses) {
+    ensureSheetFrames(`fx_slash_${c}`, 32, 32);
+    mk(`fx_slash_${c}_play`, `fx_slash_${c}`, [0, 1, 2], 24, 0);
+  }
+  const ringClasses = ['warden', 'reaver', 'shade'] as const;
+  for (const c of ringClasses) {
+    ensureSheetFrames(`fx_ring_${c}`, 24, 24);
+    mk(`fx_ring_${c}_play`, `fx_ring_${c}`, [0, 1], 6);
+  }
+  ensureSheetFrames('fx_nova', 48, 48);
+  mk('fx_nova_play', 'fx_nova', [0, 1, 2], 14, 0);
 
   ensureSheetFrames('icon_essence', 8, 8);
   mk('icon_essence_spin', 'icon_essence', [0, 1], 4);

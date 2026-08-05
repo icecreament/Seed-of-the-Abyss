@@ -48,6 +48,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private hitFlashTimer = 0;
   private isDead = false;
   private texKey: string;
+  /** Sustained-skill orbit ring (thorn has none — its nova is instant). */
+  private skillFx?: Phaser.GameObjects.Sprite;
 
   moveIntent = new Phaser.Math.Vector2(0, 0);
   aimIntent = new Phaser.Math.Vector2(1, 0);
@@ -84,6 +86,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       .setScale(HERO_SCALE)
       .setAlpha(0.35)
       .setDepth(9);
+
+    if (classId !== 'thorn') {
+      this.skillFx = scene.add
+        .sprite(x, y, `fx_ring_${classId}`, 0)
+        .setScale(2)
+        .setDepth(11)
+        .setAlpha(0.85)
+        .setVisible(false);
+      this.skillFx.play(`fx_ring_${classId}_play`);
+    }
 
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setSize(14, 12);
@@ -160,6 +172,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.isDead) {
       this.setVelocity(0, 0);
       this.shadow.setPosition(this.x, this.y + 6);
+      this.skillFx?.setVisible(false);
       return;
     }
 
@@ -224,6 +237,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.shadow.setPosition(this.x, this.y + 6);
     this.shadow.setFlipX(this.flipX);
     this.shadow.setVisible(!this.isStealthed);
+    if (this.skillFx) {
+      this.skillFx.setPosition(this.x, this.y);
+      this.skillFx.setVisible(this.skillActive > 0);
+    }
 
     if (this.wantDash && this.dashReady) this.performDash();
     if (this.wantSkill && this.skillReady) this.performSkill();
@@ -287,6 +304,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   destroy(fromScene?: boolean): void {
     this.shadow?.destroy();
+    this.skillFx?.destroy();
     super.destroy(fromScene);
   }
 
