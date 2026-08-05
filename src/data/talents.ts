@@ -11,6 +11,9 @@ export interface TalentNode {
   effects: {
     maxHp?: number;
     damage?: number;
+    /** Fractional damage bonus (0.07 = +7%) — scales equally across classes,
+     * unlike flat damage which favors low-damage fast attackers. */
+    damageMul?: number;
     moveSpeed?: number;
     essenceGain?: number;
     lifesteal?: number;
@@ -65,7 +68,7 @@ export const TALENT_TREES: Record<
         i18nKey: 'pred_fang',
         maxRank: 5,
         costPerRank: 1,
-        effects: { damage: 2 },
+        effects: { damageMul: 0.07 },
       },
       {
         id: 'pred_blood',

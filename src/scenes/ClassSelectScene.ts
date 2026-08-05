@@ -32,7 +32,8 @@ export class ClassSelectScene extends Phaser.Scene {
 
     createSceneTitle(this, t('class_title'), 30, '26px');
     CLASS_LIST.forEach((cls, i) => {
-      const x = GAME_WIDTH / 2 + (i - 1) * 300;
+      // 4 cards: centered pairs (i - 1.5) keep the row symmetric.
+      const x = GAME_WIDTH / 2 + (i - 1.5) * 280;
       const y = 230;
 
       const glow = this.add

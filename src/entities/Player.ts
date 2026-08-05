@@ -54,6 +54,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   wantAttack = false;
   wantDash = false;
   wantSkill = false;
+  /** Thorn skill: asks the scene to fire the nova ring (Player keeps no
+   * reference to the scene's projectile list). Consumed by RunScene. */
+  pendingNova = false;
 
   constructor(
     scene: Phaser.Scene,
@@ -92,7 +95,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.stats = {
       maxHp: Math.floor(def.baseHp + permanent.maxHp),
       hp: Math.floor(def.baseHp + permanent.maxHp),
-      damage: def.baseDamage + permanent.damage,
+      // Flat stage/talent bonuses add first, percentage talents multiply the
+      // sum — keeps pred_fang equally valuable on every class.
+      damage: Math.round((def.baseDamage + permanent.damage) * (1 + permanent.damageMul)),
       speed: def.baseSpeed * (1 + permanent.moveSpeed),
       attackCooldown: def.attackCooldown,
       attackRange: def.attackRange + 8,
@@ -234,7 +239,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.attackTimer = this.stats.attackCooldown;
 
     let dmg = this.stats.damage;
-    if (this.classId === 'reaver' && this.skillActive > 0) dmg *= 1.45;
+    if (this.classId === 'reaver' && this.skillActive > 0) dmg *= 1.35;
     if (this.isStealthed) {
       dmg *= 1.35;
       this.skillActive = 0;
@@ -277,7 +282,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.stats.lifesteal > 0) {
       this.heal(Math.max(1, Math.floor(damageDealt * this.stats.lifesteal)));
     }
-    if (this.classId === 'reaver') this.heal(2);
+    if (this.classId === 'reaver') this.heal(1);
   }
 
   destroy(fromScene?: boolean): void {
@@ -305,6 +310,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     } else if (this.classId === 'reaver') {
       this.skillActive = REAVER_SKILL_MS;
       this.heal(8);
+    } else if (this.classId === 'thorn') {
+      this.pendingNova = true;
     } else {
       this.skillActive = SHADE_SKILL_STEALTH_MS;
       this.dashActive = SHADE_SKILL_DASH_MS;

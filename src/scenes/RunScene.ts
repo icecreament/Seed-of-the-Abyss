@@ -9,6 +9,7 @@ import {
 } from '../game/config';
 import { Player } from '../entities/Player';
 import { Enemy, type EnemyKind } from '../entities/Enemy';
+import { CLASSES } from '../data/classes';
 import { VirtualControls } from '../input/VirtualControls';
 import { i18n, t } from '../i18n/i18n';
 import { saveSystem } from '../systems/SaveSystem';
@@ -24,6 +25,7 @@ interface Projectile {
   damage: number;
   life: number;
   fromEnemy: boolean;
+  crit: boolean;
 }
 
 const TILE = 32;
@@ -164,6 +166,13 @@ export class RunScene extends Phaser.Scene {
     this.readInput();
     this.player.updateEntity(delta);
 
+    // Thorn skill: the player entity only raises the flag, the scene owns
+    // the projectile list and fires the ring.
+    if (this.player.pendingNova) {
+      this.player.pendingNova = false;
+      this.fireNova();
+    }
+
     if (this.player.wantAttack) {
       this.tryPlayerAttack();
     }
@@ -264,6 +273,35 @@ export class RunScene extends Phaser.Scene {
     const atk = this.player.tryAttack();
     if (!atk) return;
 
+    const def = CLASSES[this.player.classId];
+    if (def.attackType === 'ranged') {
+      const speed = def.projectileSpeed ?? 360;
+      const rangePx = this.player.stats.attackRange;
+      // Spawn ahead of the body so the shot never overlaps the shooter.
+      const sx = atk.origin.x + atk.dir.x * 16;
+      const sy = atk.origin.y + atk.dir.y * 16;
+      this.spawnProjectile(
+        sx,
+        sy,
+        atk.dir.x,
+        atk.dir.y,
+        atk.damage,
+        false,
+        speed,
+        (rangePx / speed) * 1000,
+        atk.crit,
+      );
+      const flash = this.add.image(sx, sy, 'proj_seed').setScale(4).setDepth(12).setAlpha(0.85);
+      this.tweens.add({
+        targets: flash,
+        alpha: 0,
+        scale: 1.5,
+        duration: 90,
+        onComplete: () => flash.destroy(),
+      });
+      return;
+    }
+
     const reach = this.player.stats.attackRange;
     const cx = this.player.x + atk.dir.x * reach * 0.55;
     const cy = this.player.y + atk.dir.y * reach * 0.55;
@@ -287,28 +325,71 @@ export class RunScene extends Phaser.Scene {
       const dot = ndx * atk.dir.x + ndy * atk.dir.y;
       if (dot < 0.15) continue;
 
-      const killed = enemy.takeDamage(atk.damage);
-      enemy.applyKnockback(atk.dir.x, atk.dir.y, atk.crit ? 360 : 260, atk.crit ? 140 : 100);
-      this.damageDealt += atk.damage;
-      this.player.onHitEnemy(atk.damage);
-
-      this.floatText(
-        enemy.x,
-        enemy.y - 18,
-        atk.crit ? `${atk.damage}!` : `${atk.damage}`,
-        atk.crit ? '#ffd56a' : '#ffffff',
+      this.hitEnemy(
+        enemy,
+        atk.damage,
+        atk.dir.x,
+        atk.dir.y,
+        atk.crit,
+        atk.crit ? 360 : 260,
+        atk.crit ? 140 : 100,
       );
+    }
+  }
 
-      if (killed) {
-        this.kills += 1;
-        this.floorKills += 1;
-        this.spawnEssenceFx(enemy.x, enemy.y);
-        if (enemy.elite) {
-          this.floatText(enemy.x, enemy.y - 36, t('run_elite'), '#ffc4a8');
-          this.player.heal(Math.floor(this.player.stats.maxHp * 0.08));
-        }
+  /** Shared hit resolution for melee swings and player projectiles. */
+  private hitEnemy(
+    enemy: Enemy,
+    damage: number,
+    dirX: number,
+    dirY: number,
+    crit: boolean,
+    knockForce: number,
+    knockMs: number,
+  ): void {
+    const killed = enemy.takeDamage(damage);
+    enemy.applyKnockback(dirX, dirY, knockForce, knockMs);
+    this.damageDealt += damage;
+    this.player.onHitEnemy(damage);
+
+    this.floatText(
+      enemy.x,
+      enemy.y - 18,
+      crit ? `${damage}!` : `${damage}`,
+      crit ? '#ffd56a' : '#ffffff',
+    );
+
+    if (killed) {
+      this.kills += 1;
+      this.floorKills += 1;
+      this.spawnEssenceFx(enemy.x, enemy.y);
+      if (enemy.elite) {
+        this.floatText(enemy.x, enemy.y - 36, t('run_elite'), '#ffc4a8');
+        this.player.heal(Math.floor(this.player.stats.maxHp * 0.08));
       }
     }
+  }
+
+  /** Thorn skill: short-range 8-way ring for peeling mobs off the kiter. */
+  private fireNova(): void {
+    const def = CLASSES[this.player.classId];
+    const speed = def.projectileSpeed ?? 360;
+    const damage = Math.max(1, Math.floor(this.player.stats.damage * 0.7));
+    const lifeMs = (160 / speed) * 1000;
+    for (let i = 0; i < 8; i++) {
+      const angle = (Math.PI * 2 * i) / 8;
+      this.spawnProjectile(
+        this.player.x,
+        this.player.y,
+        Math.cos(angle),
+        Math.sin(angle),
+        damage,
+        false,
+        speed,
+        lifeMs,
+      );
+    }
+    this.cameras.main.flash(90, 107, 203, 119);
   }
 
   /** Kill feedback only — essence is settled on death, nothing to pick up. */
@@ -401,6 +482,8 @@ export class RunScene extends Phaser.Scene {
     damage: number,
     fromEnemy: boolean,
     speed: number,
+    lifeMs = 2200,
+    crit = false,
   ): void {
     const key = fromEnemy ? 'proj_ember' : 'proj_seed';
     const sprite = this.add.image(x, y, key).setScale(3).setDepth(11);
@@ -410,8 +493,9 @@ export class RunScene extends Phaser.Scene {
       vx: dx * speed,
       vy: dy * speed,
       damage,
-      life: 2200,
+      life: lifeMs,
       fromEnemy,
+      crit,
     });
   }
 
@@ -437,6 +521,19 @@ export class RunScene extends Phaser.Scene {
             this.floatText(this.player.x, this.player.y - 20, `-${dealt}`, '#ff6b6b');
           }
           hit = true;
+        }
+      } else if (!p.fromEnemy) {
+        for (const enemy of this.enemies.getChildren() as Enemy[]) {
+          if (!enemy.active || !enemy.isAlive) continue;
+          const d = Phaser.Math.Distance.Between(p.sprite.x, p.sprite.y, enemy.x, enemy.y);
+          if (d < 14) {
+            const len = Math.hypot(p.vx, p.vy) || 1;
+            // Light knockback only — melee-level shove would let a kiter
+            // stunlock everything from safety.
+            this.hitEnemy(enemy, p.damage, p.vx / len, p.vy / len, p.crit, 120, 60);
+            hit = true;
+            break;
+          }
         }
       }
 

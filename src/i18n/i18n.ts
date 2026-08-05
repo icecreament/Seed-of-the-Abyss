@@ -1,3 +1,5 @@
+import type { ClassId } from '../data/classes';
+
 export type Lang = 'zh' | 'en';
 
 type Dict = Record<string, string>;
@@ -63,6 +65,9 @@ const zh: Dict = {
   class_shade: '影行者',
   class_shade_desc: '机动刺客。移速更快，技能进入短暂隐匿。',
   class_shade_skill: '暗影步',
+  class_thorn: '棘语者',
+  class_thorn_desc: '远程射手。发射种子弹风筝敌人，生命最低，惧怕近身。',
+  class_thorn_skill: '荆棘新星',
 
   // Talents
   talent_title: '天赋路线',
@@ -86,7 +91,7 @@ const zh: Dict = {
   talent_growth_canopy: '冠层脉动',
   talent_growth_canopy_desc: '每级 +4% 移动速度',
   talent_pred_fang: '深渊之牙',
-  talent_pred_fang_desc: '每级 +2 伤害',
+  talent_pred_fang_desc: '每级 +7% 伤害',
   talent_pred_blood: '血之代价',
   talent_pred_blood_desc: '每级 +3% 生命偷取',
   talent_pred_frenzy: '种子狂乱',
@@ -193,6 +198,9 @@ const en: Dict = {
   class_reaver_skill: 'Blood Surge',
   class_shade: 'Shade',
   class_shade_desc: 'Mobile assassin. Faster movement. Skill grants brief stealth.',
+  class_thorn: 'Thorn',
+  class_thorn_desc: 'Ranged skirmisher. Kites with seed shots; lowest HP, hates point-blank.',
+  class_thorn_skill: 'Thorn Nova',
   class_shade_skill: 'Veil Step',
 
   talent_title: 'Talent Trees',
@@ -216,7 +224,7 @@ const en: Dict = {
   talent_growth_canopy: 'Canopy Pulse',
   talent_growth_canopy_desc: '+4% move speed per rank',
   talent_pred_fang: 'Abyss Fang',
-  talent_pred_fang_desc: '+2 damage per rank',
+  talent_pred_fang_desc: '+7% damage per rank',
   talent_pred_blood: 'Blood Price',
   talent_pred_blood_desc: '+3% lifesteal per rank',
   talent_pred_frenzy: 'Seed Frenzy',
@@ -321,15 +329,15 @@ class I18n {
   }
 
   /** Class display helpers */
-  className(id: 'warden' | 'reaver' | 'shade'): string {
+  className(id: ClassId): string {
     return this.t(`class_${id}`);
   }
 
-  classDesc(id: 'warden' | 'reaver' | 'shade'): string {
+  classDesc(id: ClassId): string {
     return this.t(`class_${id}_desc`);
   }
 
-  classSkill(id: 'warden' | 'reaver' | 'shade'): string {
+  classSkill(id: ClassId): string {
     return this.t(`class_${id}_skill`);
   }
 

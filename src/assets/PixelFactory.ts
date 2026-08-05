@@ -299,6 +299,52 @@ function drawShade(pc: PixelCanvas, walk = 0): void {
   }
 }
 
+function drawThorn(pc: PixelCanvas, walk = 0): void {
+  const foot = walk === 1 ? 1 : walk === 2 ? -1 : 0;
+  // Sprig-keeper: leaf-crowned hood, seed pendant, thorn staff.
+  pc.blit(6, 2, [
+    '....ll....',
+    '...kllk...',
+    '..kllllk..',
+    '..kLllLk..',
+    '..kbbbbk..',
+    '..kbwwbk..',
+    '..kbbbbk..',
+    '...kLLk...',
+    '..kllllk..',
+    '.kllllllk.',
+    '.kllggllk.',
+    'kLllgLglLk',
+    'kLllllllLk',
+    '.klLkkLlk.',
+    '..kllLlk..',
+    '...kLLk...',
+    '..kk..kk..',
+  ], PAL_COMMON);
+  pc.rect(10, 26, 4, 4, P.ink);
+  pc.rect(18, 26, 4, 4, P.ink);
+  pc.rect(11 + foot, 27, 2, 3, P.slimeDark);
+  pc.rect(19 - foot, 27, 2, 3, P.slimeDark);
+
+  // thorn staff with a seed tip
+  pc.blit(24, 6, [
+    '..g.',
+    '.gwg',
+    '..gG',
+    '..L.',
+    '..L.',
+    '..L.',
+    '.lL.',
+    '..L.',
+    '..k.',
+  ], PAL_COMMON);
+  // robe flick while walking
+  if (walk) {
+    pc.p(5, 15, P.slimeDark);
+    pc.p(16, 15, P.slimeDark);
+  }
+}
+
 function drawCrawler(pc: PixelCanvas, frame = 0): void {
   const bob = frame === 1 ? 1 : 0;
   pc.blit(4, 8 + bob, [
@@ -577,6 +623,7 @@ export function generateAllPixelTextures(scene: Phaser.Scene): void {
   makeHero('hero_warden', drawWarden);
   makeHero('hero_reaver', drawReaver);
   makeHero('hero_shade', drawShade);
+  makeHero('hero_thorn', drawThorn);
 
   // --- Enemies ---
   sheet(32, 32, [(pc) => drawCrawler(pc, 0), (pc) => drawCrawler(pc, 1)]).toTexture(
@@ -685,7 +732,7 @@ export function registerPixelAnimations(scene: Phaser.Scene): void {
     }
   };
 
-  const heroes = ['hero_warden', 'hero_reaver', 'hero_shade'] as const;
+  const heroes = ['hero_warden', 'hero_reaver', 'hero_shade', 'hero_thorn'] as const;
   for (const h of heroes) {
     ensureSheetFrames(h, 32, 32);
     mk(`${h}_idle`, h, [0], 1);

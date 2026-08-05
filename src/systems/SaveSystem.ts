@@ -7,6 +7,7 @@ const SAVE_KEY = 'seed_of_the_abyss_save_v1';
 export interface PermanentStats {
   maxHp: number;
   damage: number;
+  damageMul: number;
   moveSpeed: number;
   essenceGain: number;
   lifesteal: number;
@@ -47,7 +48,7 @@ const DEFAULT_SAVE: SaveData = {
   deepestFloor: 0,
   talentRanks: {},
   selectedClass: 'warden',
-  unlockedClasses: ['warden', 'reaver', 'shade'],
+  unlockedClasses: ['warden', 'reaver', 'shade', 'thorn'],
   seedStage: 1,
   language: null,
   video: { renderScale: 1, fullscreen: false, winW: 1280, winH: 720 },
@@ -147,6 +148,7 @@ export class SaveSystem {
     const stats: PermanentStats = {
       maxHp: 0,
       damage: 0,
+      damageMul: 0,
       moveSpeed: 0,
       essenceGain: 0,
       lifesteal: 0,
@@ -242,7 +244,14 @@ export class SaveSystem {
           parsed.essence ?? 0,
         ),
         talentRanks: parsed.talentRanks ?? {},
-        unlockedClasses: parsed.unlockedClasses ?? [...DEFAULT_SAVE.unlockedClasses],
+        // Union with defaults: classes added after an old save was written
+        // become available instead of staying locked forever.
+        unlockedClasses: [
+          ...new Set([
+            ...DEFAULT_SAVE.unlockedClasses,
+            ...(parsed.unlockedClasses ?? []),
+          ]),
+        ],
         // Old saves have no video block — merge over defaults.
         video: { ...structuredClone(DEFAULT_SAVE.video), ...(parsed.video ?? {}) },
       };
