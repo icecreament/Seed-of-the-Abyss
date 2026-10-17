@@ -296,7 +296,7 @@ function runFixture(scale = 1) {
   scene.virtual = new VirtualControls(scene);
   scene.createHud();
   scene.addHudObjects([scene.virtual.root]);
-  for (const name of ['keyW', 'keyA', 'keyS', 'keyD', 'keySpace', 'keyShift', 'keyQ', 'keyEsc']) scene[name] = { isDown: false, _justDown: false };
+  for (const name of ['keyW', 'keyA', 'keyS', 'keyD', 'keySpace']) scene[name] = { isDown: false, _justDown: false };
   scene.cursors = { left: {}, right: {}, up: {}, down: {} };
   return scene;
 }
@@ -556,13 +556,36 @@ test('Run.readInput：touch移动瞄准、静止保留瞄准、attack可持续',
   dispatch(s, 'up', pointerAt(s, 100, 564, 1)); s.readInput();
   near(s.player.aimIntent.y, -1); assert.equal(s.player.wantAttack, true);
 });
-test('Run.readInput：鼠标攻击与Space/Shift/Q仍有效且JustDown只消费一次', () => {
+test('Run.readInput：鼠标攻击与Space有效，冲刺/技能走 keydown 缓冲且只消费一次', () => {
   const s = runFixture(); dispatch(s, 'down', pointerAt(s, 800, 300, 0, false));
   s.readInput(); assert.equal(s.player.wantAttack, true);
   dispatch(s, 'up', pointerAt(s, 800, 300, 0, false)); s.readInput(); assert.equal(s.player.wantAttack, false);
-  s.keySpace.isDown = true; s.keyShift._justDown = s.keyQ._justDown = true;
+  s.keySpace.isDown = true;
+  s.onDashKey({ repeat: false }); s.onSkillKey({ repeat: false });
   s.readInput(); assert.deepEqual([s.player.wantAttack, s.player.wantDash, s.player.wantSkill], [true, true, true]);
   s.readInput(); assert.deepEqual([s.player.wantDash, s.player.wantSkill], [false, false]);
+});
+// 回归：按下与抬起落在同一帧时（快速点按 / 低帧率），旧实现轮询 JustDown
+// 会整帧丢掉这次按键；事件缓冲必须把它记住并只消费一次。
+test('Run 输入缓冲：同帧快速点按不丢，长按 repeat 不连发', () => {
+  const s = runFixture();
+  // 先给 activePointer 一个初始位置（真实游戏里每帧都有指针状态）
+  const p = pointerAt(s, 800, 300, 0, false);
+  dispatch(s, 'down', p); dispatch(s, 'up', p);
+  s.readInput();
+  s.onDashKey({ repeat: false }); s.onSkillKey({ repeat: false });
+  s.readInput(); assert.deepEqual([s.player.wantDash, s.player.wantSkill], [true, true]);
+  s.readInput(); assert.deepEqual([s.player.wantDash, s.player.wantSkill], [false, false]);
+  s.onDashKey({ repeat: true }); s.readInput(); assert.equal(s.player.wantDash, false);
+});
+test('Run 暂停：ESC keydown 直接生效，与帧边界无关且 repeat 不来回切', () => {
+  const s = runFixture(); s.virtual.show();
+  s.onPauseKey({ repeat: false });
+  assert.equal(s.paused, true); assert.ok(s.pauseRoot);
+  s.onPauseKey({ repeat: true });
+  assert.equal(s.paused, true); assert.ok(s.pauseRoot);
+  s.onPauseKey({ repeat: false });
+  assert.equal(s.paused, false); assert.equal(s.pauseRoot, undefined);
 });
 
 function validSpawn(scene, p, minDist, label) {

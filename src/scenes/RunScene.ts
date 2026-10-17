@@ -55,9 +55,16 @@ export class RunScene extends Phaser.Scene {
   private keyS!: Phaser.Input.Keyboard.Key;
   private keyD!: Phaser.Input.Keyboard.Key;
   private keySpace!: Phaser.Input.Keyboard.Key;
-  private keyShift!: Phaser.Input.Keyboard.Key;
-  private keyQ!: Phaser.Input.Keyboard.Key;
-  private keyEsc!: Phaser.Input.Keyboard.Key;
+
+  /**
+   * 冲刺/技能走 keydown 事件缓冲，而不是每帧轮询 JustDown。
+   * Phaser 的 Key.onUp 会把 _justDown 清成 false，按下与抬起落在同一帧内
+   * （快速点按、低帧率设备）时 JustDown 会完全丢掉这次按键。
+   */
+  private pendingDash = false;
+  private pendingSkill = false;
+  /** 场景重启前解绑 keydown 监听，避免每局叠加一层。 */
+  private offKeyHandlers?: () => void;
 
   private floor = 1;
   private kills = 0;
@@ -112,6 +119,8 @@ export class RunScene extends Phaser.Scene {
     this.lastFloorLine = '';
     this.virtualVisibleBeforePause = false;
     this.pausedByPortrait = false;
+    this.pendingDash = false;
+    this.pendingSkill = false;
     this.projectiles = [];
     this.pauseRoot = undefined;
 
@@ -159,9 +168,7 @@ export class RunScene extends Phaser.Scene {
   update(_time: number, delta: number): void {
     if (this.ended || !this.player) return;
 
-    if (Phaser.Input.Keyboard.JustDown(this.keyEsc)) {
-      this.togglePause();
-    }
+    // ESC 由 setupInput 的 keydown 监听处理（见 onPauseKey），不再逐帧轮询。
     if (this.paused) return;
 
     this.timeAlive += delta / 1000;
@@ -221,10 +228,33 @@ export class RunScene extends Phaser.Scene {
     this.keyS = kb.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     this.keyD = kb.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.keySpace = kb.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-    this.keyShift = kb.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
-    this.keyQ = kb.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
-    this.keyEsc = kb.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+
+    this.offKeyHandlers?.();
+    kb.on('keydown-ESC', this.onPauseKey);
+    kb.on('keydown-SHIFT', this.onDashKey);
+    kb.on('keydown-Q', this.onSkillKey);
+    this.offKeyHandlers = () => {
+      kb.off('keydown-ESC', this.onPauseKey);
+      kb.off('keydown-SHIFT', this.onDashKey);
+      kb.off('keydown-Q', this.onSkillKey);
+    };
   }
+
+  /** ESC 暂停/继续。事件驱动，快速点按也不会被帧边界丢掉。 */
+  private onPauseKey = (event: KeyboardEvent): void => {
+    if (event?.repeat || this.ended) return;
+    this.togglePause();
+  };
+
+  private onDashKey = (event: KeyboardEvent): void => {
+    if (event?.repeat || this.ended || this.paused) return;
+    this.pendingDash = true;
+  };
+
+  private onSkillKey = (event: KeyboardEvent): void => {
+    if (event?.repeat || this.ended || this.paused) return;
+    this.pendingSkill = true;
+  };
 
   private readInput(): void {
     let mx = 0;
@@ -266,10 +296,11 @@ export class RunScene extends Phaser.Scene {
 
     this.player.wantAttack =
       (!pointer.wasTouch && pointer.leftButtonDown()) || this.keySpace.isDown || this.virtual.attackHeld;
-    this.player.wantDash =
-      Phaser.Input.Keyboard.JustDown(this.keyShift) || this.virtual.dashPressed;
-    this.player.wantSkill =
-      Phaser.Input.Keyboard.JustDown(this.keyQ) || this.virtual.skillPressed;
+    this.player.wantDash = this.pendingDash || this.virtual.dashPressed;
+    this.player.wantSkill = this.pendingSkill || this.virtual.skillPressed;
+    // 缓冲只消费一次：读到就清，避免下一帧重复触发。
+    this.pendingDash = false;
+    this.pendingSkill = false;
 
     this.virtual.consumePresses();
   }
@@ -1010,6 +1041,11 @@ export class RunScene extends Phaser.Scene {
 
   private shutdown(): void {
     this.events.off('render-scale-changed', this.syncHudScale, this);
+    // 场景每局重启都会重新 setupInput，这里解绑，避免监听叠加。
+    this.offKeyHandlers?.();
+    this.offKeyHandlers = undefined;
+    this.pendingDash = false;
+    this.pendingSkill = false;
     try {
       this.physics.world.resume();
     } catch {
