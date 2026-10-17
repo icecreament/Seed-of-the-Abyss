@@ -5,6 +5,7 @@ import { saveSystem } from '../systems/SaveSystem';
 import { createTextButton } from '../ui/TextButton';
 import {
   createPanel,
+  createPortraitPlinth,
   createSceneTitle,
   drawAbyssBackdrop,
 } from '../ui/SceneDecor';
@@ -19,6 +20,7 @@ export class ClassSelectScene extends Phaser.Scene {
     id: ClassId;
     bg: Phaser.GameObjects.Rectangle;
     glow: Phaser.GameObjects.Rectangle;
+    status: Phaser.GameObjects.Text;
   }[] = [];
 
   constructor() {
@@ -26,57 +28,68 @@ export class ClassSelectScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.cards = [];
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.cards = [];
+    });
     this.selected = saveSystem.selectedClass;
     fadeInScene(this);
-    drawAbyssBackdrop(this, { tileAlpha: 0.22 });
+    drawAbyssBackdrop(this, { tileAlpha: 0.1, vignette: false });
 
-    createSceneTitle(this, t('class_title'), 30, '26px');
+    createSceneTitle(this, t('class_title'), 38, '30px');
+    this.add.text(GAME_WIDTH / 2, 76, t('class_gallery_hint'), bodyStyle('14px'))
+      .setOrigin(0.5).setDepth(4);
     CLASS_LIST.forEach((cls, i) => {
-      // 4 cards: centered pairs (i - 1.5) keep the row symmetric.
-      const x = GAME_WIDTH / 2 + (i - 1.5) * 280;
-      const y = 230;
+      // 4 张卡等距排开：以中线对称，卡宽 272 / 间距 292，避免与详情面板重叠。
+      const x = GAME_WIDTH / 2 + (i - (CLASS_LIST.length - 1) / 2) * 292;
+      const y = 310;
+      const cardW = 272;
 
       const glow = this.add
-        .rectangle(x, y, 268, 250, cls.color, 0.08)
+        .rectangle(x, y, cardW + 16, 422, cls.color, 0.08)
         .setStrokeStyle(0, cls.color, 0)
         .setDepth(1);
 
       const bg = this.add
-        .rectangle(x, y, 250, 230, UI.panel, 0.95)
+        .rectangle(x, y, cardW, 406, UI.panel, 0.95)
         .setStrokeStyle(2, cls.color, 0.55)
         .setInteractive({ useHandCursor: true })
         .setDepth(2);
 
-      // Header strip
-      this.add
-        .rectangle(x, y - 95, 246, 28, cls.color, 0.18)
-        .setDepth(3);
-
-      const heroKey = HERO_TEXTURES[cls.id];
-      const spr = this.add.sprite(x, y - 40, heroKey, 0).setScale(3).setDepth(4);
-      if (this.anims.exists(`${heroKey}_idle`)) spr.play(`${heroKey}_idle`);
-
-      this.add
-        .text(x, y + 24, i18n.className(cls.id), {
-          fontSize: '18px',
-          color: UI.text,
-          fontFamily: UI_FONT,
-        })
-        .setOrigin(0.5)
-        .setDepth(4);
-
-      this.add
-        .text(
-          x,
-          y + 62,
-          `${t('class_hp')} ${cls.baseHp}   ${t('class_dmg')} ${cls.baseDamage}\n${t('class_spd')} ${cls.baseSpeed}`,
-          {
-            ...bodyStyle('12px', UI.textDim),
-            align: 'center',
-          },
-        )
-        .setOrigin(0.5)
-        .setDepth(4);
+      // 装饰与肖像不设交互，整张卡片仍由同一个背景处理选择。
+      const ink = `#${cls.color.toString(16).padStart(6, '0')}`;
+      const edge = cardW / 2 - 12;
+      this.add.rectangle(x, 108, cardW, 2, cls.color, 0.8).setDepth(3);
+      this.add.text(x - edge, 129, `0${i + 1}  /  ${cls.id.toUpperCase()}`, bodyStyle('12px', ink)).setDepth(4);
+      const status = this.add.text(x + edge, 129, '', bodyStyle('12px', ink)).setOrigin(1, 0).setDepth(4);
+      this.add.text(x, 170, t(`class_${cls.id}_role`), bodyStyle('15px', UI.textDim))
+        .setOrigin(0.5).setDepth(4);
+      const rune = this.add.graphics().setDepth(3);
+      rune.lineStyle(1, cls.color, 0.13).strokeCircle(x, 299, 96);
+      rune.lineStyle(1, cls.color, 0.08).strokeCircle(x, 299, 84);
+      rune.lineBetween(x, 191, x, 407);
+      rune.lineBetween(x - 106, 299, x + 106, 299);
+      createPortraitPlinth(this, x, 422, cls.color, 212);
+      const portraitKey = `portrait_${cls.id}`;
+      if (this.textures.exists(portraitKey)) {
+        this.add.image(x, 317, portraitKey).setScale(3).setDepth(4);
+      } else {
+        // TODO(art): 棘语者暂无同风格 64×80 肖像，先用战斗立绘（脚底对齐基座）顶替。
+        const heroKey = HERO_TEXTURES[cls.id];
+        const stand = this.add
+          .sprite(x, 437, heroKey, 0)
+          .setOrigin(0.5, 1)
+          .setScale(6)
+          .setDepth(4);
+        if (this.anims.exists(`${heroKey}_idle`)) stand.play(`${heroKey}_idle`);
+      }
+      this.add.text(x, 462, i18n.className(cls.id), {
+        fontSize: '26px', color: '#e6e1d8', fontFamily: UI_FONT,
+      }).setOrigin(0.5).setDepth(4);
+      this.add.text(x, 494,
+        `${t('class_hp')} ${cls.baseHp}   ·   ${t('class_dmg')} ${cls.baseDamage}   ·   ${t('class_spd')} ${cls.baseSpeed}`,
+        bodyStyle('13px', UI.textDim),
+      ).setOrigin(0.5).setDepth(4);
 
       bg.on('pointerover', () => {
         if (this.selected !== cls.id) bg.setFillStyle(UI.panelAlt, 0.98);
@@ -91,10 +104,10 @@ export class ClassSelectScene extends Phaser.Scene {
         this.refreshSelection();
       });
 
-      this.cards.push({ id: cls.id, bg, glow });
+      this.cards.push({ id: cls.id, bg, glow, status });
     });
 
-    createPanel(this, GAME_WIDTH / 2, 430, 760, 86, {
+    createPanel(this, GAME_WIDTH / 2, 569, 1152, 82, {
       color: UI.panelAlt,
       stroke: UI.stroke,
       alpha: 0.92,
@@ -102,25 +115,25 @@ export class ClassSelectScene extends Phaser.Scene {
     });
 
     this.detail = this.add
-      .text(GAME_WIDTH / 2, 430, '', {
-        fontSize: '14px',
+      .text(GAME_WIDTH / 2, 569, '', {
+        fontSize: '15px',
         color: '#cfc4e8',
         fontFamily: UI_FONT,
         align: 'center',
-        wordWrap: { width: 700 },
+        wordWrap: { width: 1090 },
         lineSpacing: 6,
       })
       .setOrigin(0.5)
       .setDepth(5);
 
-    createTextButton(this, GAME_WIDTH / 2 - 130, GAME_HEIGHT - 48, t('class_back'), () => {
+    createTextButton(this, GAME_WIDTH / 2 - 160, GAME_HEIGHT - 62, t('class_back'), () => {
       goScene(this, 'Menu');
-    }, { width: 150, height: 40 });
+    }, { width: 196, height: 48 });
 
-    createTextButton(this, GAME_WIDTH / 2 + 130, GAME_HEIGHT - 48, t('class_begin'), () => {
+    createTextButton(this, GAME_WIDTH / 2 + 116, GAME_HEIGHT - 62, t('class_begin'), () => {
       saveSystem.setSelectedClass(this.selected);
       goScene(this, 'Run');
-    }, { width: 190, height: 40, color: 0x3d1f4a, stroke: UI.accent });
+    }, { width: 300, height: 48, color: 0x24514f, stroke: 0x69b4a6, fontSize: '18px' });
 
     this.refreshSelection();
   }
@@ -137,6 +150,7 @@ export class ClassSelectScene extends Phaser.Scene {
       card.bg.setFillStyle(active ? UI.panelActive : UI.panel, 0.95);
       card.glow.setAlpha(active ? 0.22 : 0.06);
       card.glow.setStrokeStyle(active ? 2 : 0, color, active ? 0.5 : 0);
+      card.status.setText(active ? `◆ ${t('class_selected')}` : '');
     }
   }
 }

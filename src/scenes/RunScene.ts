@@ -2,10 +2,9 @@ import Phaser from 'phaser';
 import {
   GAME_HEIGHT,
   GAME_WIDTH,
-  getRenderScale,
   isPortraitBlocked,
   isTouchLikeDevice,
-  offsetFixedUi,
+  syncSceneRenderScale,
 } from '../game/config';
 import { Player } from '../entities/Player';
 import { Enemy, type EnemyKind } from '../entities/Enemy';
@@ -80,6 +79,8 @@ export class RunScene extends Phaser.Scene {
   private floorText!: Phaser.GameObjects.Text;
   private bannerText!: Phaser.GameObjects.Text;
   private pauseRoot?: Phaser.GameObjects.Container;
+  private hudRoot!: Phaser.GameObjects.Container;
+  private pauseButton!: Phaser.GameObjects.Container;
   private projectiles: Projectile[] = [];
   private groundImage?: Phaser.GameObjects.Image;
   private wallRects: Phaser.Geom.Rectangle[] = [];
@@ -117,7 +118,7 @@ export class RunScene extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, this.mapW, this.mapH);
     this.cameras.main.setBounds(0, 0, this.mapW, this.mapH);
     this.cameras.main.setBackgroundColor(0x0b0914);
-    this.cameras.main.setZoom(getRenderScale());
+    syncSceneRenderScale(this);
     this.cameras.main.setRoundPixels(true);
     this.input.enabled = true;
     this.cameras.main.fadeIn(220, 8, 6, 14);
@@ -140,10 +141,14 @@ export class RunScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player, true, 0.14, 0.14);
 
     this.setupInput();
+    this.hudRoot = this.add.container(0, 0).setScrollFactor(0).setDepth(490);
+    this.events.on('render-scale-changed', this.syncHudScale, this);
+    this.syncHudScale();
     this.virtual = new VirtualControls(this);
 
     this.createHud();
-    attachRunVignette(this);
+    this.addHudObjects([attachRunVignette(this), this.virtual.root]);
+    if (isTouchLikeDevice()) this.virtual.show();
     this.spawnWave(6);
     this.showBanner(`${t('run_floor')} 1`, UI.teal);
     // Device already in portrait: start paused behind the rotate overlay.
@@ -260,7 +265,7 @@ export class RunScene extends Phaser.Scene {
     }
 
     this.player.wantAttack =
-      pointer.leftButtonDown() || this.keySpace.isDown || this.virtual.attackHeld;
+      (!pointer.wasTouch && pointer.leftButtonDown()) || this.keySpace.isDown || this.virtual.attackHeld;
     this.player.wantDash =
       Phaser.Input.Keyboard.JustDown(this.keyShift) || this.virtual.dashPressed;
     this.player.wantSkill =
@@ -435,6 +440,7 @@ export class RunScene extends Phaser.Scene {
       const elite = this.floor >= 3 && Math.random() < 0.08 + this.floor * 0.01;
       const kind = this.pickEnemyKind();
       const pos = this.spawnPointAwayFromPlayer(220);
+      if (!pos) break;
       const enemy = new Enemy(this, pos.x, pos.y, kind, this.floor, elite);
       this.enemies.add(enemy);
     }
@@ -447,20 +453,31 @@ export class RunScene extends Phaser.Scene {
     return 'crawler';
   }
 
-  private spawnPointAwayFromPlayer(minDist: number): { x: number; y: number } {
+  private spawnPointAwayFromPlayer(minDist: number): { x: number; y: number } | null {
+    const clear = (x: number, y: number): boolean => {
+      if (Phaser.Math.Distance.Between(x, y, this.player.x, this.player.y) < minDist) return false;
+      // 每侧预留一格，覆盖当前所有敌人（含精英）的物理体积及原点偏移。
+      return this.walls.getChildren().every((wall) => {
+        const body = wall.body as Phaser.Physics.Arcade.StaticBody;
+        return x + TILE <= body.left || x - TILE >= body.right ||
+          y + TILE <= body.top || y - TILE >= body.bottom;
+      });
+    };
     for (let i = 0; i < 24; i++) {
       const x = Phaser.Math.Between(TILE * 2, this.mapW - TILE * 2);
       const y = Phaser.Math.Between(TILE * 2, this.mapH - TILE * 2);
       // Never inside a pillar — physics would shove them out or wedge them in.
       if (this.pointInWall(x, y)) continue;
-      if (Phaser.Math.Distance.Between(x, y, this.player.x, this.player.y) >= minDist) {
-        return { x, y };
+      // clear() 同时校验“离玩家足够远”和“与所有墙体 body 保持安全边距”。
+      if (clear(x, y)) return { x, y };
+    }
+    // 随机重试失败仍只接受验证过的空地，无空地则跳过本次生成。
+    for (let y = TILE * 2; y <= this.mapH - TILE * 2; y += TILE) {
+      for (let x = TILE * 2; x <= this.mapW - TILE * 2; x += TILE) {
+        if (clear(x, y)) return { x, y };
       }
     }
-    return {
-      x: Phaser.Math.Between(TILE * 2, this.mapW - TILE * 2),
-      y: Phaser.Math.Between(TILE * 2, this.mapH - TILE * 2),
-    };
+    return null;
   }
 
   private advanceFloor(): void {
@@ -569,17 +586,30 @@ export class RunScene extends Phaser.Scene {
     }
   }
 
-  private createHud(): void {
-    // Camera zoom would push scrollFactor(0) layers off-center — every fixed
-    // HUD piece is collected here and shifted back at the end.
-    const fixed: Phaser.GameObjects.Components.Transform[] = [];
+  private syncHudScale(): void {
+    // 抵消中心缩放对固定 HUD 的平移，使设计坐标始终映射到同一屏幕位置。
+    this.hudRoot.setPosition((this.scale.width - GAME_WIDTH) / 2, (this.scale.height - GAME_HEIGHT) / 2);
+    this.cameras.main.centerOn(this.player.x, this.player.y);
+  }
 
+  private addHudObjects(objects: Phaser.GameObjects.GameObject[]): void {
+    const fixScroll = (object: Phaser.GameObjects.GameObject): void => {
+      const fixed = object as Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.ScrollFactor;
+      fixed.setScrollFactor(0);
+      if (object instanceof Phaser.GameObjects.Container) object.list.forEach(fixScroll);
+    };
+    objects.forEach(fixScroll);
+    this.hudRoot.add(objects);
+  }
+
+  private createHud(): void {
+    // HUD 整体挂在 hudRoot 里，由 syncHudScale 统一抵消相机缩放位移。
+    const existing = new Set(this.children.list);
     const plate = this.add.graphics().setScrollFactor(0).setDepth(490);
     plate.fillStyle(0x0b0914, 0.55);
     plate.fillRoundedRect(8, 8, 320, 72, 6);
     plate.lineStyle(1, UI.stroke, 0.5);
     plate.strokeRoundedRect(8, 8, 320, 72, 6);
-    fixed.push(plate);
 
     const heart = this.add
       .image(18, 16, 'ui_heart')
@@ -587,12 +617,10 @@ export class RunScene extends Phaser.Scene {
       .setScale(2)
       .setScrollFactor(0)
       .setDepth(500);
-    fixed.push(heart);
 
     this.hpBar = this.add.graphics().setScrollFactor(0).setDepth(500);
     this.cdBar = this.add.graphics().setScrollFactor(0).setDepth(500);
     this.progressBar = this.add.graphics().setScrollFactor(0).setDepth(500);
-    fixed.push(this.hpBar, this.cdBar, this.progressBar);
 
     this.hudText = this.add
       .text(18, 52, '', {
@@ -602,14 +630,12 @@ export class RunScene extends Phaser.Scene {
       })
       .setScrollFactor(0)
       .setDepth(500);
-    fixed.push(this.hudText);
 
     const rightPlate = this.add.graphics().setScrollFactor(0).setDepth(490);
     rightPlate.fillStyle(0x0b0914, 0.55);
     rightPlate.fillRoundedRect(GAME_WIDTH - 188, 8, 180, 44, 6);
     rightPlate.lineStyle(1, UI.stroke, 0.5);
     rightPlate.strokeRoundedRect(GAME_WIDTH - 188, 8, 180, 44, 6);
-    fixed.push(rightPlate);
 
     this.floorText = this.add
       .text(GAME_WIDTH - 20, 14, '', {
@@ -620,7 +646,6 @@ export class RunScene extends Phaser.Scene {
       .setOrigin(1, 0)
       .setScrollFactor(0)
       .setDepth(500);
-    fixed.push(this.floorText);
 
     const classLabel = this.add
       .text(
@@ -635,7 +660,6 @@ export class RunScene extends Phaser.Scene {
       )
       .setScrollFactor(0)
       .setDepth(500);
-    fixed.push(classLabel);
 
     this.bannerText = this.add
       .text(GAME_WIDTH / 2, 90, '', {
@@ -648,30 +672,11 @@ export class RunScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(520)
       .setAlpha(0);
-    fixed.push(this.bannerText);
 
-    // Touch devices have no Esc key — give them a pause button next to the floor plate.
-    if (isTouchLikeDevice()) {
-      const pauseBg = this.add
-        .rectangle(GAME_WIDTH - 240, 30, 48, 48, 0x0b0914, 0.55)
-        .setStrokeStyle(1, UI.stroke, 0.5)
-        .setScrollFactor(0)
-        .setDepth(500);
-      const pauseIcon = this.add
-        .text(GAME_WIDTH - 240, 30, '❚❚', {
-          fontSize: '15px',
-          color: UI.textDim,
-          fontFamily: UI_FONT,
-        })
-        .setOrigin(0.5)
-        .setScrollFactor(0)
-        .setDepth(501);
-      pauseBg.setInteractive({ useHandCursor: true });
-      pauseBg.on('pointerup', () => this.togglePause());
-      fixed.push(pauseBg, pauseIcon);
-    }
-
-    for (const obj of fixed) offsetFixedUi(obj);
+    this.pauseButton = createTextButton(this, GAME_WIDTH - 62, 92, t('run_pause'), () => {
+      if (!this.paused) this.togglePause();
+    }, { width: 108, height: 48, fontSize: '14px', depth: 530 });
+    this.addHudObjects(this.children.list.filter((object) => !existing.has(object)));
   }
 
   private updateHud(): void {
@@ -769,15 +774,16 @@ export class RunScene extends Phaser.Scene {
   }
 
   private togglePause(): void {
-    if (this.ended) return;
+    if (this.ended || (this.paused && isPortraitBlocked())) return;
     this.paused = !this.paused;
+    this.pauseButton.setVisible(!this.paused);
     if (this.paused) {
       this.physics.world.pause();
       // Avoid anims.pauseAll() — global and can break later scenes/UI.
       this.player.setVelocity(0, 0);
       this.setActorsAnimsPaused(true);
       this.virtualVisibleBeforePause = this.virtual?.isVisible ?? false;
-      this.virtual?.hide();
+      this.virtual?.setSuspended(true);
       this.buildPauseMenu();
     } else {
       this.physics.world.resume();
@@ -785,6 +791,7 @@ export class RunScene extends Phaser.Scene {
       this.destroyPauseMenu();
       this.input.enabled = true;
       this.pausedByPortrait = false;
+      this.virtual?.setSuspended(false);
       // Restore touch controls as they were — previously they stayed hidden
       // after unpausing until the next touch.
       if (this.virtualVisibleBeforePause) this.virtual?.show();
@@ -870,7 +877,7 @@ export class RunScene extends Phaser.Scene {
       () => this.togglePause(),
       { width: 220, height: 42, color: 0x1f2d3d, stroke: UI.teal, depth: 920 },
     );
-    resume.setScrollFactor(0);
+    resume.setScrollFactor(0, 0, true);
 
     const quit = createTextButton(
       this,
@@ -885,11 +892,8 @@ export class RunScene extends Phaser.Scene {
       },
       { width: 220, height: 42, color: 0x3a1a22, stroke: UI.accentHot, depth: 920 },
     );
-    quit.setScrollFactor(0);
-
-    offsetFixedUi(root);
-    offsetFixedUi(resume);
-    offsetFixedUi(quit);
+    quit.setScrollFactor(0, 0, true);
+    this.addHudObjects([root, resume, quit]);
 
     root.setData('extra', [resume, quit]);
     this.pauseRoot = root;
@@ -980,7 +984,8 @@ export class RunScene extends Phaser.Scene {
       /* ignore */
     }
     this.destroyPauseMenu();
-    this.virtual?.hide();
+    this.virtual?.setSuspended(true);
+    this.pauseButton.setVisible(false);
     this.input.enabled = false;
 
     runState.deathSettled = false;
@@ -1004,6 +1009,7 @@ export class RunScene extends Phaser.Scene {
   }
 
   private shutdown(): void {
+    this.events.off('render-scale-changed', this.syncHudScale, this);
     try {
       this.physics.world.resume();
     } catch {

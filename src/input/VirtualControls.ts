@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME_HEIGHT, GAME_WIDTH, offsetFixedUi } from '../game/config';
+import { GAME_HEIGHT, GAME_WIDTH } from '../game/config';
 import { t } from '../i18n/i18n';
 
 /**
@@ -14,7 +14,7 @@ export class VirtualControls {
   private skillBtn!: Phaser.GameObjects.Container;
   /** Dot that slides along the drag direction while aiming with the attack button. */
   private attackKnob!: Phaser.GameObjects.Arc;
-  private root: Phaser.GameObjects.Container;
+  readonly root: Phaser.GameObjects.Container;
 
   private stickPointerId: number | null = null;
   private attackPointerId: number | null = null;
@@ -30,8 +30,10 @@ export class VirtualControls {
 
   private enabled = false;
   private bound = false;
+  private suspended = false;
 
   private onDown = (p: Phaser.Input.Pointer) => {
+    if (this.suspended || !p.wasTouch) return;
     // First touch enables mobile UI.
     if (!this.enabled && p.wasTouch) this.show();
     if (!this.enabled) return;
@@ -52,11 +54,15 @@ export class VirtualControls {
     }
 
     if (this.hit(this.attackBtn, x, y)) {
-      this.attackHeld = true;
-      this.attackPointerId = p.id;
+      if (this.attackPointerId === null) {
+        this.attackHeld = true;
+        this.attackPointerId = p.id;
+      }
+    } else if (this.hit(this.dashBtn, x, y)) {
+      this.dashPressed = true;
+    } else if (this.hit(this.skillBtn, x, y)) {
+      this.skillPressed = true;
     }
-    if (this.hit(this.dashBtn, x, y)) this.dashPressed = true;
-    if (this.hit(this.skillBtn, x, y)) this.skillPressed = true;
   };
 
   private onMove = (p: Phaser.Input.Pointer) => {
@@ -112,8 +118,8 @@ export class VirtualControls {
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
     this.root = scene.add.container(0, 0).setScrollFactor(0).setDepth(1000);
-    // Camera zoom pushes scrollFactor(0) layers off-center — shift the root back.
-    offsetFixedUi(this.root);
+
+    // Fixed design space — RunScene 把 root 挂进 hudRoot，由 hudRoot 统一抵消缩放。
 
     // Fixed design space — the camera zoom handles the render scale.
     const h = GAME_HEIGHT;
@@ -154,7 +160,13 @@ export class VirtualControls {
     this.skillPressed = false;
   }
 
+  setSuspended(suspended: boolean): void {
+    this.suspended = suspended;
+    if (suspended) this.hide();
+  }
+
   show(): void {
+    if (this.suspended) return;
     this.enabled = true;
     this.root.setVisible(true);
   }
@@ -204,6 +216,7 @@ export class VirtualControls {
     c.add([circle, text]);
     // Inflated hit size
     c.setSize(r * 2.4, r * 2.4);
+    c.setData('hitRadius', r);
     return c;
   }
 
@@ -213,6 +226,7 @@ export class VirtualControls {
     this.scene.input.on('pointerdown', this.onDown);
     this.scene.input.on('pointermove', this.onMove);
     this.scene.input.on('pointerup', this.onUp);
+    this.scene.input.on('pointerupoutside', this.onUp);
   }
 
   private unbind(): void {
@@ -221,11 +235,12 @@ export class VirtualControls {
     this.scene.input.off('pointerdown', this.onDown);
     this.scene.input.off('pointermove', this.onMove);
     this.scene.input.off('pointerup', this.onUp);
+    this.scene.input.off('pointerupoutside', this.onUp);
   }
 
   private hit(btn: Phaser.GameObjects.Container, x: number, y: number): boolean {
-    const halfW = btn.width / 2;
-    const halfH = btn.height / 2;
-    return x >= btn.x - halfW && x <= btn.x + halfW && y >= btn.y - halfH && y <= btn.y + halfH;
+    // 使用可见圆形命中区，避免放大的矩形边角同时触发多个动作。
+    const radius = btn.getData('hitRadius') as number;
+    return (x - btn.x) ** 2 + (y - btn.y) ** 2 <= radius ** 2;
   }
 }

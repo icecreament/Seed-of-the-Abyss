@@ -88,6 +88,7 @@ function hookSceneCamera(scene: Phaser.Scene): void {
  * RunScene overrides scroll with setBounds + startFollow right after, harmless.
  */
 export function applyRenderScale(game: Phaser.Game, scale: number): void {
+  scale = VIDEO_SCALE_STEPS.includes(scale) ? scale : 1;
   currentRenderScale = scale;
   const w = Math.round(GAME_WIDTH * scale);
   const h = Math.round(GAME_HEIGHT * scale);
@@ -95,12 +96,21 @@ export function applyRenderScale(game: Phaser.Game, scale: number): void {
     game.scale.setGameSize(w, h);
   }
   for (const scene of game.scene.scenes) {
+    // START 钩子覆盖“场景重启后再切分辨率”，syncSceneRenderScale 负责
+    // 相机尺寸/缩放/居中并通知 HUD 重新定位——两者缺一都会漏掉一种时机。
     hookSceneCamera(scene);
-    const cam = scene.cameras?.main;
-    if (!cam) continue;
-    if (cam.zoom !== scale) cam.setZoom(scale);
-    cam.centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+    syncSceneRenderScale(scene);
   }
+}
+
+/** 相机在场景重入时会重建，必须重新同步倍率与设计坐标中心。 */
+export function syncSceneRenderScale(scene: Phaser.Scene): void {
+  const cam = scene.cameras?.main;
+  if (!cam) return;
+  cam.setSize(scene.scale.width, scene.scale.height);
+  cam.setZoom(currentRenderScale);
+  if (!cam.useBounds) cam.centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+  scene.events.emit('render-scale-changed');
 }
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {

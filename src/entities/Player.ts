@@ -102,6 +102,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     body.setOffset(9, 16);
     // Cap must cover the fastest dash boost — previously this was base speed
     // +40, so every dash got clamped back to walking speed the same frame.
+    // 640 > 所有冲刺/暗影步加成，因此不会截断位移，同时避免速度失控。
     body.setMaxSpeed(BODY_MAX_SPEED);
 
     this.stats = {

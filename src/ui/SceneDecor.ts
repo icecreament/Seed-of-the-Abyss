@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME_HEIGHT, GAME_WIDTH, offsetFixedUi } from '../game/config';
+import { GAME_HEIGHT, GAME_WIDTH } from '../game/config';
 import { UI, UI_FONT, bodyStyle, titleStyle } from './theme';
 
 /**
@@ -46,6 +46,83 @@ export function drawAbyssBackdrop(
     lines.lineBetween(48, 64, GAME_WIDTH - 48, 64);
     lines.lineBetween(48, GAME_HEIGHT - 48, GAME_WIDTH - 48, GAME_HEIGHT - 48);
   }
+}
+
+/** 样稿页专用的石拱与祭坛背景，不改变其他场景的装饰。 */
+export function drawSanctumBackdrop(scene: Phaser.Scene, centerX = 872): void {
+  const g = scene.add.graphics().setDepth(-20);
+  g.fillStyle(0x0c0e18, 1).fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+  g.fillStyle(0x11131f, 1).fillRect(560, 76, 656, 508);
+  g.fillStyle(0x141725, 1);
+  const arch = (inset: number, color: number) => {
+    g.fillStyle(color, 1).fillPoints([
+      { x: centerX - 246 + inset, y: 532 },
+      { x: centerX - 246 + inset, y: 238 },
+      { x: centerX - 164 + inset / 2, y: 138 + inset },
+      { x: centerX, y: 86 + inset },
+      { x: centerX + 164 - inset / 2, y: 138 + inset },
+      { x: centerX + 246 - inset, y: 238 },
+      { x: centerX + 246 - inset, y: 532 },
+    ], true);
+  };
+  arch(0, 0x252735);
+  arch(7, 0x141923);
+  arch(20, 0x32313e);
+  arch(23, 0x101721);
+  arch(36, 0x0c141c);
+  g.lineStyle(1, UI.teal, 0.13);
+  g.strokeCircle(centerX, 296, 144);
+  g.strokeCircle(centerX, 296, 138);
+  g.lineBetween(centerX, 138, centerX, 450);
+  g.lineBetween(centerX - 160, 296, centerX + 160, 296);
+  for (let i = 0; i < 12; i++) {
+    const a = i * Math.PI / 6;
+    const x = centerX + Math.cos(a) * 138;
+    const y = 296 + Math.sin(a) * 138;
+    g.fillStyle(UI.teal, i % 3 === 0 ? 0.55 : 0.22).fillRect(x - 2, y - 2, 4, 4);
+  }
+  for (const x of [centerX - 262, centerX + 238]) {
+    g.fillStyle(0x1c1e2c, 1).fillRect(x, 196, 24, 342);
+    g.fillStyle(0x343342, 1).fillRect(x, 196, 3, 342);
+    for (let y = 218; y < 538; y += 48) {
+      g.fillStyle(0x0a0e17, 1).fillRect(x, y, 24, 3);
+    }
+    g.fillStyle(0x383747, 1).fillRect(x - 8, 528, 40, 8);
+  }
+  g.lineStyle(1, 0x333143, 0.4);
+  for (let i = -6; i <= 6; i++) {
+    g.lineBetween(centerX + i * 30, 486, centerX + i * 124, 668);
+  }
+  for (const y of [502, 530, 570, 624]) g.lineBetween(568, y, 1208, y);
+  // 固定种子分布的尘埃像素，重入时不会改变构图。
+  for (let i = 0; i < 48; i++) {
+    const x = 582 + (i * 137) % 608;
+    const y = 100 + (i * 83) % 414;
+    g.fillStyle(i % 3 === 0 ? UI.teal : UI.accent, 0.16 + (i % 4) * 0.08)
+      .fillRect(x, y, i % 5 === 0 ? 3 : 2, 2);
+  }
+  g.lineStyle(1, 0x414052, 0.6);
+  g.lineBetween(72, 76, 1208, 76);
+  g.lineBetween(72, 594, 1208, 594);
+  g.lineBetween(72, 674, 1208, 674);
+}
+
+/** 像素肖像的落脚台：装饰无交互，不覆盖卡片命中区域。 */
+export function createPortraitPlinth(
+  scene: Phaser.Scene, x: number, y: number, color: number, width = 140,
+): void {
+  const g = scene.add.graphics().setDepth(3);
+  const w = width / 2;
+  const points = (offset: number) => [
+    { x: x - w, y: y + offset }, { x: x - w + 18, y: y - 10 + offset },
+    { x: x + w - 18, y: y - 10 + offset }, { x: x + w, y: y + offset },
+    { x: x + w - 18, y: y + 10 + offset }, { x: x - w + 18, y: y + 10 + offset },
+  ];
+  g.fillStyle(0x080c13, 1).fillPoints(points(9), true);
+  g.fillStyle(0x272b38, 1).fillPoints(points(3), true);
+  g.fillStyle(0x161e29, 1).fillPoints(points(0), true);
+  g.lineStyle(1, color, 0.65).strokePoints(points(0), true);
+  g.fillStyle(color, 0.75).fillRect(x - 12, y + 12, 24, 2);
 }
 
 /** Framed content panel. */
@@ -125,6 +202,6 @@ export function attachRunVignette(scene: Phaser.Scene): Phaser.GameObjects.Graph
   g.fillRect(0, h - 10, w, 10);
   g.fillRect(0, 0, 10, h);
   g.fillRect(w - 10, 0, 10, h);
-  offsetFixedUi(g);
+  // 由 RunScene 的 hudRoot 统一抵消相机缩放位移，这里不再单独平移。
   return g;
 }
