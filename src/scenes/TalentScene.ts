@@ -23,6 +23,12 @@ export class TalentScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.cardTexts = [];
+    this.panels = [];
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.cardTexts = [];
+      this.panels = [];
+    });
     fadeInScene(this);
     drawAbyssBackdrop(this, { tileAlpha: 0.2 });
     createSceneTitle(this, t('talent_title'), 28, '26px');

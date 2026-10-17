@@ -68,6 +68,7 @@ export function createTextButton(
   };
 
   let locked = false;
+  let pressedPointer: number | null = null;
   const fire = () => {
     if (locked || !scene.sys.isActive()) return;
     locked = true;
@@ -76,18 +77,30 @@ export function createTextButton(
     } finally {
       scene.time.delayedCall(200, () => {
         locked = false;
-        paintIdle();
+        if (bg.scene) paintIdle();
       });
     }
   };
 
   bg.on('pointerover', () => paintHover());
-  bg.on('pointerout', () => paintIdle());
-  bg.on('pointerdown', () => paintDown());
+  bg.on('pointerout', () => {
+    pressedPointer = null;
+    paintIdle();
+  });
+  bg.on('pointerdown', (pointer: Phaser.Input.Pointer, _x: number, _y: number, event: Phaser.Types.Input.EventData) => {
+    event.stopPropagation();
+    pressedPointer = pointer.id;
+    paintDown();
+  });
   // Single click path for mouse + touch. Phaser maps both to pointerup on the object.
-  bg.on('pointerup', () => {
+  bg.on('pointerup', (pointer: Phaser.Input.Pointer, _x: number, _y: number, event: Phaser.Types.Input.EventData) => {
+    const pressedHere = pressedPointer === pointer.id;
+    pressedPointer = null;
     paintHover();
-    fire();
+    if (pressedHere) {
+      event.stopPropagation();
+      fire();
+    }
   });
 
   return container;

@@ -74,7 +74,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setSize(14, 12);
     body.setOffset(9, 16);
-    body.setMaxSpeed(def.baseSpeed * (1 + permanent.moveSpeed) + 40);
+    // 普通移动由归一化输入与 stats.speed 控制，不额外限速以免截断冲刺和暗影步。
 
     this.stats = {
       maxHp: Math.floor(def.baseHp + permanent.maxHp),

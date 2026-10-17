@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { syncSceneRenderScale } from '../game/config';
 
 type SceneFlag = Phaser.Scene & { __leaving?: boolean };
 
@@ -45,6 +46,7 @@ export function goScene(
 
 /** Call at the start of every scene create(). */
 export function fadeInScene(scene: Phaser.Scene, duration = 200): void {
+  syncSceneRenderScale(scene);
   const s = scene as SceneFlag;
   s.__leaving = false;
   scene.input.enabled = true;

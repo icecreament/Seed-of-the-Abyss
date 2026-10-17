@@ -4,20 +4,18 @@
  * Also useful to upload to free hosts (Cloudflare/Netlify) with low traffic.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, createWriteStream, statSync } from 'node:fs';
+import { mkdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { cwd } from 'node:process';
+import { fileURLToPath } from 'node:url';
 
-const root = cwd();
+const root = fileURLToPath(new URL('../', import.meta.url));
 const dist = join(root, 'dist');
 const outDir = join(root, 'release');
 const outZip = join(outDir, 'SeedOfTheAbyss-web.zip');
 
-if (!existsSync(join(dist, 'index.html'))) {
-  console.log('dist/ missing, building...');
-  const r = spawnSync('npm', ['run', 'build'], { stdio: 'inherit', shell: true });
-  if (r.status !== 0) process.exit(r.status ?? 1);
-}
+console.log('先构建最新网页资源...');
+const build = spawnSync('npm', ['run', 'build'], { cwd: root, stdio: 'inherit', shell: true });
+if (build.status !== 0) process.exit(build.status ?? 1);
 
 mkdirSync(outDir, { recursive: true });
 

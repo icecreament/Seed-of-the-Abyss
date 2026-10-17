@@ -58,6 +58,7 @@ export function getRenderScale(): number {
  * (ScaleManager.setZoom is a no-op in FIT mode — verified in the Phaser source.)
  */
 export function applyRenderScale(game: Phaser.Game, scale: number): void {
+  scale = VIDEO_SCALE_STEPS.includes(scale) ? scale : 1;
   currentRenderScale = scale;
   const w = Math.round(GAME_WIDTH * scale);
   const h = Math.round(GAME_HEIGHT * scale);
@@ -65,9 +66,18 @@ export function applyRenderScale(game: Phaser.Game, scale: number): void {
     game.scale.setGameSize(w, h);
   }
   for (const scene of game.scene.scenes) {
-    const cam = scene.cameras?.main;
-    if (cam && cam.zoom !== scale) cam.setZoom(scale);
+    syncSceneRenderScale(scene);
   }
+}
+
+/** 相机在场景重入时会重建，必须重新同步倍率与设计坐标中心。 */
+export function syncSceneRenderScale(scene: Phaser.Scene): void {
+  const cam = scene.cameras?.main;
+  if (!cam) return;
+  cam.setSize(scene.scale.width, scene.scale.height);
+  cam.setZoom(currentRenderScale);
+  if (!cam.useBounds) cam.centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+  scene.events.emit('render-scale-changed');
 }
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {

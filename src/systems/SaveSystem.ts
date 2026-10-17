@@ -4,6 +4,13 @@ import { detectDefaultLang, i18n, type Lang } from '../i18n/i18n';
 
 const SAVE_KEY = 'seed_of_the_abyss_save_v1';
 
+// 进度计数只接受有限数值，避免损坏字段污染累计值或阶段。
+function normalizeCount(value: unknown): number {
+  return typeof value === 'number' && Number.isFinite(value)
+    ? Math.min(Number.MAX_SAFE_INTEGER, Math.max(0, Math.floor(value)))
+    : 0;
+}
+
 export interface PermanentStats {
   maxHp: number;
   damage: number;
@@ -26,6 +33,8 @@ export interface VideoSettings {
 
 export interface SaveData {
   essence: number;
+  /** 累计获得的精华，消费天赋不扣减。 */
+  lifetimeEssence: number;
   totalDeaths: number;
   deepestFloor: number;
   talentRanks: Record<string, number>;
@@ -39,6 +48,7 @@ export interface SaveData {
 
 const DEFAULT_SAVE: SaveData = {
   essence: 0,
+  lifetimeEssence: 0,
   totalDeaths: 0,
   deepestFloor: 0,
   talentRanks: {},
@@ -184,16 +194,19 @@ export class SaveSystem {
       run.floor * 8 +
       Math.floor(run.timeAliveSec / 10) +
       Math.floor(run.damageDealt / 80);
-    const gained = Math.max(1, Math.floor(raw * (1 + perm.essenceGain)));
+    const gained = Math.max(1, normalizeCount(raw * (1 + perm.essenceGain)));
 
     const essenceBefore = this.data.essence;
-    this.data.essence += gained;
-    this.data.totalDeaths += 1;
-    this.data.deepestFloor = Math.max(this.data.deepestFloor, run.floor);
+    this.data.essence = normalizeCount(this.data.essence + gained);
+    this.data.lifetimeEssence = normalizeCount(this.data.lifetimeEssence + gained);
+    this.data.totalDeaths = normalizeCount(this.data.totalDeaths + 1);
+    this.data.deepestFloor = Math.max(this.data.deepestFloor, normalizeCount(run.floor));
 
     const stageBefore = this.data.seedStage;
-    this.data.seedStage =
-      1 + Math.floor(this.data.totalDeaths / 3) + Math.floor(this.data.essence / 40);
+    this.data.seedStage = Math.max(
+      stageBefore,
+      1 + Math.floor(this.data.totalDeaths / 3) + Math.floor(this.data.lifetimeEssence / 40),
+    );
     const newStage = this.data.seedStage > stageBefore;
 
     this.persist();
@@ -228,11 +241,38 @@ export class SaveSystem {
       const parsed = JSON.parse(raw) as Partial<SaveData>;
       const language =
         parsed.language === 'zh' || parsed.language === 'en' ? parsed.language : null;
+      const essence = normalizeCount(parsed.essence);
+      const totalDeaths = normalizeCount(parsed.totalDeaths);
+      const seedStage = Math.max(1, normalizeCount(parsed.seedStage));
+      const talentRanks =
+        parsed.talentRanks && typeof parsed.talentRanks === 'object' && !Array.isArray(parsed.talentRanks)
+          ? { ...parsed.talentRanks }
+          : {};
+      let spentEssence = 0;
+      for (const node of ALL_TALENT_NODES) {
+        if (!Object.prototype.hasOwnProperty.call(talentRanks, node.id)) continue;
+        const rank = Math.min(node.maxRank, normalizeCount(talentRanks[node.id]));
+        talentRanks[node.id] = rank;
+        spentEssence += rank * node.costPerRank;
+      }
+      // 旧存档按余额与已购天赋还原累计值，已有阶段提供保守下限。
+      // 使用最大值而非相加，保证反复读档不会重复计入历史消费。
+      const stageEssence = Math.max(0, seedStage - 1 - Math.floor(totalDeaths / 3)) * 40;
+      const lifetimeEssence = normalizeCount(Math.max(
+        normalizeCount(parsed.lifetimeEssence),
+        essence + spentEssence,
+        stageEssence,
+      ));
       return {
         ...structuredClone(DEFAULT_SAVE),
         ...parsed,
+        essence,
+        lifetimeEssence,
+        totalDeaths,
+        deepestFloor: normalizeCount(parsed.deepestFloor),
+        seedStage: Math.max(seedStage, 1 + Math.floor(totalDeaths / 3) + Math.floor(lifetimeEssence / 40)),
         language,
-        talentRanks: parsed.talentRanks ?? {},
+        talentRanks,
         unlockedClasses: parsed.unlockedClasses ?? [...DEFAULT_SAVE.unlockedClasses],
         // Old saves have no video block — merge over defaults.
         video: { ...structuredClone(DEFAULT_SAVE.video), ...(parsed.video ?? {}) },
@@ -243,7 +283,11 @@ export class SaveSystem {
   }
 
   private persist(): void {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(this.data));
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify(this.data));
+    } catch {
+      // 拒写时保留内存进度，让调用方完成结算防重标记；后续保存再重试。
+    }
   }
 }
 

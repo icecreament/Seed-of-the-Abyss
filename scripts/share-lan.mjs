@@ -4,17 +4,23 @@
  */
 import { spawnSync } from 'node:child_process';
 import { networkInterfaces } from 'node:os';
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { readFileSync, realpathSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
-import { extname, join, normalize } from 'node:path';
+import { extname, isAbsolute, join, relative, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = process.cwd();
-const dist = join(root, 'dist');
+const root = fileURLToPath(new URL('../', import.meta.url));
 
-if (!existsSync(join(dist, 'index.html'))) {
-  console.log('dist/ 不存在，先构建...');
-  const r = spawnSync('npm', ['run', 'build'], { stdio: 'inherit', shell: true });
-  if (r.status !== 0) process.exit(r.status ?? 1);
+console.log('先构建最新网页资源...');
+const build = spawnSync('npm', ['run', 'build'], { cwd: root, stdio: 'inherit', shell: true });
+if (build.status !== 0) process.exit(build.status ?? 1);
+
+const dist = realpathSync(join(root, 'dist'));
+
+function isInsideDist(filePath) {
+  // relative 按当前平台处理大小写和分隔符，避免同名前缀目录绕过校验。
+  const pathFromDist = relative(dist, filePath);
+  return pathFromDist !== '..' && !pathFromDist.startsWith(`..${sep}`) && !isAbsolute(pathFromDist);
 }
 
 const preferred = Number(process.env.PORT || 4173);
@@ -44,25 +50,48 @@ function ips() {
 function createApp() {
   return createServer((req, res) => {
     try {
-      let urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
+      let urlPath;
+      try {
+        urlPath = decodeURIComponent((req.url || '/').split('?')[0]).replace(/\\/g, '/');
+      } catch {
+        res.writeHead(400);
+        res.end('Bad request');
+        return;
+      }
+      // 拒绝空字符及 Windows 盘符/备用数据流，不把无效请求交给文件系统。
+      if (!urlPath.startsWith('/') || urlPath.includes('\0') || (process.platform === 'win32' && urlPath.includes(':'))) {
+        res.writeHead(400);
+        res.end('Bad request');
+        return;
+      }
       if (urlPath === '/') urlPath = '/index.html';
-      const filePath = normalize(join(dist, '.' + urlPath));
-      if (!filePath.startsWith(dist)) {
+      const filePath = join(dist, '.' + urlPath);
+      if (!isInsideDist(filePath)) {
         res.writeHead(403);
         res.end('Forbidden');
         return;
       }
-      if (!existsSync(filePath) || statSync(filePath).isDirectory()) {
+      // 再校验真实路径，禁止符号链接或目录联接指向 dist 以外。
+      const realFilePath = realpathSync(filePath);
+      if (!isInsideDist(realFilePath)) {
+        res.writeHead(403);
+        res.end('Forbidden');
+        return;
+      }
+      if (!statSync(realFilePath).isFile()) {
         res.writeHead(404);
         res.end('Not found');
         return;
       }
-      const type = mime[extname(filePath)] || 'application/octet-stream';
+      const body = readFileSync(realFilePath);
+      const type = mime[extname(realFilePath).toLowerCase()] || 'application/octet-stream';
       res.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'no-cache' });
-      res.end(readFileSync(filePath));
+      res.end(body);
     } catch (e) {
-      res.writeHead(500);
-      res.end(String(e));
+      const status = e.code === 'ENOENT' || e.code === 'ENOTDIR' ? 404
+        : e.code === 'EACCES' || e.code === 'EPERM' ? 403 : 500;
+      res.writeHead(status);
+      res.end(status === 404 ? 'Not found' : status === 403 ? 'Forbidden' : 'Internal server error');
     }
   });
 }
