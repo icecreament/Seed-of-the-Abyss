@@ -5,6 +5,9 @@
   "description": "Seed of the Abyss - Top-down 2D action roguelike",
   "type": "module",
   "main": "electron/main.cjs",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
