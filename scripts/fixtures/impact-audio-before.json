@@ -1,0 +1,1013 @@
+{
+  "rows": [
+    {
+      "id": "warden",
+      "type": "attack",
+      "rate": 22050,
+      "frames": 2867,
+      "hash": "6b169a4aaa7fc906ed902ec1b207bb5084407b9963911e2ec2d22906eb673414",
+      "rms": 0.09863251519234886,
+      "peak": 0.5367792844772339
+    },
+    {
+      "id": "warden",
+      "type": "attack",
+      "rate": 48000,
+      "frames": 6240,
+      "hash": "da18b3475133596073aa6812dc966ec6aaf389eddcfaece3e58edb53b8264674",
+      "rms": 0.09878229590158166,
+      "peak": 0.5490456223487854
+    },
+    {
+      "id": "warden",
+      "type": "hit",
+      "rate": 22050,
+      "frames": 1985,
+      "hash": "4aa0380e26394bbab502c6bb19741a02b0fe75bc7399e8f736660d99c921d3b2",
+      "rms": 0.16892916246549938,
+      "peak": 0.8382368683815002
+    },
+    {
+      "id": "warden",
+      "type": "hit",
+      "rate": 48000,
+      "frames": 4320,
+      "hash": "1c18adf8fa4812d3c1430add0ced60a00ed65aaa214f1cb1b00e6e4a986832be",
+      "rms": 0.1548454730269325,
+      "peak": 0.8600000143051147
+    },
+    {
+      "id": "warden",
+      "type": "crit",
+      "rate": 22050,
+      "frames": 3749,
+      "hash": "bb64278a5f8b03dd762b8bcf934c7d700359024b4ab7316be5971cd5bc2f6153",
+      "rms": 0.12630487725316772,
+      "peak": 0.85999995470047
+    },
+    {
+      "id": "warden",
+      "type": "crit",
+      "rate": 48000,
+      "frames": 8161,
+      "hash": "16399cc1eb1d2c499ba711d42f1de64f04740e4476b29eae9b40861779dddbed",
+      "rms": 0.11283059492293991,
+      "peak": 0.8600000143051147
+    },
+    {
+      "id": "warden",
+      "type": "kill",
+      "rate": 22050,
+      "frames": 4410,
+      "hash": "6d509da8e08b4875777baad7a32fb2536f02378c2c851bafedd4867e5544a69d",
+      "rms": 0.1062696084585157,
+      "peak": 0.654126763343811
+    },
+    {
+      "id": "warden",
+      "type": "kill",
+      "rate": 48000,
+      "frames": 9600,
+      "hash": "1bca0fe33810ec86a17d9478af2491cdde8974adbd401027b4865113d65c73d2",
+      "rms": 0.10660639851426061,
+      "peak": 0.6638583540916443
+    },
+    {
+      "id": "warden",
+      "type": "dash",
+      "rate": 22050,
+      "frames": 3969,
+      "hash": "285ed5cf8ab980f023599baeeb2ad71e90c2a0f3dafc274f2b8465346e5a8409",
+      "rms": 0.12047156161618815,
+      "peak": 0.40685153007507324
+    },
+    {
+      "id": "warden",
+      "type": "dash",
+      "rate": 48000,
+      "frames": 8640,
+      "hash": "2b90859e24fbe8094ac98221bce995b6cce6bc0aaeae8924382d6e1bcda4c381",
+      "rms": 0.1226826820273897,
+      "peak": 0.417244553565979
+    },
+    {
+      "id": "warden",
+      "type": "skill",
+      "rate": 22050,
+      "frames": 10584,
+      "hash": "ecd03260e14ab9eb2f34b8655e8cff170a939d64878f7323fce29c90f6445013",
+      "rms": 0.1189155179901685,
+      "peak": 0.5612359046936035
+    },
+    {
+      "id": "warden",
+      "type": "skill",
+      "rate": 48000,
+      "frames": 23040,
+      "hash": "7765a2c7dafd2c6604d55d42492cc369b30654486130b3262b83329fd1991c9b",
+      "rms": 0.1189360982685103,
+      "peak": 0.5987492203712463
+    },
+    {
+      "id": "warden",
+      "type": "hurt",
+      "rate": 22050,
+      "frames": 4410,
+      "hash": "7296a30f35909d1c62cdb5a7b4437b60547e8886ea3c11f3f48d17b34929b923",
+      "rms": 0.14252073802087553,
+      "peak": 0.5213780403137207
+    },
+    {
+      "id": "warden",
+      "type": "hurt",
+      "rate": 48000,
+      "frames": 9600,
+      "hash": "f45f583ec2462bf48746ffe2b572ab6cf81ed708709d40de17e056e91e4ac293",
+      "rms": 0.14176730395056172,
+      "peak": 0.5189900994300842
+    },
+    {
+      "id": "warden",
+      "type": "combo",
+      "rate": 22050,
+      "frames": 7938,
+      "hash": "f987d548aade7e2c103aabcba519edcf09bf92e51feba4c9846310516baf0b3c",
+      "rms": 0.054969283293695194,
+      "peak": 0.20383788645267487
+    },
+    {
+      "id": "warden",
+      "type": "combo",
+      "rate": 48000,
+      "frames": 17280,
+      "hash": "da5e386a8855a99e2ab4babcee95b6083ac5a227f4639c95b8ab2511cf26fc8c",
+      "rms": 0.05496926013257148,
+      "peak": 0.20398922264575958
+    },
+    {
+      "id": "warden",
+      "type": "victory",
+      "rate": 22050,
+      "frames": 23153,
+      "hash": "97a1e03cbcf35160f245cf7646ddc4a1ec840d639a69b02e62009ed95add9a1d",
+      "rms": 0.06458064835063476,
+      "peak": 0.4142327606678009
+    },
+    {
+      "id": "warden",
+      "type": "victory",
+      "rate": 48000,
+      "frames": 50400,
+      "hash": "ada64e9f772187b8f1bd0cc5d21d6fbb04f8f3894bd28a63c77b0d19851900dd",
+      "rms": 0.06458136673251494,
+      "peak": 0.4142889082431793
+    },
+    {
+      "id": "warden",
+      "type": "break",
+      "rate": 22050,
+      "frames": 8379,
+      "hash": "92a3afcd86344621cca668f22df4769144c89c4635d87c28b1ab7db4f499d804",
+      "rms": 0.11620517053653623,
+      "peak": 0.8600000143051147
+    },
+    {
+      "id": "warden",
+      "type": "break",
+      "rate": 48000,
+      "frames": 18240,
+      "hash": "9a614fb50131c1fe56112cd8b8d6c6a644cadec6a265d32c0103cf9fe4c923fa",
+      "rms": 0.11061810527550256,
+      "peak": 0.8600000143051147
+    },
+    {
+      "id": "warden",
+      "type": "parry",
+      "rate": 22050,
+      "frames": 5292,
+      "hash": "096616dae15fbad5b640891931635b09b214973cf50bf052dde342f5ee2e8fed",
+      "rms": 0.09873635517580766,
+      "peak": 0.4977658689022064
+    },
+    {
+      "id": "warden",
+      "type": "parry",
+      "rate": 48000,
+      "frames": 11520,
+      "hash": "62821ec3bad6a3aa8a2c388b6a9ff8203e6d07948eb44453edc30d367b4da4aa",
+      "rms": 0.09895458381454512,
+      "peak": 0.5251915454864502
+    },
+    {
+      "id": "warden",
+      "type": "tell",
+      "rate": 22050,
+      "frames": 7498,
+      "hash": "c57f717706d319396781b76e5db12b270da0cff91f3f83332bc5a5437f8e8850",
+      "rms": 0.056776367736393364,
+      "peak": 0.288566917181015
+    },
+    {
+      "id": "warden",
+      "type": "tell",
+      "rate": 48000,
+      "frames": 16321,
+      "hash": "4354d8b85f1240e99a4a38a2cc350a1147a9a15075b6f9189f82a3d613cf302f",
+      "rms": 0.05698447711524607,
+      "peak": 0.28551897406578064
+    },
+    {
+      "id": "warden",
+      "type": "seed",
+      "rate": 22050,
+      "frames": 3528,
+      "hash": "17a9b611c8c874703b7070c0a2306789546f319724757b98a6efdb990befcc97",
+      "rms": 0.058979029429071364,
+      "peak": 0.2766839563846588
+    },
+    {
+      "id": "warden",
+      "type": "seed",
+      "rate": 48000,
+      "frames": 7680,
+      "hash": "177757ff0ec9b7d86b99091a59d4f65d7afe6b8650f8e841630d3281ac43aaf4",
+      "rms": 0.05901643847087925,
+      "peak": 0.2955360412597656
+    },
+    {
+      "id": "warden",
+      "type": "bloom",
+      "rate": 22050,
+      "frames": 9261,
+      "hash": "65795ec094a6edd81755e208594f60513f7cb7e2e3c175ff8af13ec147f21e5b",
+      "rms": 0.11810562867841438,
+      "peak": 0.8475443720817566
+    },
+    {
+      "id": "warden",
+      "type": "bloom",
+      "rate": 48000,
+      "frames": 20160,
+      "hash": "1c1b0691c9eedf02553984b9bbaeda14456945400a1ddcc76991a2dedd49e815",
+      "rms": 0.1181806082639654,
+      "peak": 0.814118504524231
+    },
+    {
+      "id": "reaver",
+      "type": "attack",
+      "rate": 22050,
+      "frames": 2867,
+      "hash": "578fa4c7e29ed551cdd98488489d93251f8b8dffa05895c6e03210df1fd25dcd",
+      "rms": 0.07289953074033435,
+      "peak": 0.5378050208091736
+    },
+    {
+      "id": "reaver",
+      "type": "attack",
+      "rate": 48000,
+      "frames": 6240,
+      "hash": "5708dad04183cef1524aa0ee957be1bde31bdef24b68abf624c4b4bfb72160ea",
+      "rms": 0.07358057527964665,
+      "peak": 0.4600350856781006
+    },
+    {
+      "id": "reaver",
+      "type": "hit",
+      "rate": 22050,
+      "frames": 1985,
+      "hash": "149cef2942e615adc1e6b421a1520c9eaa5078087f5fb1b4c89c95bb30a2033f",
+      "rms": 0.16752831272939533,
+      "peak": 0.7721635103225708
+    },
+    {
+      "id": "reaver",
+      "type": "hit",
+      "rate": 48000,
+      "frames": 4320,
+      "hash": "200d1160462d11edfcec794a9cd50658bf713c57beddde614ea34bcd102bad36",
+      "rms": 0.1546866347900589,
+      "peak": 0.8600000143051147
+    },
+    {
+      "id": "reaver",
+      "type": "crit",
+      "rate": 22050,
+      "frames": 3749,
+      "hash": "bc85efcf00c94f4f0dc8a0349be8bbc56a759a0980688a1d5597837c684824d6",
+      "rms": 0.13597537023235895,
+      "peak": 0.85999995470047
+    },
+    {
+      "id": "reaver",
+      "type": "crit",
+      "rate": 48000,
+      "frames": 8161,
+      "hash": "b0fd2d3560af176c8cc837faf16d630d7348f1a86545bc3815809c1de1dcf2dc",
+      "rms": 0.11271450952906707,
+      "peak": 0.8600000143051147
+    },
+    {
+      "id": "reaver",
+      "type": "kill",
+      "rate": 22050,
+      "frames": 4410,
+      "hash": "6d509da8e08b4875777baad7a32fb2536f02378c2c851bafedd4867e5544a69d",
+      "rms": 0.1062696084585157,
+      "peak": 0.654126763343811
+    },
+    {
+      "id": "reaver",
+      "type": "kill",
+      "rate": 48000,
+      "frames": 9600,
+      "hash": "1bca0fe33810ec86a17d9478af2491cdde8974adbd401027b4865113d65c73d2",
+      "rms": 0.10660639851426061,
+      "peak": 0.6638583540916443
+    },
+    {
+      "id": "reaver",
+      "type": "dash",
+      "rate": 22050,
+      "frames": 3969,
+      "hash": "285ed5cf8ab980f023599baeeb2ad71e90c2a0f3dafc274f2b8465346e5a8409",
+      "rms": 0.12047156161618815,
+      "peak": 0.40685153007507324
+    },
+    {
+      "id": "reaver",
+      "type": "dash",
+      "rate": 48000,
+      "frames": 8640,
+      "hash": "2b90859e24fbe8094ac98221bce995b6cce6bc0aaeae8924382d6e1bcda4c381",
+      "rms": 0.1226826820273897,
+      "peak": 0.417244553565979
+    },
+    {
+      "id": "reaver",
+      "type": "skill",
+      "rate": 22050,
+      "frames": 10584,
+      "hash": "b7bcfb0afb84cae78578643a89ee64c32c7dfc8e54b2a3fab38dd260662d7463",
+      "rms": 0.13812972453653896,
+      "peak": 0.7642817497253418
+    },
+    {
+      "id": "reaver",
+      "type": "skill",
+      "rate": 48000,
+      "frames": 23040,
+      "hash": "6976cf12397d7b256ebc623fe1e573a86519bb3935deaa560f7fd255bed3c6b6",
+      "rms": 0.13825320351563544,
+      "peak": 0.7399437427520752
+    },
+    {
+      "id": "reaver",
+      "type": "hurt",
+      "rate": 22050,
+      "frames": 4410,
+      "hash": "7296a30f35909d1c62cdb5a7b4437b60547e8886ea3c11f3f48d17b34929b923",
+      "rms": 0.14252073802087553,
+      "peak": 0.5213780403137207
+    },
+    {
+      "id": "reaver",
+      "type": "hurt",
+      "rate": 48000,
+      "frames": 9600,
+      "hash": "f45f583ec2462bf48746ffe2b572ab6cf81ed708709d40de17e056e91e4ac293",
+      "rms": 0.14176730395056172,
+      "peak": 0.5189900994300842
+    },
+    {
+      "id": "reaver",
+      "type": "combo",
+      "rate": 22050,
+      "frames": 7938,
+      "hash": "f987d548aade7e2c103aabcba519edcf09bf92e51feba4c9846310516baf0b3c",
+      "rms": 0.054969283293695194,
+      "peak": 0.20383788645267487
+    },
+    {
+      "id": "reaver",
+      "type": "combo",
+      "rate": 48000,
+      "frames": 17280,
+      "hash": "da5e386a8855a99e2ab4babcee95b6083ac5a227f4639c95b8ab2511cf26fc8c",
+      "rms": 0.05496926013257148,
+      "peak": 0.20398922264575958
+    },
+    {
+      "id": "reaver",
+      "type": "victory",
+      "rate": 22050,
+      "frames": 23153,
+      "hash": "97a1e03cbcf35160f245cf7646ddc4a1ec840d639a69b02e62009ed95add9a1d",
+      "rms": 0.06458064835063476,
+      "peak": 0.4142327606678009
+    },
+    {
+      "id": "reaver",
+      "type": "victory",
+      "rate": 48000,
+      "frames": 50400,
+      "hash": "ada64e9f772187b8f1bd0cc5d21d6fbb04f8f3894bd28a63c77b0d19851900dd",
+      "rms": 0.06458136673251494,
+      "peak": 0.4142889082431793
+    },
+    {
+      "id": "reaver",
+      "type": "break",
+      "rate": 22050,
+      "frames": 8379,
+      "hash": "92a3afcd86344621cca668f22df4769144c89c4635d87c28b1ab7db4f499d804",
+      "rms": 0.11620517053653623,
+      "peak": 0.8600000143051147
+    },
+    {
+      "id": "reaver",
+      "type": "break",
+      "rate": 48000,
+      "frames": 18240,
+      "hash": "9a614fb50131c1fe56112cd8b8d6c6a644cadec6a265d32c0103cf9fe4c923fa",
+      "rms": 0.11061810527550256,
+      "peak": 0.8600000143051147
+    },
+    {
+      "id": "reaver",
+      "type": "parry",
+      "rate": 22050,
+      "frames": 5292,
+      "hash": "096616dae15fbad5b640891931635b09b214973cf50bf052dde342f5ee2e8fed",
+      "rms": 0.09873635517580766,
+      "peak": 0.4977658689022064
+    },
+    {
+      "id": "reaver",
+      "type": "parry",
+      "rate": 48000,
+      "frames": 11520,
+      "hash": "62821ec3bad6a3aa8a2c388b6a9ff8203e6d07948eb44453edc30d367b4da4aa",
+      "rms": 0.09895458381454512,
+      "peak": 0.5251915454864502
+    },
+    {
+      "id": "reaver",
+      "type": "tell",
+      "rate": 22050,
+      "frames": 7498,
+      "hash": "c57f717706d319396781b76e5db12b270da0cff91f3f83332bc5a5437f8e8850",
+      "rms": 0.056776367736393364,
+      "peak": 0.288566917181015
+    },
+    {
+      "id": "reaver",
+      "type": "tell",
+      "rate": 48000,
+      "frames": 16321,
+      "hash": "4354d8b85f1240e99a4a38a2cc350a1147a9a15075b6f9189f82a3d613cf302f",
+      "rms": 0.05698447711524607,
+      "peak": 0.28551897406578064
+    },
+    {
+      "id": "reaver",
+      "type": "seed",
+      "rate": 22050,
+      "frames": 3528,
+      "hash": "17a9b611c8c874703b7070c0a2306789546f319724757b98a6efdb990befcc97",
+      "rms": 0.058979029429071364,
+      "peak": 0.2766839563846588
+    },
+    {
+      "id": "reaver",
+      "type": "seed",
+      "rate": 48000,
+      "frames": 7680,
+      "hash": "177757ff0ec9b7d86b99091a59d4f65d7afe6b8650f8e841630d3281ac43aaf4",
+      "rms": 0.05901643847087925,
+      "peak": 0.2955360412597656
+    },
+    {
+      "id": "reaver",
+      "type": "bloom",
+      "rate": 22050,
+      "frames": 9261,
+      "hash": "65795ec094a6edd81755e208594f60513f7cb7e2e3c175ff8af13ec147f21e5b",
+      "rms": 0.11810562867841438,
+      "peak": 0.8475443720817566
+    },
+    {
+      "id": "reaver",
+      "type": "bloom",
+      "rate": 48000,
+      "frames": 20160,
+      "hash": "1c1b0691c9eedf02553984b9bbaeda14456945400a1ddcc76991a2dedd49e815",
+      "rms": 0.1181806082639654,
+      "peak": 0.814118504524231
+    },
+    {
+      "id": "shade",
+      "type": "attack",
+      "rate": 22050,
+      "frames": 2867,
+      "hash": "dc985d63de07e930f59d5680279adb8a03646b9fee6983a8720626e0404481a1",
+      "rms": 0.09858467202346084,
+      "peak": 0.5232675075531006
+    },
+    {
+      "id": "shade",
+      "type": "attack",
+      "rate": 48000,
+      "frames": 6240,
+      "hash": "5be54fb20fc9d6d554813ae996ab8f0a00fcc3a30a0cf54b78943b772f201732",
+      "rms": 0.09901600700364815,
+      "peak": 0.5290089845657349
+    },
+    {
+      "id": "shade",
+      "type": "hit",
+      "rate": 22050,
+      "frames": 1985,
+      "hash": "c9ec11e73fb8645de9ed322c2ee7f120a6c06ac22caf270663d08c06db9117f3",
+      "rms": 0.15424754460222367,
+      "peak": 0.8600000143051147
+    },
+    {
+      "id": "shade",
+      "type": "hit",
+      "rate": 48000,
+      "frames": 4320,
+      "hash": "fdfdeaa976963ac972b8f959c8157b49cb1299dac09c13187cb96c6c998b21a0",
+      "rms": 0.15726117544635626,
+      "peak": 0.85999995470047
+    },
+    {
+      "id": "shade",
+      "type": "crit",
+      "rate": 22050,
+      "frames": 3749,
+      "hash": "8cf437b174b1cd1ee571d89f201da704a40f6e1c10eb29eb49925ccfc66d5ce3",
+      "rms": 0.1124168882148941,
+      "peak": 0.8600000143051147
+    },
+    {
+      "id": "shade",
+      "type": "crit",
+      "rate": 48000,
+      "frames": 8161,
+      "hash": "48a1b5f4a5fc7b1282d13d1b9513f4eafe28cdffe1f0f7698e4e5e5cd38877f2",
+      "rms": 0.11459822249989801,
+      "peak": 0.8600000143051147
+    },
+    {
+      "id": "shade",
+      "type": "kill",
+      "rate": 22050,
+      "frames": 4410,
+      "hash": "6d509da8e08b4875777baad7a32fb2536f02378c2c851bafedd4867e5544a69d",
+      "rms": 0.1062696084585157,
+      "peak": 0.654126763343811
+    },
+    {
+      "id": "shade",
+      "type": "kill",
+      "rate": 48000,
+      "frames": 9600,
+      "hash": "1bca0fe33810ec86a17d9478af2491cdde8974adbd401027b4865113d65c73d2",
+      "rms": 0.10660639851426061,
+      "peak": 0.6638583540916443
+    },
+    {
+      "id": "shade",
+      "type": "dash",
+      "rate": 22050,
+      "frames": 3969,
+      "hash": "285ed5cf8ab980f023599baeeb2ad71e90c2a0f3dafc274f2b8465346e5a8409",
+      "rms": 0.12047156161618815,
+      "peak": 0.40685153007507324
+    },
+    {
+      "id": "shade",
+      "type": "dash",
+      "rate": 48000,
+      "frames": 8640,
+      "hash": "2b90859e24fbe8094ac98221bce995b6cce6bc0aaeae8924382d6e1bcda4c381",
+      "rms": 0.1226826820273897,
+      "peak": 0.417244553565979
+    },
+    {
+      "id": "shade",
+      "type": "skill",
+      "rate": 22050,
+      "frames": 10584,
+      "hash": "a16a7b422554a5fd1d5cdbf41adc64f1da503655951289f506f751e014b8e62b",
+      "rms": 0.11934881563823747,
+      "peak": 0.6250365376472473
+    },
+    {
+      "id": "shade",
+      "type": "skill",
+      "rate": 48000,
+      "frames": 23040,
+      "hash": "b8d841e2e6c676f39f46b8935e2191184b659406842739cbdda8a6bef704711d",
+      "rms": 0.11914555442744612,
+      "peak": 0.6224783658981323
+    },
+    {
+      "id": "shade",
+      "type": "hurt",
+      "rate": 22050,
+      "frames": 4410,
+      "hash": "7296a30f35909d1c62cdb5a7b4437b60547e8886ea3c11f3f48d17b34929b923",
+      "rms": 0.14252073802087553,
+      "peak": 0.5213780403137207
+    },
+    {
+      "id": "shade",
+      "type": "hurt",
+      "rate": 48000,
+      "frames": 9600,
+      "hash": "f45f583ec2462bf48746ffe2b572ab6cf81ed708709d40de17e056e91e4ac293",
+      "rms": 0.14176730395056172,
+      "peak": 0.5189900994300842
+    },
+    {
+      "id": "shade",
+      "type": "combo",
+      "rate": 22050,
+      "frames": 7938,
+      "hash": "f987d548aade7e2c103aabcba519edcf09bf92e51feba4c9846310516baf0b3c",
+      "rms": 0.054969283293695194,
+      "peak": 0.20383788645267487
+    },
+    {
+      "id": "shade",
+      "type": "combo",
+      "rate": 48000,
+      "frames": 17280,
+      "hash": "da5e386a8855a99e2ab4babcee95b6083ac5a227f4639c95b8ab2511cf26fc8c",
+      "rms": 0.05496926013257148,
+      "peak": 0.20398922264575958
+    },
+    {
+      "id": "shade",
+      "type": "victory",
+      "rate": 22050,
+      "frames": 23153,
+      "hash": "97a1e03cbcf35160f245cf7646ddc4a1ec840d639a69b02e62009ed95add9a1d",
+      "rms": 0.06458064835063476,
+      "peak": 0.4142327606678009
+    },
+    {
+      "id": "shade",
+      "type": "victory",
+      "rate": 48000,
+      "frames": 50400,
+      "hash": "ada64e9f772187b8f1bd0cc5d21d6fbb04f8f3894bd28a63c77b0d19851900dd",
+      "rms": 0.06458136673251494,
+      "peak": 0.4142889082431793
+    },
+    {
+      "id": "shade",
+      "type": "break",
+      "rate": 22050,
+      "frames": 8379,
+      "hash": "92a3afcd86344621cca668f22df4769144c89c4635d87c28b1ab7db4f499d804",
+      "rms": 0.11620517053653623,
+      "peak": 0.8600000143051147
+    },
+    {
+      "id": "shade",
+      "type": "break",
+      "rate": 48000,
+      "frames": 18240,
+      "hash": "9a614fb50131c1fe56112cd8b8d6c6a644cadec6a265d32c0103cf9fe4c923fa",
+      "rms": 0.11061810527550256,
+      "peak": 0.8600000143051147
+    },
+    {
+      "id": "shade",
+      "type": "parry",
+      "rate": 22050,
+      "frames": 5292,
+      "hash": "096616dae15fbad5b640891931635b09b214973cf50bf052dde342f5ee2e8fed",
+      "rms": 0.09873635517580766,
+      "peak": 0.4977658689022064
+    },
+    {
+      "id": "shade",
+      "type": "parry",
+      "rate": 48000,
+      "frames": 11520,
+      "hash": "62821ec3bad6a3aa8a2c388b6a9ff8203e6d07948eb44453edc30d367b4da4aa",
+      "rms": 0.09895458381454512,
+      "peak": 0.5251915454864502
+    },
+    {
+      "id": "shade",
+      "type": "tell",
+      "rate": 22050,
+      "frames": 7498,
+      "hash": "c57f717706d319396781b76e5db12b270da0cff91f3f83332bc5a5437f8e8850",
+      "rms": 0.056776367736393364,
+      "peak": 0.288566917181015
+    },
+    {
+      "id": "shade",
+      "type": "tell",
+      "rate": 48000,
+      "frames": 16321,
+      "hash": "4354d8b85f1240e99a4a38a2cc350a1147a9a15075b6f9189f82a3d613cf302f",
+      "rms": 0.05698447711524607,
+      "peak": 0.28551897406578064
+    },
+    {
+      "id": "shade",
+      "type": "seed",
+      "rate": 22050,
+      "frames": 3528,
+      "hash": "17a9b611c8c874703b7070c0a2306789546f319724757b98a6efdb990befcc97",
+      "rms": 0.058979029429071364,
+      "peak": 0.2766839563846588
+    },
+    {
+      "id": "shade",
+      "type": "seed",
+      "rate": 48000,
+      "frames": 7680,
+      "hash": "177757ff0ec9b7d86b99091a59d4f65d7afe6b8650f8e841630d3281ac43aaf4",
+      "rms": 0.05901643847087925,
+      "peak": 0.2955360412597656
+    },
+    {
+      "id": "shade",
+      "type": "bloom",
+      "rate": 22050,
+      "frames": 9261,
+      "hash": "65795ec094a6edd81755e208594f60513f7cb7e2e3c175ff8af13ec147f21e5b",
+      "rms": 0.11810562867841438,
+      "peak": 0.8475443720817566
+    },
+    {
+      "id": "shade",
+      "type": "bloom",
+      "rate": 48000,
+      "frames": 20160,
+      "hash": "1c1b0691c9eedf02553984b9bbaeda14456945400a1ddcc76991a2dedd49e815",
+      "rms": 0.1181806082639654,
+      "peak": 0.814118504524231
+    },
+    {
+      "id": "thorn",
+      "type": "attack",
+      "rate": 22050,
+      "frames": 2867,
+      "hash": "a6c9710c650de605ce1040df4c362e4595771a6580f189968549f065c36de04c",
+      "rms": 0.09892628982039754,
+      "peak": 0.5574676394462585
+    },
+    {
+      "id": "thorn",
+      "type": "attack",
+      "rate": 48000,
+      "frames": 6240,
+      "hash": "ba65f79f4f5c75769cf46771f3e0a623afc605b31845848cb4fbaf725d1f5123",
+      "rms": 0.09900275858987963,
+      "peak": 0.4791375398635864
+    },
+    {
+      "id": "thorn",
+      "type": "hit",
+      "rate": 22050,
+      "frames": 1985,
+      "hash": "feb98dd8602073854728d9465f09f91389e16b27a3ff77972a480969ab1049cb",
+      "rms": 0.16526509051371144,
+      "peak": 0.8271446824073792
+    },
+    {
+      "id": "thorn",
+      "type": "hit",
+      "rate": 48000,
+      "frames": 4320,
+      "hash": "8be1146e0f8948a2154ec59e64eaf9f9dda650c50e41b3acaa9f4962856745a2",
+      "rms": 0.16622730336057737,
+      "peak": 0.8432802557945251
+    },
+    {
+      "id": "thorn",
+      "type": "crit",
+      "rate": 22050,
+      "frames": 3749,
+      "hash": "60e1352596520faf7a1d2cb5e6db7309db727bd3639ab1af5356a7d2422536bd",
+      "rms": 0.12522820601506135,
+      "peak": 0.85999995470047
+    },
+    {
+      "id": "thorn",
+      "type": "crit",
+      "rate": 48000,
+      "frames": 8161,
+      "hash": "e1c854907ff233695112f91089d0034dc87093aef66731c49c8af0b4818bd850",
+      "rms": 0.12353132860239856,
+      "peak": 0.85999995470047
+    },
+    {
+      "id": "thorn",
+      "type": "kill",
+      "rate": 22050,
+      "frames": 4410,
+      "hash": "6d509da8e08b4875777baad7a32fb2536f02378c2c851bafedd4867e5544a69d",
+      "rms": 0.1062696084585157,
+      "peak": 0.654126763343811
+    },
+    {
+      "id": "thorn",
+      "type": "kill",
+      "rate": 48000,
+      "frames": 9600,
+      "hash": "1bca0fe33810ec86a17d9478af2491cdde8974adbd401027b4865113d65c73d2",
+      "rms": 0.10660639851426061,
+      "peak": 0.6638583540916443
+    },
+    {
+      "id": "thorn",
+      "type": "dash",
+      "rate": 22050,
+      "frames": 3969,
+      "hash": "285ed5cf8ab980f023599baeeb2ad71e90c2a0f3dafc274f2b8465346e5a8409",
+      "rms": 0.12047156161618815,
+      "peak": 0.40685153007507324
+    },
+    {
+      "id": "thorn",
+      "type": "dash",
+      "rate": 48000,
+      "frames": 8640,
+      "hash": "2b90859e24fbe8094ac98221bce995b6cce6bc0aaeae8924382d6e1bcda4c381",
+      "rms": 0.1226826820273897,
+      "peak": 0.417244553565979
+    },
+    {
+      "id": "thorn",
+      "type": "skill",
+      "rate": 22050,
+      "frames": 10584,
+      "hash": "6674b609866a20b3c7ac2cdf1a573ef3b5c5dd967796a3e633554cf2c47d8aec",
+      "rms": 0.11829463905657488,
+      "peak": 0.6333614587783813
+    },
+    {
+      "id": "thorn",
+      "type": "skill",
+      "rate": 48000,
+      "frames": 23040,
+      "hash": "d77cd7e80aa233cc6b785075ba74a7d0c117a7ffe544c44f6dcd5dea1426bbc0",
+      "rms": 0.1183494512488759,
+      "peak": 0.6061650514602661
+    },
+    {
+      "id": "thorn",
+      "type": "hurt",
+      "rate": 22050,
+      "frames": 4410,
+      "hash": "7296a30f35909d1c62cdb5a7b4437b60547e8886ea3c11f3f48d17b34929b923",
+      "rms": 0.14252073802087553,
+      "peak": 0.5213780403137207
+    },
+    {
+      "id": "thorn",
+      "type": "hurt",
+      "rate": 48000,
+      "frames": 9600,
+      "hash": "f45f583ec2462bf48746ffe2b572ab6cf81ed708709d40de17e056e91e4ac293",
+      "rms": 0.14176730395056172,
+      "peak": 0.5189900994300842
+    },
+    {
+      "id": "thorn",
+      "type": "combo",
+      "rate": 22050,
+      "frames": 7938,
+      "hash": "f987d548aade7e2c103aabcba519edcf09bf92e51feba4c9846310516baf0b3c",
+      "rms": 0.054969283293695194,
+      "peak": 0.20383788645267487
+    },
+    {
+      "id": "thorn",
+      "type": "combo",
+      "rate": 48000,
+      "frames": 17280,
+      "hash": "da5e386a8855a99e2ab4babcee95b6083ac5a227f4639c95b8ab2511cf26fc8c",
+      "rms": 0.05496926013257148,
+      "peak": 0.20398922264575958
+    },
+    {
+      "id": "thorn",
+      "type": "victory",
+      "rate": 22050,
+      "frames": 23153,
+      "hash": "97a1e03cbcf35160f245cf7646ddc4a1ec840d639a69b02e62009ed95add9a1d",
+      "rms": 0.06458064835063476,
+      "peak": 0.4142327606678009
+    },
+    {
+      "id": "thorn",
+      "type": "victory",
+      "rate": 48000,
+      "frames": 50400,
+      "hash": "ada64e9f772187b8f1bd0cc5d21d6fbb04f8f3894bd28a63c77b0d19851900dd",
+      "rms": 0.06458136673251494,
+      "peak": 0.4142889082431793
+    },
+    {
+      "id": "thorn",
+      "type": "break",
+      "rate": 22050,
+      "frames": 8379,
+      "hash": "92a3afcd86344621cca668f22df4769144c89c4635d87c28b1ab7db4f499d804",
+      "rms": 0.11620517053653623,
+      "peak": 0.8600000143051147
+    },
+    {
+      "id": "thorn",
+      "type": "break",
+      "rate": 48000,
+      "frames": 18240,
+      "hash": "9a614fb50131c1fe56112cd8b8d6c6a644cadec6a265d32c0103cf9fe4c923fa",
+      "rms": 0.11061810527550256,
+      "peak": 0.8600000143051147
+    },
+    {
+      "id": "thorn",
+      "type": "parry",
+      "rate": 22050,
+      "frames": 5292,
+      "hash": "096616dae15fbad5b640891931635b09b214973cf50bf052dde342f5ee2e8fed",
+      "rms": 0.09873635517580766,
+      "peak": 0.4977658689022064
+    },
+    {
+      "id": "thorn",
+      "type": "parry",
+      "rate": 48000,
+      "frames": 11520,
+      "hash": "62821ec3bad6a3aa8a2c388b6a9ff8203e6d07948eb44453edc30d367b4da4aa",
+      "rms": 0.09895458381454512,
+      "peak": 0.5251915454864502
+    },
+    {
+      "id": "thorn",
+      "type": "tell",
+      "rate": 22050,
+      "frames": 7498,
+      "hash": "c57f717706d319396781b76e5db12b270da0cff91f3f83332bc5a5437f8e8850",
+      "rms": 0.056776367736393364,
+      "peak": 0.288566917181015
+    },
+    {
+      "id": "thorn",
+      "type": "tell",
+      "rate": 48000,
+      "frames": 16321,
+      "hash": "4354d8b85f1240e99a4a38a2cc350a1147a9a15075b6f9189f82a3d613cf302f",
+      "rms": 0.05698447711524607,
+      "peak": 0.28551897406578064
+    },
+    {
+      "id": "thorn",
+      "type": "seed",
+      "rate": 22050,
+      "frames": 3528,
+      "hash": "17a9b611c8c874703b7070c0a2306789546f319724757b98a6efdb990befcc97",
+      "rms": 0.058979029429071364,
+      "peak": 0.2766839563846588
+    },
+    {
+      "id": "thorn",
+      "type": "seed",
+      "rate": 48000,
+      "frames": 7680,
+      "hash": "177757ff0ec9b7d86b99091a59d4f65d7afe6b8650f8e841630d3281ac43aaf4",
+      "rms": 0.05901643847087925,
+      "peak": 0.2955360412597656
+    },
+    {
+      "id": "thorn",
+      "type": "bloom",
+      "rate": 22050,
+      "frames": 9261,
+      "hash": "65795ec094a6edd81755e208594f60513f7cb7e2e3c175ff8af13ec147f21e5b",
+      "rms": 0.11810562867841438,
+      "peak": 0.8475443720817566
+    },
+    {
+      "id": "thorn",
+      "type": "bloom",
+      "rate": 48000,
+      "frames": 20160,
+      "hash": "1c1b0691c9eedf02553984b9bbaeda14456945400a1ddcc76991a2dedd49e815",
+      "rms": 0.1181806082639654,
+      "peak": 0.814118504524231
+    }
+  ],
+  "scope": "Actual original deterministic PCM before impact-audio-v1, two sample rates; chain=3."
+}

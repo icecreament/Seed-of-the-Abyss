@@ -32,6 +32,17 @@ export interface VideoSettings {
   winH: number;
 }
 
+export interface FeedbackSettings {
+  sfxVolume: number;
+  impactMotion: boolean;
+}
+const DEFAULT_FEEDBACK: FeedbackSettings = { sfxVolume: 0.55, impactMotion: true };
+function normalizeFeedback(value: unknown): FeedbackSettings {
+  const v = value && typeof value === 'object' ? value as Partial<FeedbackSettings> : {};
+  return { sfxVolume: typeof v.sfxVolume === 'number' && Number.isFinite(v.sfxVolume) ? Math.max(0,Math.min(1,v.sfxVolume)) : DEFAULT_FEEDBACK.sfxVolume,
+    impactMotion: typeof v.impactMotion === 'boolean' ? v.impactMotion : true };
+}
+
 export interface SaveData {
   essence: number;
   /** 累计获得的精华（消费天赋不扣减）：种子阶段由它推进，买天赋不会掉阶段。 */
@@ -45,6 +56,7 @@ export interface SaveData {
   /** Persisted UI language. null/undefined = auto-detect once. */
   language: Lang | null;
   video: VideoSettings;
+  feedback: FeedbackSettings;
 }
 
 const DEFAULT_SAVE: SaveData = {
@@ -58,6 +70,7 @@ const DEFAULT_SAVE: SaveData = {
   seedStage: 1,
   language: null,
   video: { renderScale: 1, fullscreen: false, winW: 1280, winH: 720 },
+  feedback: { ...DEFAULT_FEEDBACK },
 };
 
 export class SaveSystem {
@@ -98,6 +111,13 @@ export class SaveSystem {
 
   get video(): VideoSettings {
     return { ...this.data.video };
+  }
+
+  get feedback(): FeedbackSettings { return { ...this.data.feedback }; }
+
+  setFeedback(patch: Partial<FeedbackSettings>): void {
+    this.data.feedback = normalizeFeedback({ ...this.data.feedback, ...patch });
+    this.persist();
   }
 
   /** 深拷贝快照：回归测试与只读调试用，调用方无法改到存档本体。 */
@@ -190,19 +210,20 @@ export class SaveSystem {
     kills: number;
     timeAliveSec: number;
     damageDealt: number;
+    outcome?: 'death' | 'abandoned' | 'victory';
   }): { gained: number; newStage: boolean; essenceBefore: number } {
     const perm = this.computePermanentStats();
     const raw =
       run.kills * 2 +
       run.floor * 8 +
       Math.floor(run.timeAliveSec / 10) +
-      Math.floor(run.damageDealt / 80);
+      Math.floor(run.damageDealt / 80) + (run.outcome === 'victory' ? 100 : 0);
     const gained = Math.max(1, normalizeCount(raw * (1 + perm.essenceGain)));
 
     const essenceBefore = this.data.essence;
     this.data.essence = normalizeCount(this.data.essence + gained);
     this.data.lifetimeEssence = normalizeCount(this.data.lifetimeEssence + gained);
-    this.data.totalDeaths = normalizeCount(this.data.totalDeaths + 1);
+    if (!run.outcome || run.outcome === 'death') this.data.totalDeaths = normalizeCount(this.data.totalDeaths + 1);
     this.data.deepestFloor = Math.max(this.data.deepestFloor, normalizeCount(run.floor));
 
     // Stage follows lifetime earnings, not the current balance — previously
@@ -222,9 +243,11 @@ export class SaveSystem {
     const keepLang = this.data.language;
     // Video settings are device prefs, not progress — survive a save reset.
     const keepVideo = this.data.video;
+    const keepFeedback = this.data.feedback;
     this.data = structuredClone(DEFAULT_SAVE);
     this.data.language = keepLang;
     this.data.video = keepVideo;
+    this.data.feedback = keepFeedback;
     this.applyLanguage();
     this.persist();
   }
@@ -291,6 +314,7 @@ export class SaveSystem {
         ],
         // Old saves have no video block — merge over defaults.
         video: { ...structuredClone(DEFAULT_SAVE.video), ...(parsed.video ?? {}) },
+        feedback: normalizeFeedback(parsed.feedback),
       };
     } catch {
       return structuredClone(DEFAULT_SAVE);

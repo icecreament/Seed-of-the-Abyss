@@ -1,0 +1,13 @@
+Use case: stylized-concept
+Asset type: original game protagonist character design sheet, NOT an animation sprite sheet.
+Primary request: Design the Warden protagonist of Seed of the Abyss, a top-down 2D action roguelike. Dark fantasy with invasive plant parasitism. A human survivor still resisting the organism, not a tree creature and not a lush forest druid.
+Output intent: landscape 1536x1024 PNG, one cohesive professional art-direction board.
+Subject identity invariants: damaged bone-white faceplate with a narrow dark eye slit; a pale teal seed embedded in the center of the breastplate; thin woody roots stitching together broken iron armor; one compact angular woody growth on the CHARACTER'S LEFT shoulder; a short broad chipped iron sword held in the CHARACTER'S RIGHT hand; faded dark-violet short cloth; human legs in worn boots. Restrained luminous veins, not a glowing body outline. No shield.
+Composition: about 55 percent of the board is a large full-body three-quarter front view with feet fully visible and the sword lowered in a guarded idle pose; about 25 percent is smaller consistent side and rear views; about 20 percent is three uncluttered close-up studies of the chest seed, parasitized shoulder and sword hilt, plus small palette swatches. Keep anatomy, handedness, costume and weapon identical across views.
+Style/medium: polished hand-painted game production concept art, readable graphic silhouettes, strong material separation and economical surface details. The design must translate to a small top-down pixel-art character; do not imitate low-resolution sprites in the main illustration. Clear helmet top plane and shoulder masses.
+Scene/backdrop: subdued charcoal-purple neutral board; no scenic illustration behind the character. Generous breathing room, clean editorial arrangement, no decorative frames.
+Materials: chipped dull iron, dry dark wood, cracked ivory faceplate, frayed cloth. Roots feel invasive and tense, not ornamental green vines.
+Lighting/mood: somber survival, soft neutral key light to show the design, small contained teal emission from the seed. No dramatic black shadows that hide equipment.
+Color palette: #0B0914 #16122A #3D3558 #E8E0D4 #3ECFBF, sparse #A87A1C metal accents. Brightness concentrated at the chest core.
+Text: no lettering, labels, logos, watermark or invented glyphs. Use visual callout placement rather than text.
+Avoid: oversized antlers, giant leaves, capes concealing the entire silhouette, sexualized armor, realistic gore, guns, ornate golden armor, giant glowing swords, modern HUD, extra limbs, inconsistent left/right shoulder design, a second protagonist, different evolution stages.

@@ -11,6 +11,8 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
+    // Generated evidence is not source; Windows may briefly lock copied screenshots.
+    watch: { ignored: ['**/output/**', '**/.scan-*/**', '**/release/**'] },
   },
   build: {
     target: 'es2020',

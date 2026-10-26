@@ -1,0 +1,21 @@
+'use strict';
+const assert=require('node:assert/strict'), fs=require('node:fs'), path=require('node:path'), vm=require('node:vm'), ts=require('typescript');
+const source=fs.readFileSync(path.resolve('src/systems/ReaverPursuit.ts'),'utf8');
+const code=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText;
+const m={exports:{}};vm.runInThisContext(`(function(module,exports){${code}\n})`)(m,m.exports);
+const {ReaverPursuit:P,pursuitTravel:travel,REAVER_PURSUIT:T}=m.exports;
+const OUT=path.resolve(process.env.SEED_REAVER_OUTPUT||'output/reaver-pursuit-v1/checks');fs.mkdirSync(OUT,{recursive:true});const checks=[];
+function check(name,fn){fn();checks.push({name,passed:true});console.log('PASS',name);}
+check('只有击杀授予机会，1200ms战斗时钟后过期',()=>{const p=new P();assert.ok(!p.available);p.earn();assert.equal(p.remaining,1200);p.update(1199);assert.ok(p.available);p.update(1);assert.ok(!p.available);});
+check('击杀只刷新不堆叠，异常delta不污染状态',()=>{const p=new P();p.earn();p.update(500);p.earn();assert.equal(p.remaining,1200);for(const d of [NaN,Infinity,-2,0])p.update(d);assert.equal(p.remaining,1200);});
+check('开始必须有机会、有效移动向量和0..64距离',()=>{const p=new P();assert.equal(p.start(1,0,64),false);p.earn();for(const a of [[0,0,30],[NaN,1,20],[1,0,NaN],[1,0,65],[1,0,0],[1,0,-1]])assert.equal(p.start(...a),false);assert.ok(p.available);assert.ok(p.start(3,4,64));assert.deepEqual(p.direction,{x:.6,y:.8});assert.equal(p.start(1,0,64),false);});
+check('运动结束前不能出刀，结束后只消费一次',()=>{const p=new P();p.earn();p.start(1,0,64);assert.equal(p.consumeStrike(),null);p.advancePhysics(1000/60*8);assert.ok(p.strikeReady);assert.deepEqual(p.consumeStrike(),{x:1,y:0});assert.equal(p.consumeStrike(),null);assert.ok(!p.active);});
+check('600ms物理追帧最多移动64px，不恢复旧速度',()=>{const p=new P();p.earn();p.start(1,0,64);let x=0;for(let i=0;i<36;i++){x+=p.velocityForStep(1000/60).x/60;p.advancePhysics(1000/60);}assert.ok(Math.abs(x-64)<1e-8);assert.deepEqual(p.velocityForStep(1000/60),{x:0,y:0});});
+check('战斗delta不替代物理距离预算，不把追步变成传送',()=>{const p=new P();p.earn();p.start(1,0,40);p.update(600);assert.ok(p.moving);assert.equal(p.consumeStrike(),null);});
+check('承诺期间的新击杀保留一次机会，不叠多个后续追步',()=>{const p=new P();p.earn();p.start(1,0,40);p.earn();p.earn();assert.ok(!p.available);p.advancePhysics(100);p.consumeStrike();assert.ok(p.available);assert.equal(p.remaining,1200);});
+check('取消同时清机会、运动和待出刀，后续物理步不复活',()=>{const p=new P();p.earn();p.start(1,0,64);p.cancel();p.advancePhysics(600);assert.ok(!p.available&&!p.active);assert.equal(p.consumeStrike(),null);assert.deepEqual(p.velocityForStep(16),{x:0,y:0});});
+check('刀内敌人优先普通攻击，追步只选刀外近敌',()=>{assert.equal(travel(70,0,1,0,1,0,56,14),null);assert.equal(travel(71,0,1,0,1,0,56,14),11);assert.equal(travel(124,0,1,0,1,0,56,14),64);assert.equal(travel(124.001,0,1,0,1,0,56,14),null);});
+check('不动、后退、横移、背后目标均不自动拉人',()=>{for(const a of [[100,0,0,0,1,0],[100,0,-1,0,1,0],[100,0,0,1,1,0],[-100,0,1,0,1,0],[100,60,1,0,1,0]])assert.equal(travel(...a,56,14),null);});
+check('非有限目标/负半径不会消耗机会',()=>{for(const a of [[NaN,0,1,0,1,0,56,14],[100,0,1,0,1,0,-1,14],[100,0,1,0,1,0,56,-1]])assert.equal(travel(...a),null);});
+check('10000个固定样本：任意方向/步长不超预算，端点可进原刀距',()=>{let seed=0x5eeda;const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/2**32;};for(let i=0;i<10000;i++){const a=random()*Math.PI*2,d=70.001+random()*53.999,x=Math.cos(a),y=Math.sin(a),t=travel(d*x,d*y,x,y,x,y,56,14);assert.ok(t>0&&t<=64);assert.ok(d-t<=70);const p=new P();p.earn();p.start(x,y,t);let moved=0;for(let j=0;j<100&&p.moving;j++){const dt=1+random()*60,v=p.velocityForStep(dt);moved+=Math.hypot(v.x,v.y)*dt/1000;p.advancePhysics(dt);}assert.ok(Math.abs(moved-t)<1e-7);}});
+fs.writeFileSync(path.join(OUT,'model-checks.json'),JSON.stringify({date:new Date().toISOString(),checks,randomSamples:10000},null,2));console.log(`Reaver pursuit model: ${checks.length}/${checks.length}`);

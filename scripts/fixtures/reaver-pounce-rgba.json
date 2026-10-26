@@ -1,0 +1,12 @@
+{
+  "pounce_reaver": {
+    "w": 192,
+    "h": 32,
+    "sha256": "5595d0cf54e07eea5d91d9410c832a2dd6d5e84031a976d28229eb05c1a8c41b"
+  },
+  "pounce_reaver_awakened": {
+    "w": 192,
+    "h": 32,
+    "sha256": "6f5bf04f33f29a482350a637ca6b1d6a927d95a2d80256f22b71c15f438b12a2"
+  }
+}

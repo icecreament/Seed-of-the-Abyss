@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME_HEIGHT, GAME_WIDTH } from '../game/config';
+import { GAME_HEIGHT, GAME_WIDTH, isTouchLikeDevice } from '../game/config';
 import { saveSystem } from '../systems/SaveSystem';
 import { runState } from '../systems/RunState';
 import { fadeInScene, goScene } from '../ui/transitions';
@@ -12,9 +12,12 @@ import {
   drawAbyssBackdrop,
 } from '../ui/SceneDecor';
 import { UI, UI_FONT, bodyStyle } from '../ui/theme';
-import { t } from '../i18n/i18n';
+import { i18n, t } from '../i18n/i18n';
+import { InputEdgeGuard } from '../input/InputEdgeGuard';
+import { MUTATIONS, mutationName } from '../systems/RunBuild';
 
 export class DeathScene extends Phaser.Scene {
+  private readonly retryEdges = new InputEdgeGuard();
   constructor() {
     super('Death');
   }
@@ -24,8 +27,10 @@ export class DeathScene extends Phaser.Scene {
     fadeInScene(this);
     drawAbyssBackdrop(this, { tileAlpha: 0.18 });
 
-    createSceneTitle(this, t('death_title'), 42, '30px');
-    createSceneSubtitle(this, t('death_subtitle'), 78);
+    const victory = run?.outcome === 'victory';
+    const abandoned = run?.outcome === 'abandoned';
+    createSceneTitle(this, t(victory ? 'chapter_victory' : abandoned ? 'chapter_abandoned' : 'death_title'), 42, '30px');
+    createSceneSubtitle(this, t(victory ? 'chapter_victory_sub' : abandoned ? 'chapter_abandoned_sub' : 'death_subtitle'), 78);
 
     // Ritual frame
     createPanel(this, GAME_WIDTH / 2, 320, 560, 360, {
@@ -94,7 +99,7 @@ export class DeathScene extends Phaser.Scene {
 
       const rewardLines = [
         `${t('death_damage')}: ${Math.floor(run.damageDealt)}`,
-        '',
+        [run.bestChain ? `${t('feel_best_chain')}: ${run.bestChain}` : '',run.eliteBreaks ? `${t('elite_breaks')}: ${run.eliteBreaks}` : ''].filter(Boolean).join(' · '),
         `+${result.gained}  ${t('death_gained')}`,
         `${t('death_essence_total')}: ${saveSystem.essence}`,
         `${t('death_seed_stage')}: ${saveSystem.seedStage}${
@@ -124,16 +129,46 @@ export class DeathScene extends Phaser.Scene {
           })
           .setOrigin(0.5)
           .setDepth(5);
-        this.cameras.main.flash(280, 80, 40, 100);
+        if(saveSystem.feedback.impactMotion)this.cameras.main.flash(280, 80, 40, 100);
       }
     }
 
-    createTextButton(this, GAME_WIDTH / 2 - 140, GAME_HEIGHT - 58, t('death_talents'), () => {
-      goScene(this, 'Talent');
-    }, { width: 180, height: 42, color: 0x1f2d3d, stroke: UI.teal, depth: 50 });
+    if (run?.mutations?.length) {
+      const names=run.mutations.map(id=>MUTATIONS.find(m=>m.id===id)).filter((m): m is NonNullable<typeof m>=>!!m).map(mutationName);
+      this.add.text(GAME_WIDTH/2,536,`${t('mutation_build')}: ${names.join(' · ')}`,{fontFamily:UI_FONT,fontSize:'12px',color:UI.textGood,align:'center',wordWrap:{width:850}}).setOrigin(0.5).setDepth(5);
+    }
 
-    createTextButton(this, GAME_WIDTH / 2 + 140, GAME_HEIGHT - 58, t('death_menu'), () => {
+    const retryClass = run?.classId ?? saveSystem.selectedClass;
+    let retrying = false;
+    const retry = () => {
+      if (retrying || !this.sys.isActive() || !this.input.enabled) return;
+      retrying = true;
+      // The finished run, not another screen's selection, defines 'same class'.
+      saveSystem.setSelectedClass(retryClass);
+      goScene(this, 'Run');
+    };
+    const hint = t('death_retry_class', { class: i18n.className(retryClass) }) +
+      (isTouchLikeDevice() ? '' : ` · ${t('death_retry_key')}`);
+    this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 112, hint, bodyStyle('12px', UI.textDim))
+      .setOrigin(0.5).setDepth(5);
+
+    createTextButton(this, GAME_WIDTH / 2 - 240, GAME_HEIGHT - 58, t('death_talents'), () => {
+      goScene(this, 'Talent');
+    }, { width: 200, height: 42, color: 0x1f2d3d, stroke: UI.teal, depth: 50 });
+
+    createTextButton(this, GAME_WIDTH / 2, GAME_HEIGHT - 58, t('death_retry'), retry,
+      { width: 220, height: 46, color: 0x173833, stroke: UI.teal, depth: 50 }).setData('action', 'retry');
+
+    createTextButton(this, GAME_WIDTH / 2 + 240, GAME_HEIGHT - 58, t('death_menu'), () => {
       goScene(this, 'Menu');
-    }, { width: 180, height: 42, color: 0x3d1f4a, stroke: UI.accent, depth: 50 });
+    }, { width: 200, height: 42, color: 0x3d1f4a, stroke: UI.accent, depth: 50 });
+
+    const onRetryKey = (event: KeyboardEvent) => {
+      if (this.retryEdges.accept(event)) retry();
+    };
+    this.input.keyboard?.on('keydown-R', onRetryKey);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.input.keyboard?.off('keydown-R', onRetryKey);
+    });
   }
 }

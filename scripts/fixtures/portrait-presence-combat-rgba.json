@@ -1,0 +1,13 @@
+{
+  "scope": "Pre-portrait-presence-v1 actual generated 448x32 combat atlas RGBA hashes. Portrait-only work must not alter these pixels. PNG encoding intentionally excluded.",
+  "hashes": {
+    "hero_warden": "61e97fad94f003ee98ddef4ad456ee25d189bba187c356407fbb213ec837ebda",
+    "hero_warden_awakened": "3b05aa4df88c3b3067f016f38c91e29fbc362f62f2edbe26af681cbc8691e2c1",
+    "hero_reaver": "c513a51494712d9a475132f67a8a3fb692e9558001b14c95887061326a64f473",
+    "hero_reaver_awakened": "38b6f4338dea42546a99df9fc32968098f9c9868ec26c14c2aa9a6a5851a3288",
+    "hero_shade": "89b926046ca71879d32c21c35a962f7217f623636cb3b9e71a30a45c42b6ad91",
+    "hero_shade_awakened": "a27f0c8d11a81c1fe686ef315e5eb8dc70b6d228d7b34d01e7e11d1d7667098a",
+    "hero_thorn": "07008f2d5d059b10ea0d64ba61026ca594537e659080bb1d7119d4d21737b062",
+    "hero_thorn_awakened": "68d06199a9c879487579e1f761a3b96cc369b523720a00957b533d67fb4fcb09"
+  }
+}

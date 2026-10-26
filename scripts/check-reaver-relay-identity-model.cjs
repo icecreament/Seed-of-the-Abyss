@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict'),ts=require('typescript');
+const OUT=path.resolve(process.env.SEED_RELAY_IDENTITY_OUTPUT||'output/reaver-relay-v4/identity-model-exploration');fs.mkdirSync(OUT,{recursive:true});
+const cache=new Map();function load(file){file=path.resolve(file);if(cache.has(file))return cache.get(file);const m={exports:{}};cache.set(file,m.exports);const code=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.CommonJS}}).outputText;vm.runInThisContext(`(function(module,exports,require){${code}\n})`)(m,m.exports,id=>load(path.resolve(path.dirname(file),id+'.ts')));return m.exports;}
+const {relayDebtPriority,relayMarkLayout}=load('src/systems/ReaverRelay.ts'),checks=[];
+function check(name,fn){fn();checks.push({name,passed:true});console.log('PASS',name);}
+check('Only real remaining pulses give inherited debt a priority',()=>{for(const n of [NaN,Infinity,-1,0,.9])for(const inherited of [true,false])assert.equal(relayDebtPriority(n,inherited),0);for(const n of [1,2,3,9]){assert.equal(relayDebtPriority(n,true),2);assert.equal(relayDebtPriority(n,false),1);}});
+check('Layouts reject expired or malformed debt without inventing a pip',()=>{for(const n of [NaN,Infinity,-1,0])assert.equal(relayMarkLayout(100,100,14,n),undefined);for(const args of [[NaN,1,14,2],[1,Infinity,14,2],[1,1,-1,2],[1,1,NaN,2]])assert.equal(relayMarkLayout(...args),undefined);});
+check('One to three centered static pips; pixel aligned and above the original HP bar',()=>{for(let n=1;n<=3;n++){const r=relayMarkLayout(100.4,200.3,14,n);assert.deepEqual({x:r.x,y:r.y},{x:100,y:160});assert.equal(r.pips.length,n);assert.equal(r.pips.reduce((a,p)=>a+p.x+1,0)/n,r.x);for(const p of r.pips){assert.ok(Number.isInteger(p.x)&&Number.isInteger(p.y));assert.ok(p.y+3<200.3-28);}}});
+check('Layout bounds pulses and remains pure across repeated reads',()=>{const a=[100,200,14,20],old=[...a];assert.deepEqual(relayMarkLayout(...a),relayMarkLayout(...a));assert.equal(relayMarkLayout(...a).pips.length,3);assert.deepEqual(a,old);});
+fs.writeFileSync(path.join(OUT,'identity-model.json'),JSON.stringify({scope:'Pure display/ranking checks only; no runtime or natural-input claim.',checks},null,2));
+console.log(`Relay identity model: ${checks.length}/${checks.length}`);

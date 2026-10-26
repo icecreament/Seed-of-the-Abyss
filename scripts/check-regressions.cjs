@@ -148,6 +148,8 @@ class VisualStub extends Rectangle {
   setText(text) { assert.ok(this.scene, '销毁后仍刷新旧文本'); this.text = text; return this; }
   setTint() { return this; }
   setColor() { return this; }
+  // 绘制仍由浏览器测试覆盖；这里只记录 Phaser Text 描边样式，不替换矩阵/命中测试。
+  setStroke(color, thickness = 1) { this.style = { ...this.style, stroke: color, strokeThickness: thickness }; return this; }
   play() { return this; }
 }
 function setupScene(scene = new SceneStub('Fixture'), scale = 1) {
@@ -207,7 +209,7 @@ function setupScene(scene = new SceneStub('Fixture'), scale = 1) {
     sprite: (x, y, key) => add(Object.assign(new VisualStub(scene, x, y), { textureKey: key })),
   };
   scene.anims = { exists: () => false };
-  // 纹理集合按真实资源建模：四个职业各有一张 64×80 展示肖像。
+  // 纹理集合按真实资源建模：四个职业各有一张 128×160 展示肖像，界面占位保持不变。
   const knownTextures = new Set([
     'portrait_warden', 'portrait_reaver', 'portrait_shade', 'portrait_thorn',
     'hero_warden', 'hero_reaver', 'hero_shade', 'hero_thorn',
@@ -250,7 +252,7 @@ function renderedObjects(scene) {
 }
 function pointerAt(scene, x, y, id = 1, wasTouch = true) {
   const scale = scene.scale.width / 1280;
-  return { id, x: x * scale, y: y * scale, wasTouch, isDown: true,
+  return { id, x: x * scale, y: y * scale, wasTouch, button: 0, isDown: true,
     downElement: scene.input.manager.game.canvas, upElement: scene.input.manager.game.canvas,
     leftButtonDown() { return this.isDown; } };
 }
@@ -284,7 +286,11 @@ function runFixture(scale = 1) {
   const scene = setupScene(new RunScene(), scale);
   // 暂停会暂停玩家/敌人动画，桩必须提供 anims，否则测到的是桩的缺口而非真实行为。
   scene.player = {
-    x: 896, y: 608, classId: 'warden', setVelocity() {},
+    x: 896, y: 608, classId: 'warden', setVelocity() {}, queueAttack() { this.queuedAttacks=(this.queuedAttacks??0)+1; },
+    // This fixture exercises HUD/input with a non-pursuing Warden. Real pursuit physics
+    // and lifecycle cancellation use an actual Player in the browser suite.
+    resumePursuit() { this.pursuitResumes=(this.pursuitResumes??0)+1; },
+    stopCombat() { this.combatStopped=true; this.setVelocity(0,0); },
     anims: { pause() {}, resume() {} },
     moveIntent: new Vector2(), aimIntent: new Vector2(1, 0),
   };
@@ -298,6 +304,11 @@ function runFixture(scale = 1) {
   scene.addHudObjects([scene.virtual.root]);
   for (const name of ['keyW', 'keyA', 'keyS', 'keyD', 'keySpace']) scene[name] = { isDown: false, _justDown: false };
   scene.cursors = { left: {}, right: {}, up: {}, down: {} };
+  // Keyboard manager is not booted in this fixture; connect the actual production
+  // mouse handlers to the real InputPlugin dispatch, rather than fake global hold.
+  scene.input.on('pointerdown', scene.onAttackPointer);
+  scene.input.on('pointerup', scene.onAttackRelease);
+  scene.input.on('pointerupoutside', scene.onAttackRelease);
   return scene;
 }
 
@@ -341,7 +352,7 @@ for (const scale of scales) {
     near(s.hudRoot.y, (720 * scale - 720) / 2);
     s.virtual.show();
     const objects = [s.hudText, s.floorText, s.bannerText, s.pauseButton.list[0], s.virtual.attackBtn.list[0]];
-    const coordinates = [[18, 52], [1260, 14], [640, 90], [1218, 92], [1190, 630]];
+    const coordinates = [[304, 57], [1044, 32], [640, 132], [1218, 92], [1190, 630]];
     for (const [px, py] of [[896, 608], [100, 100], [1700, 1100], [1200, 840]]) {
       s.player.x = px; s.player.y = py; s.syncHudScale();
       objects.forEach((object, i) => {
@@ -373,8 +384,8 @@ for (const scale of scales) {
       assert.equal(s.paused, false); assert.equal(s.physics.world.paused, false);
       assert.equal(s.pauseRoot, undefined); assert.equal(bg.scene, undefined);
       s.time.flush();
-      if (kind === 'resume') { assert.equal(s.virtual.isVisible, true); assert.equal(s.input.enabled, true); }
-      else { assert.equal(s.ended, true); assert.equal(s.input.enabled, false); assert.equal(runState.lastRun.classId, 'warden'); assert.deepEqual(s.starts, [['Death']]); }
+      if (kind === 'resume') { assert.equal(s.player.pursuitResumes, 1); assert.equal(s.virtual.isVisible, true); assert.equal(s.input.enabled, true); }
+      else { assert.equal(s.player.combatStopped, true); assert.equal(s.ended, true); assert.equal(s.input.enabled, false); assert.equal(runState.lastRun.classId, 'warden'); assert.deepEqual(s.starts, [['Death']]); }
     });
   }
   test(`倍率 ${scale} 暂停中触摸和 show 不唤醒，继续恢复可见性`, () => {
@@ -759,7 +770,7 @@ for (const scale of scales) {
       const portraits = s.children.list.filter(o => o.textureKey?.startsWith('portrait_'));
       assert.equal(portraits.length, 4);
       assert.deepEqual(portraits.map(o => o.textureKey), ['portrait_warden', 'portrait_reaver', 'portrait_shade', 'portrait_thorn']);
-      assert.ok(portraits.every(o => o.scaleX === 2 && !o.input));
+      assert.ok(portraits.every(o => o.scaleX === 1 && !o.input));
       const p = pointerAt(s, x, y);
       assert.equal(hitObjects(s, p).length, 1);
       dispatch(s, 'down', p); dispatch(s, 'up', p);
@@ -777,7 +788,7 @@ for (const scale of scales) {
     const raw = localStorage.getItem(SAVE_KEY);
     const portraits = s.children.list.filter(o => o.textureKey?.startsWith('portrait_'));
     assert.equal(portraits.length, 4);
-    assert.ok(portraits.every(o => o.scaleX === 3 && !o.input));
+    assert.ok(portraits.every(o => o.scaleX === 1.5 && !o.input));
     for (const card of s.cards) {
       // 卡宽 272：内边角 120px 命中，158px 已落在卡外。
       for (const [x, y] of [[card.bg.x, 310], [card.bg.x - 120, 490], [card.bg.x + 120, 116]]) {
@@ -807,6 +818,194 @@ test('Run.shutdown：解绑倍率监听，销毁HUD后切换倍率不会访问�
   assert.equal(s.pauseRoot, undefined);
   s.hudRoot.destroy(true);
   assert.doesNotThrow(() => applyScale(s, 2));
+});
+
+// Pure pixel raster checks use the production drawers, not snapshots of their source text.
+const { drawParasiticWarden, drawParasiticWardenPortrait } = loadTs('src/assets/ParasiticWarden.ts');
+function raster(width, height) {
+  const pixels = Array(width * height).fill(null);
+  return {
+    w: width, h: height, pixels,
+    p(x, y, color) { if (x >= 0 && y >= 0 && x < width && y < height) pixels[(y|0)*width+(x|0)] = color; },
+    rect(x, y, w, h, color) { for (let yy=y|0; yy<(y|0)+(h|0); yy++) for (let xx=x|0; xx<(x|0)+(w|0); xx++) this.p(xx,yy,color); },
+    blit(x, y, rows, palette) { rows.forEach((row, yy) => [...row].forEach((key, xx) => { if (palette[key]) this.p(x+xx,y+yy,palette[key]); })); },
+  };
+}
+test('守望者像素：14个生产姿态有效，四帧呼吸脚底锚点相同', () => {
+  const frames = Array.from({length:14}, (_,i) => { const r=raster(32,32); drawParasiticWarden(r,i); return r; });
+  for (const frame of frames) {
+    assert.ok(frame.pixels.filter(Boolean).length > 230);
+    assert.ok(frame.pixels.includes('#e8e0c9'), '骨白面甲不能丢失');
+    assert.ok(frame.pixels.includes('#245a55'), '种子核心不能丢失');
+  }
+  const soles = frames[4].pixels.slice(27*32,29*32);
+  for (let i=5;i<=7;i++) assert.deepEqual(frames[i].pixels.slice(27*32,29*32),soles);
+  assert.notDeepEqual(frames[4].pixels,frames[5].pixels,'呼吸不是重复同一静态帧');
+});
+test('守望者像素：挥剑四帧各异，冲刺与受击不复用待机', () => {
+  const frames = Array.from({length:14}, (_,i) => { const r=raster(32,32); drawParasiticWarden(r,i); return r.pixels; });
+  for (let i=8;i<11;i++) assert.notDeepEqual(frames[i],frames[i+1]);
+  assert.notDeepEqual(frames[12],frames[4]);
+  assert.notDeepEqual(frames[13],frames[4]);
+});
+test('守望者展示肖像：透明底，骨白面甲／木肩／胸核与战斗素材一致', () => {
+  const r=raster(128,160); drawParasiticWardenPortrait(r);
+  assert.ok(r.pixels.filter(Boolean).length > 1300);
+  for (const color of ['#e8e0c9','#414337','#3ecfbf','#b6f0d5']) assert.ok(r.pixels.includes(color),color);
+  assert.equal(r.pixels[0],null);
+  assert.equal(r.pixels[159*128+127],null);
+});
+const heroArt = loadTs('src/assets/AbyssHeroes.ts');
+for (const [name, drawer, portrait, colors] of [
+  ['掠夺者', heroArt.drawReaver, heroArt.drawReaverPortrait, ['#10131c','#ac3b43','#50555b','#e36959']],
+  ['影行者', heroArt.drawShade, heroArt.drawShadePortrait, ['#10131c','#383052','#55456e','#7bbbbd']],
+  ['棘语者', heroArt.drawThorn, heroArt.drawThornPortrait, ['#10131c','#4d6e4a','#c7aa63','#e8dfb1']],
+]) {
+  test(`${name}像素：14帧非空、保留职业标记且不越出32×32单元`, () => {
+    for (let i=0;i<14;i++) {
+      // A larger target exposes right/bottom overflow that the production cell would clip.
+      const r=raster(64,64); drawer(r,i);
+      assert.ok(r.pixels.filter(Boolean).length > 180, `帧${i}`);
+      colors.forEach(color => assert.ok(r.pixels.includes(color),`帧${i}: ${color}`));
+      for (let y=0;y<64;y++) for (let x=0;x<64;x++) {
+        if (x>=32 || y>=32) assert.equal(r.pixels[y*64+x],null,`帧${i}越界(${x},${y})`);
+      }
+      assert.equal(r.pixels[0],null);
+    }
+  });
+  test(`${name}像素：呼吸不滑脚、四段攻击不同、冲刺与受击独立`, () => {
+    const frames=Array.from({length:14},(_,i)=>{const r=raster(32,32);drawer(r,i);return r;});
+    const soles = frame => frame.pixels.slice(27*32,29*32).filter((_,i)=>i%32>=8 && i%32<24);
+    for (let i=5;i<=7;i++) assert.deepEqual(soles(frames[i]),soles(frames[4]));
+    for (const [a,b] of [[4,5],[5,6],[6,7],[8,9],[9,10],[10,11],[12,4],[13,4]]) {
+      assert.notDeepEqual(frames[a].pixels,frames[b].pixels,`帧${a}不能复用帧${b}`);
+    }
+  });
+  test(`${name}肖像：128×160透明底、同职业配色、靴底对齐`, () => {
+    const r=raster(128,160); portrait(r);
+    assert.ok(r.pixels.filter(Boolean).length>1000);
+    assert.equal(r.pixels[0],null);
+    assert.equal(r.pixels[159*128+127],null);
+    colors.forEach(color=>assert.ok(r.pixels.includes(color),color));
+    assert.ok(r.pixels.slice(148*128,150*128).some(Boolean),'鞋底位于y148–149');
+  });
+}
+const portraitArt = loadTs('src/assets/HeroPortraits.ts');
+test('展示肖像分辨率翻倍，菜单／职业卡尺寸和脚底世界坐标不变', () => {
+  const {PORTRAIT_WIDTH:w,PORTRAIT_HEIGHT:h,PORTRAIT_MENU_SCALE:menu,PORTRAIT_CARD_SCALE:card}=portraitArt;
+  assert.deepEqual([w,h],[128,160]);
+  near(w*menu,128);near(h*menu,160);near(w*card,192);near(h*card,240);
+  near((150-h/2)*menu,(75-80/2)*2);
+  near((150-h/2)*card,(75-80/2)*3);
+});
+for (const [name,draw] of [
+  ['守望者',portraitArt.drawWardenPortrait],['掠夺者',portraitArt.drawReaverPortrait],
+  ['影行者',portraitArt.drawShadePortrait],['棘语者',portraitArt.drawThornPortrait],
+]) {
+  test(`${name}新肖像：原生细节非简单放大、无裁边、透明边距、绘制确定性`,()=>{
+    const a=raster(128,160),b=raster(128,160);draw(a);draw(b);
+    assert.deepEqual(a.pixels,b.pixels);
+    const wide=raster(192,224);draw(wide);
+    let detail=0,visible=0;
+    for(let y=0;y<224;y++)for(let x=0;x<192;x++){
+      if(wide.pixels[y*192+x]){
+        visible++;assert.ok(x>=2&&x<126&&y>=2&&y<150,`越过肖像透明边界(${x},${y})`);
+      }
+    }
+    assert.ok(visible>6000,'完整全身构图，不能只有局部叠加');
+    for(let y=0;y<160;y+=2)for(let x=0;x<128;x+=2){
+      if(new Set([a.pixels[y*128+x],a.pixels[y*128+x+1],a.pixels[(y+1)*128+x],a.pixels[(y+1)*128+x+1]]).size>1)detail++;
+    }
+    assert.ok(detail>200,`必须包含原生单像素细节，实际${detail}`);
+    assert.ok(a.pixels.slice(148*128,150*128).some(Boolean));
+  });
+}
+
+test('四职业动画：统一14帧、完整五种姿态、快速攻击不截断第四帧、重复注册安全', () => {
+  const { registerPixelAnimations }=loadTs('src/assets/PixelFactory.ts');
+  const { HERO_TEXTURES }=loadTs('src/data/classes.ts');
+  const textures=new Map(), animations=new Map();
+  const scene={
+    textures:{get(key){
+      if(!textures.has(key)) textures.set(key,{frameTotal:1,frames:[],getSourceImage:()=>({width:key.startsWith('hero_')?448:96}),add(i,_s,x,y,w,h){this.frames.push({i,x,y,w,h});this.frameTotal++;}});
+      return textures.get(key);
+    }},
+    anims:{exists:key=>animations.has(key),create:config=>animations.set(config.key,config)},
+  };
+  registerPixelAnimations(scene);
+  const count=animations.size;
+  for(const cls of CLASS_LIST){
+    for (const key of [HERO_TEXTURES[cls.id], `${HERO_TEXTURES[cls.id]}_awakened`]) {
+    assert.equal(textures.get(key).frames.length,14);
+    for(const [pose,frames] of Object.entries({idle:[4,5,6,7],walk:[0,1,2,3],attack:[8,9,10,11],dash:[12],hurt:[13]})){
+      const anim=animations.get(`${key}_${pose}`);
+      assert.deepEqual(anim.frames.map(f=>f.frame),frames);
+      assert.equal(anim.repeat,['idle','walk'].includes(pose)?-1:0);
+    }
+    near(4000/animations.get(`${key}_attack`).frameRate,Math.min(250,cls.attackCooldown));
+    }
+  }
+  registerPixelAnimations(scene);
+  assert.equal(animations.size,count);
+  assert.ok([...textures.values()].filter(t=>t.frames.length===14).length===8);
+});
+
+test('四职业觉醒：只由各自代表突变激活，名称双语且新局不继承', () => {
+  const {AWAKENINGS,isAwakened,portraitKey,awakenedHeroKey}=loadTs('src/data/awakenings.ts');
+  const {MUTATIONS,RunBuild}=loadTs('src/systems/RunBuild.ts');
+  const triggers=new Set();
+  for(const {id} of CLASS_LIST){
+    const a=AWAKENINGS[id],build=new RunBuild(id);triggers.add(a.mutation);
+    assert.equal(MUTATIONS.find(m=>m.id===a.mutation).owner,id);
+    assert.equal(a.name.length,2);assert.ok(a.name.every(n=>n.length>1));
+    assert.equal(isAwakened(id,build.owned),false);
+    build.acquire('shared_feast');assert.equal(isAwakened(id,build.owned),false);
+    build.acquire(a.mutation);assert.equal(isAwakened(id,build.owned),true);
+    for(const other of CLASS_LIST.filter(c=>c.id!==id))assert.equal(isAwakened(other.id,build.owned),false);
+    assert.equal(awakenedHeroKey(id),`hero_${id}_awakened`);
+    assert.equal(portraitKey(id,true),`portrait_${id}_awakened`);
+    assert.equal(portraitKey(id),`portrait_${id}`);
+    assert.equal(isAwakened(id,new RunBuild(id).owned),false);
+  }
+  assert.equal(triggers.size,4);
+});
+test('四职业觉醒绘制：确定性、14帧无越界、脚底不变、肖像保持透明边距', () => {
+  const {drawAwakenedHero,drawAwakenedPortrait}=loadTs('src/assets/HeroAwakening.ts');
+  for(const {id} of CLASS_LIST){
+    for(let frame=0;frame<14;frame++){
+      const draw=()=>{const r=raster(32,32),p=r.p;r.p=function(x,y,c){assert.ok(x>=0&&x<32&&y>=0&&y<32,`${id} ${frame} ${x},${y}`);p.call(r,x,y,c);};drawAwakenedHero(r,id,frame,false);drawAwakenedHero(r,id,frame,true);return r;};
+      const a=draw(),b=draw();assert.deepEqual(a.pixels,b.pixels);assert.ok(a.pixels.filter(Boolean).length>30);assert.ok(a.pixels.slice(26*32).every(p=>!p));
+    }
+    const a=raster(128,160),b=raster(128,160);
+    for(const r of [a,b]){drawAwakenedPortrait(r,id,false);drawAwakenedPortrait(r,id,true);}
+    assert.deepEqual(a.pixels,b.pixels);assert.ok(a.pixels.filter(Boolean).length>200);
+    for(let y=0;y<160;y++){assert.equal(a.pixels[y*128],null);assert.equal(a.pixels[y*128+127],null);}
+    assert.ok(a.pixels.slice(150*128).every(p=>!p));
+  }
+});
+
+test('新版HUD：真实生命／冷却／楼层进度／计时映射，移动端隐藏重复卡片', () => {
+  const s=runFixture();
+  s.player.stats={hp:35,maxHp:140,attackCooldown:300,dashCooldown:900,skillCooldown:7000};
+  const timers={attack:0,dash:450,skill:3200};
+  s.player.cooldownRemaining=action=>timers[action];
+  s.floor=3; s.floorKills=18; s.kills=23; s.floorTimer=9000; s.timeAlive=65;
+  s.updateHud(200);
+  assert.equal(s.hudText.text,'35 / 140');
+  assert.equal(s.killsText.text,'击杀  23');
+  assert.equal(s.elapsedText.text,'01:05');
+  assert.equal(s.floorProgressText.text,'50%');
+  assert.deepEqual(s.abilityTexts.map(text=>text.text),['就绪','0.5s','3.2s']);
+  assert.equal(s.abilityRoot.parentContainer,s.hudRoot);
+  assert.ok(s.abilityTexts.every(text=>text.parentContainer===s.abilityRoot));
+  assert.equal(s.abilityRoot.visible,true);
+  s.virtual.show(); s.updateHud();
+  assert.equal(s.abilityRoot.visible,false);
+  assert.equal(s.identityRoot.visible,false);
+  assert.deepEqual(s.virtual.cooldownSteps,[100,50,54]);
+  s.virtual.hide(); s.updateHud();
+  assert.equal(s.abilityRoot.visible,true);
+  shutdown(s);
 });
 
 test('依赖锁：Electron和electron-builder声明、根锁与安装锁版本一致', () => {

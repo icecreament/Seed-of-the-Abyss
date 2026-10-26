@@ -26,7 +26,7 @@ export function createTextButton(
   const w = opts?.width ?? 240;
   const h = opts?.height ?? 48;
   const color = opts?.color ?? UI.panelAlt;
-  const stroke = opts?.stroke ?? UI.strokeBright;
+  const stroke = opts?.stroke ?? UI.rootLight;
   const depth = opts?.depth ?? 80;
 
   const container = scene.add.container(x, y).setDepth(depth);
@@ -43,9 +43,17 @@ export function createTextButton(
     })
     .setOrigin(0.5);
 
-  const line = scene.add.rectangle(0, h / 2 - 2, Math.min(w - 24, 120), 2, UI.accent, 0.55);
+  const line = scene.add.rectangle(0, h / 2 - 2, Math.min(w - 24, 72), 1, stroke, 0.55);
+  const roots = scene.add.graphics();
+  roots.lineStyle(1, UI.rootLight, 0.5);
+  for (const side of [-1, 1]) {
+    const edge = side * (w / 2 - 6);
+    roots.beginPath().moveTo(edge, -h/2+6).lineTo(edge-side*5, -h/2+13)
+      .lineTo(edge-side*4, -h/2+19).strokePath();
+    roots.lineBetween(edge-side*5,-h/2+13,edge-side*12,-h/2+12);
+  }
 
-  container.add([bg, line, text]);
+  container.add([bg, line, text, roots]);
   container.setSize(w, h);
 
   // Hit exactly the drawn button. Origin of rectangle is center by default,
@@ -57,10 +65,12 @@ export function createTextButton(
 
   const paintIdle = () => {
     bg.setFillStyle(color, 0.96);
-    line.setFillStyle(UI.accent, 0.55);
+    line.setFillStyle(stroke, 0.55);
+    bg.setStrokeStyle(1, stroke, 0.75);
   };
   const paintHover = () => {
-    bg.setFillStyle(0x3a3058, 1);
+    bg.setFillStyle(0x273b38, 1);
+    bg.setStrokeStyle(1, UI.teal, 0.85);
     line.setFillStyle(UI.teal, 0.9);
   };
   const paintDown = () => {

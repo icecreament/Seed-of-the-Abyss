@@ -1,0 +1,87 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const OUT=path.resolve(process.env.SEED_IMPACT_AUDIO_OUTPUT||'output/impact-audio-v1/browser');fs.mkdirSync(OUT,{recursive:true});
+const checks=[],errors=[];let page;
+async function check(name,fn){try{const detail=await fn();checks.push({name,passed:true,detail});console.log('PASS',name);}catch(e){checks.push({name,passed:false,error:String(e.stack),state:await page.evaluate(()=>({requests:window.audioRequests,started:window.startedVoices,hp:window.target?.hp,player:window.__seedGame.scene.getScene('Run').player?.x})).catch(()=>null)});await page.screenshot({path:path.join(OUT,'failure.png')}).catch(()=>{});throw e;}}
+async function start(id='warden'){
+ for(const key of ['Space','w','a','s','d','q','Shift','Escape'])await page.keyboard.up(key);
+ await page.evaluate(id=>{const g=window.__seedGame;window.oldPlayer=g.scene.getScene('Run').player;window.__seedDev.saveSystem.setSelectedClass(id);window.__seedDev.saveSystem.setFeedback({sfxVolume:.55,impactMotion:false});for(const k of ['Menu','Run','Death','Settings'])g.scene.stop(k);g.scene.start('Run');},id);
+ await page.waitForFunction(id=>{const s=window.__seedGame.scene.getScene('Run');return s.sys.isActive()&&s.player!==window.oldPlayer&&s.player.classId===id&&s.cameras.main.fadeEffect.alpha===0;},id);
+ // A real browser input gesture, not an autoplay flag or mocked AudioContext.
+ await page.keyboard.press('a');await page.waitForFunction(()=>window.__seedGame.scene.getScene('Run').audio.state==='running');
+ await page.evaluate(async()=>{
+  const s=window.__seedGame.scene.getScene('Run'),p=s.player,a=s.audio,{Enemy}=await import('/src/entities/Enemy.ts');
+  s.enemies.clear(true,true);s.spawnTimer=s.floorTimer=-1e9;s.paused=true;s.physics.world.pause();
+  p.setPosition(1100,950);p.body.reset(p.x,p.y);p.setVelocity(0,0);p.moveIntent.set(0,0);p.aimIntent.set(1,0);p.stats.critChance=0;p.updateEntity(1);
+  window.foe=(dx=45,dy=0)=>{const e=new Enemy(s,p.x+dx,p.y+dy,'crawler',1,false,0);e.hp=e.maxHp=600;e.speed=0;s.enemies.add(e);e.body.reset(e.x,e.y);e.body.updateFromGameObject();window.target=e;return e;};
+  window.attack=(held=false,direction)=>{const paused=s.paused;s.paused=false;try{s.tryPlayerAttack(held,direction);}finally{s.paused=paused;}};
+  window.guard=()=>{p.wantSkill=true;p.updateEntity(1);p.wantSkill=false;s.consumeCombatEvents();p.updateEntity(201);p.applyDamage(20);s.consumeCombatEvents();p.updateEntity(121);};
+  window.stealth=()=>{p.wantSkill=true;p.updateEntity(1);p.wantSkill=false;s.consumeCombatEvents();p.updateEntity(161);};
+  window.step=()=>{s.physics.world.resume();s.physics.world.update(performance.now(),8*1000/60);s.physics.world.postUpdate();s.physics.world.pause();};
+  window.audioRequests=[];window.startedVoices=[];
+  const play=a.play.bind(a);a.play=(...args)=>{window.audioRequests.push(args);return play(...args);};
+  const create=a.context.createBufferSource.bind(a.context);
+  a.context.createBufferSource=()=>{const source=create(),start=source.start.bind(source),connect=source.connect.bind(source);let panner;
+   source.connect=(node,...args)=>{panner=node;return connect(node,...args);};
+   source.start=(...args)=>{window.startedVoices.push({key:[...a.buffers].find(([,v])=>v===source.buffer)?.[0],pan:panner?.pan?.value,time:a.context.currentTime});return start(...args);};return source;};
+  window.cleanAudio=()=>{a.stopVoices();a.last.clear();window.audioRequests=[];window.startedVoices=[];};window.cleanAudio();
+  window.snapshot=()=>({requests:window.audioRequests.map(r=>r[0]),started:window.startedVoices.map(r=>({...r})),voices:a.activeVoices});
+ });
+}
+const types=r=>r.started.map(v=>v.key.split(':')[0]);
+const impacts=r=>types(r).filter(t=>['hit','crit','reprisal','rip','ambush','bloom'].includes(t));
+(async()=>{
+ const browser=await chromium.launch({headless:true,executablePath:process.env.EDGE_EXECUTABLE||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
+ const context=await browser.newContext({viewport:{width:1280,height:720}});page=await context.newPage();page.on('pageerror',e=>errors.push(String(e.stack)));
+ try{
+  await page.goto(process.env.SEED_TEST_URL||'http://127.0.0.1:5173');await page.waitForFunction(()=>window.__seedGame?.scene.getScene('Menu')?.sys.isActive());
+  await check('Four real ordinary attacks retain original damage and route one material impact per update; Thorn travels before contact',async()=>{
+   const rows=[];for(const id of ['warden','reaver','shade','thorn']){await start(id);const r=await page.evaluate(async id=>{const s=window.__seedGame.scene.getScene('Run'),e=window.foe(id==='thorn'?180:45);if(id!=='thorn')window.foe(44,10);window.attack();const beforeTravel=e.hp;if(id==='thorn')s.updateProjectiles(400);await Promise.resolve();return{id,hp:e.hp,beforeTravel,...window.snapshot()};},id);assert.equal(600-r.hp,{warden:16,reaver:19,shade:15,thorn:10}[id]);assert.deepEqual(impacts(r),['hit']);if(id==='thorn')assert.equal(r.beforeTravel,600);rows.push(r);}return rows;
+  });
+  await check('Four actual forced-critical attacks route their class crit rather than an ordinary material or payoff',async()=>{
+   const rows=[];for(const id of ['warden','reaver','shade','thorn']){await start(id);const r=await page.evaluate(async id=>{const s=window.__seedGame.scene.getScene('Run'),e=window.foe(id==='thorn'?180:45);s.player.stats.critChance=1;window.attack();if(id==='thorn')s.updateProjectiles(400);await Promise.resolve();return{id,hp:e.hp,...window.snapshot()};},id);assert.ok(r.hp<600);assert.deepEqual(impacts(r),['crit']);assert.equal(r.started.find(v=>v.key.startsWith('crit:')).key,`crit:${id}:0`);rows.push(r);}return rows;
+  });
+  await check('Actual paid guard -> reprisal hits two enemies for 31 each; one reprisal replaces both hits, not a second parry',async()=>{
+   await start();const r=await page.evaluate(async()=>{const s=window.__seedGame.scene.getScene('Run');window.guard();const e=window.foe(),other=window.foe(44,10);window.cleanAudio();window.attack();window.attack();await Promise.resolve();return{hp:[e.hp,other.hp],remaining:s.player.reprisalDamage,...window.snapshot()};});assert.deepEqual(r.hp,[569,569]);assert.equal(r.remaining,0);assert.deepEqual(impacts(r),['reprisal']);assert.ok(!types(r).includes('parry'));assert.equal(r.requests.filter(t=>t==='reprisal').length,1);return r;
+  });
+  await check('Reaver earns bleed with a real basic, spends its three pulses on actual pursuit, then accepts only rip for original-target 34 damage',async()=>{
+   await start('reaver');const r=await page.evaluate(async()=>{const s=window.__seedGame.scene.getScene('Run'),p=s.player,e=window.foe();s.build.acquire('reaver_bleed');window.attack();await Promise.resolve();const basicHp=e.hp,bleed=s.marks.get(e)?.bleed;p.updateEntity(301);p.moveIntent.set(1,0);e.setPosition(p.x+110,p.y);e.body.reset(e.x,e.y);e.setVelocity(0,0);window.cleanAudio();window.attack();const committed={same:s.pursuitBrand?.target===e,pulses:s.pursuitBrand?.pulses,remaining:s.marks.get(e)?.bleed??0,hp:e.hp};window.step();const direction=p.consumePursuitStrike();if(direction)window.attack(false,direction);await Promise.resolve();return{basicHp,bleed,committed,direction,hp:e.hp,focus:s.bloodFocus.current,...window.snapshot()};});assert.equal(r.basicHp,581);assert.equal(r.bleed,3100);assert.deepEqual(r.committed,{same:true,pulses:3,remaining:0,hp:581});assert.ok(r.direction);assert.equal(r.hp,547);assert.equal(r.focus.stage,'hit');assert.deepEqual(impacts(r),['rip']);return r;
+  });
+  await check('Paid pursuit whose original target escapes cannot transfer rip to the ordinary-hit bystander',async()=>{
+   await start('reaver');const r=await page.evaluate(async()=>{const s=window.__seedGame.scene.getScene('Run'),p=s.player,e=window.foe();s.build.acquire('reaver_bleed');window.attack();await Promise.resolve();p.updateEntity(301);p.moveIntent.set(1,0);e.setPosition(p.x+110,p.y);e.body.reset(e.x,e.y);e.setVelocity(0,0);window.attack();const paid=s.pursuitBrand?.pulses;e.setPosition(p.x-150,p.y+100);e.body.reset(e.x,e.y);const other=window.foe(105);window.cleanAudio();window.step();const direction=p.consumePursuitStrike();if(direction)window.attack(false,direction);await Promise.resolve();return{paid,original:e.hp,other:other.hp,focus:s.bloodFocus.current,...window.snapshot()};});assert.equal(r.paid,3);assert.equal(r.original,581);assert.equal(r.other,581);assert.equal(r.focus.stage,'miss');assert.deepEqual(impacts(r),['hit']);return r;
+  });
+  await check('Actual stealth-consuming ambush pays 33 on each target; only first confirmed contact supplies ambush/pan',async()=>{
+   await start('shade');const r=await page.evaluate(async()=>{window.stealth();const e=window.foe(),other=window.foe(44,10);window.cleanAudio();window.attack();await Promise.resolve();return{hp:[e.hp,other.hp],...window.snapshot()};});assert.deepEqual(r.hp,[567,567]);assert.deepEqual(impacts(r),['ambush']);assert.equal(r.requests.filter(t=>t==='ambush').length,1);assert.ok(Math.abs(r.started.find(v=>v.key==='ambush:shade:0').pan-.09)<.00001);return r;
+  });
+  await check('Thorn plants three real projectile basics then detonates 27 seed damage; original bloom replaces generic hit',async()=>{
+   await start('thorn');const r=await page.evaluate(async()=>{const s=window.__seedGame.scene.getScene('Run'),p=s.player,e=window.foe(180);s.build.acquire('thorn_seeds');for(let n=0;n<3;n++){window.attack();s.updateProjectiles(400);p.updateEntity(221);e.setVelocity(0,0);}await Promise.resolve();const before=e.hp,seeds=s.marks.get(e)?.seeds;window.cleanAudio();s.fireNova();await Promise.resolve();return{before,seeds,hp:e.hp,remaining:s.marks.get(e)?.seeds,...window.snapshot()};});assert.equal(r.before,570);assert.equal(r.seeds,3);assert.equal(r.hp,543);assert.equal(r.remaining,0);assert.deepEqual(impacts(r),['bloom']);return r;
+  });
+  await check('No earned accent for ordinary/empty/unpaid or cooling-down attacks, rejected HP damage, or passive bleed',async()=>{
+   const rows=[];
+   for(const id of ['warden','reaver','shade']){await start(id);const r=await page.evaluate(async()=>{window.attack();window.attack();await Promise.resolve();return window.snapshot();});assert.deepEqual(impacts(r),[]);rows.push({id,...r});}
+   await start('shade');const miss=await page.evaluate(async()=>{window.stealth();window.cleanAudio();window.attack();await Promise.resolve();return window.snapshot();});assert.deepEqual(impacts(miss),[]);rows.push({id:'empty-ambush',...miss});
+   await start();const rejected=await page.evaluate(async()=>{window.guard();const e=window.foe();e.takeDamage=()=>false;window.cleanAudio();window.attack();await Promise.resolve();return{hp:e.hp,...window.snapshot()};});assert.equal(rejected.hp,600);assert.deepEqual(impacts(rejected),[]);rows.push({id:'rejected-damage-engine-fixture',...rejected});
+   await start('reaver');const dot=await page.evaluate(async()=>{const s=window.__seedGame.scene.getScene('Run'),e=window.foe();s.build.acquire('reaver_bleed');window.attack();await Promise.resolve();window.cleanAudio();s.updateMutations(1000);await Promise.resolve();return{hp:e.hp,...window.snapshot()};});assert.equal(dot.hp,576);assert.deepEqual(impacts(dot),['hit']);rows.push({id:'passive-bleed',...dot});return rows;
+  });
+  await check('Held guard pressure and a declared obstructed sight fixture cannot fabricate reprisal contact',async()=>{
+   const rows=[];for(const mode of ['held','blocked']){await start();const r=await page.evaluate(async mode=>{const s=window.__seedGame.scene.getScene('Run');window.guard();const e=window.foe();window.cleanAudio();if(mode==='blocked')s.navigation.clearLine=()=>false;window.attack(mode==='held');await Promise.resolve();return{hp:e.hp,remaining:s.player.reprisalDamage,...window.snapshot()};},mode);assert.ok(!impacts(r).includes('reprisal'));if(mode==='blocked')assert.equal(r.hp,600);else assert.equal(r.hp,584);rows.push({mode,...r});}return rows;
+  });
+  await check('Actual AudioBufferSource graph honors highest priority/first pan and 85ms foreground without suppressing warning/hurt',async()=>{
+   await start();const first=await page.evaluate(async()=>{const a=window.__seedGame.scene.getScene('Run').audio;a.play('hit','warden',0,-.3);a.play('crit','warden',0,-.2);a.play('reprisal','warden',0,.4);a.play('rip','reaver',0,-.5);await Promise.resolve();return window.snapshot();});assert.deepEqual(impacts(first),['reprisal']);assert.ok(Math.abs(first.started[0].pan-.4)<.00001);
+   const second=await page.evaluate(async()=>{const a=window.__seedGame.scene.getScene('Run').audio;a.play('hit','warden');a.play('hurt','warden');a.play('tell','warden');await Promise.resolve();return window.snapshot();});assert.deepEqual(impacts(second),['reprisal']);assert.ok(types(second).includes('hurt')&&types(second).includes('tell'));
+   await page.waitForFunction(()=>{const a=window.__seedGame.scene.getScene('Run').audio;return a.context.currentTime>=a.accentUntil;});const after=await page.evaluate(async()=>{window.__seedGame.scene.getScene('Run').audio.play('hit','warden');await Promise.resolve();return window.snapshot();});assert.deepEqual(impacts(after),['reprisal','hit']);return{first,second,after};
+  });
+  await check('Pause, actual sound button toggle, DOM-hidden fixture and destroy discard queued impact; resume never replays it',async()=>{
+   const rows=[];for(const mode of ['pause','mute','hidden','destroy']){await start();const r=await page.evaluate(async mode=>{const s=window.__seedGame.scene.getScene('Run'),a=s.audio,ctx=a.context;a.play('reprisal','warden');if(mode==='pause'){a.setSuspended(true);a.setSuspended(false);}if(mode==='mute'){s.toggleSound();s.toggleSound();}if(mode==='hidden'){Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));delete document.hidden;document.dispatchEvent(new Event('visibilitychange'));}if(mode==='destroy')a.destroy();await Promise.resolve();const cancelled=window.snapshot();if(mode!=='destroy'){a.play('hit','warden');await Promise.resolve();}else await new Promise(resolve=>setTimeout(resolve,50));return{cancelled,after:window.snapshot(),state:ctx.state,buffers:a.buffers.size};},mode);assert.deepEqual(r.cancelled.started,[]);assert.equal(r.cancelled.voices,0);if(mode==='destroy'){assert.equal(r.state,'closed');assert.equal(r.buffers,0);}else assert.deepEqual(impacts(r.after),['hit']);rows.push({mode,...r});}return rows;
+  });
+  await check('Real analyser observes output, mute stops it, and resumed graph accepts only a new request',async()=>{
+   await start();await page.evaluate(()=>window.__seedGame.scene.getScene('Run').audio.play('bloom','thorn'));await page.waitForFunction(()=>window.__seedGame.scene.getScene('Run').audio.energy()>.001);const before=await page.evaluate(()=>window.__seedGame.scene.getScene('Run').audio.energy());await page.evaluate(()=>window.__seedGame.scene.getScene('Run').toggleSound());await page.waitForFunction(()=>window.__seedGame.scene.getScene('Run').audio.energy()<.0001);const muted=await page.evaluate(()=>{const s=window.__seedGame.scene.getScene('Run');const state={energy:s.audio.energy(),voices:s.audio.activeVoices};s.toggleSound();window.cleanAudio();return state;});await page.waitForTimeout(50);assert.deepEqual(await page.evaluate(()=>window.snapshot().started),[]);assert.equal(muted.voices,0);return{before,muted};
+  });
+  await check('Real graph stress keeps 16-source cap and bounded cache; destroyed audio cannot unlock again',async()=>{
+   await start();const r=await page.evaluate(async()=>{const a=window.__seedGame.scene.getScene('Run').audio;let maximum=0;for(let i=0;i<100;i++){a.last.clear();a.play('hurt','warden');maximum=Math.max(maximum,a.activeVoices);}const sources=window.startedVoices.length;const types=['attack','hit','crit','kill','dash','skill','hurt','combo','victory','break','parry','tell','seed','bloom','reprisal','rip','ambush'];for(const id of ['warden','reaver','shade','thorn'])for(const type of types)for(let chain=0;chain<(type==='kill'?8:1);chain++){a.stopVoices();a.last.clear();a.play(type,id,chain);await Promise.resolve();}const cached=a.buffers.size;a.destroy();await a.unlock();a.play('hit','warden');await Promise.resolve();return{maximum,sources,cached,after:a.activeVoices,buffers:a.buffers.size,state:a.state};});assert.equal(r.maximum,16);assert.equal(r.sources,100);assert.equal(r.cached,96);assert.equal(r.after,0);assert.equal(r.buffers,0);assert.equal(r.state,'closed');return r;
+  });
+  await check('Browser emits no uncaught exceptions',()=>assert.deepEqual(errors,[]));
+ }finally{fs.writeFileSync(path.join(OUT,'impact-audio-browser-checks.json'),JSON.stringify({checks,errors,scope:'Actual unlocked AudioContext and accepted source.start buffer/pan traces. Paused deterministic engine fixtures exercise earned combat paths; they are not natural playtests or a subjective listening verdict. Sight rejection and document.hidden are explicitly injected engine/DOM fixtures, not OS-focus or real-wall tests. 100-source stress explicitly clears throttle only in fixture.'},null,2));await browser.close();}
+ console.log(`Impact audio browser: ${checks.length}/${checks.length}`);
+})().catch(e=>{console.error(e);process.exitCode=1;});

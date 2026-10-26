@@ -1,0 +1,13 @@
+{
+  "scope": "Combat-presence-v1 actual generated RGBA, intentional attack-cell art revision. Before-cell/portrait compatibility is independently checked against combat-presence-before.json; historical portrait-presence-combat-rgba.json is preserved unchanged.",
+  "hashes": {
+    "hero_warden": "376c269ed4c3456137de116d709d1ed189997600347e594fa830d4dc2b216e7c",
+    "hero_warden_awakened": "01d2137fcd84c7c502ce5fc709e8500bf4ff711b56abdbed4c91ccd32df911e9",
+    "hero_reaver": "f2eb406f2f03abb913264c0c60db8b7cc51c10b854cf817614b1b15c414d09cb",
+    "hero_reaver_awakened": "ef4b2a6d2ffa3d2917e4d330da033583037e8173ab46c9901654b8e4ba0e6f64",
+    "hero_shade": "9d29df5f910200542404ae8ff6fd9a8e49591b6b2984b8ab35bec6097daa3470",
+    "hero_shade_awakened": "f6d41580083122646328597c86c41d3b6b2e3a2f41cfcf1e5a9290b1ba9f5998",
+    "hero_thorn": "4ba38b06b1e81ad9b7d1d32b51c872f692d7a83cce3b15bb1dbfdb124d84d6b9",
+    "hero_thorn_awakened": "c270ef3662ebdab6c23c4ee6ac7c7068f96f5125e6a60d27fe58569243c2e79a"
+  }
+}

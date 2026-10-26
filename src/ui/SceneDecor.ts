@@ -2,6 +2,22 @@ import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../game/config';
 import { UI, UI_FONT, bodyStyle, titleStyle } from './theme';
 
+/** Sparse, stepped root silhouettes kept out of the content column. */
+function drawRootMargins(g: Phaser.GameObjects.Graphics): void {
+  for (const side of [-1, 1]) {
+    const x = side < 0 ? 10 : GAME_WIDTH-10;
+    const d = -side;
+    g.lineStyle(3, UI.root, 0.28);
+    g.beginPath().moveTo(x, 590).lineTo(x+d*14, 490).lineTo(x+d*8, 420)
+      .lineTo(x+d*24, 340).lineTo(x+d*18, 278).strokePath();
+    g.lineStyle(1, UI.rootLight, 0.35);
+    g.lineBetween(x+d*10, 450, x+d*32, 420);
+    g.lineBetween(x+d*18, 365, x+d*40, 349);
+    g.lineBetween(x+d*17, 490, x+d*36, 513);
+    g.fillStyle(UI.teal,0.45).fillRect(x+d*22,340,2,2);
+  }
+}
+
 /**
  * Flat abyss backdrop: solid fill + sparse floor tiles.
  * No radial soft glows, no edge vignette bars (those looked like weird shadows on menus).
@@ -15,6 +31,7 @@ export function drawAbyssBackdrop(
   const g = scene.add.graphics().setDepth(-20);
   g.fillStyle(UI.bg, 1);
   g.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+  drawRootMargins(g);
 
   // Subtle checker dimming (hard-edged, pixel-friendly) — not a soft orb glow
   const grid = scene.add.graphics().setDepth(-15);
@@ -94,6 +111,15 @@ export function drawSanctumBackdrop(scene: Phaser.Scene, centerX = 872): void {
     g.lineBetween(centerX + i * 30, 486, centerX + i * 124, 668);
   }
   for (const y of [502, 530, 570, 624]) g.lineBetween(568, y, 1208, y);
+  drawRootMargins(g);
+  for (const x of [centerX - 254, centerX + 244]) {
+    g.lineStyle(2, UI.root, 0.7);
+    g.beginPath().moveTo(x,527).lineTo(x+5,463).lineTo(x-4,418)
+      .lineTo(x+7,349).lineTo(x+3,285).lineTo(x+12,246).strokePath();
+    g.lineStyle(1, UI.rootLight, 0.65);
+    g.lineBetween(x+3,467,x+20,446).lineBetween(x+2,365,x+17,347);
+    g.fillStyle(UI.teal,0.55).fillRect(x+6,349,2,2);
+  }
   // 固定种子分布的尘埃像素，重入时不会改变构图。
   for (let i = 0; i < 48; i++) {
     const x = 582 + (i * 137) % 608;

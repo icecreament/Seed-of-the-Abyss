@@ -1,6 +1,9 @@
+import { HudPeek, focusOverlaps, type FocusRect } from '../ui/CombatHudFocus';
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../game/config';
 import { t } from '../i18n/i18n';
+import { UI } from '../ui/theme';
+import type { AmbushAction } from './AmbushInputOrder';
 
 /**
  * On-screen left stick + action buttons for touch devices.
@@ -12,6 +15,7 @@ export class VirtualControls {
   private attackBtn!: Phaser.GameObjects.Container;
   private dashBtn!: Phaser.GameObjects.Container;
   private skillBtn!: Phaser.GameObjects.Container;
+  private skillText!: Phaser.GameObjects.Text;
   /** Dot that slides along the drag direction while aiming with the attack button. */
   private attackKnob!: Phaser.GameObjects.Arc;
   readonly root: Phaser.GameObjects.Container;
@@ -23,11 +27,16 @@ export class VirtualControls {
   private maxRadius = 56;
 
   attackHeld = false;
+  attackPressed = false;
   dashPressed = false;
   skillPressed = false;
   /** Drag direction of the held attack button (design coords). Zero = no manual aim. */
   readonly attackAim = new Phaser.Math.Vector2(0, 0);
 
+  private readonly combatPeeks: Array<{button: Phaser.GameObjects.Container; outer: Phaser.GameObjects.Arc; inner: Phaser.GameObjects.Arc; peek: HudPeek}> = [];
+  private readonly stickPeek = new HudPeek();
+  private readonly cooldownBars: Phaser.GameObjects.Graphics[] = [];
+  private readonly cooldownSteps = [-1, -1, -1];
   private enabled = false;
   private bound = false;
   private suspended = false;
@@ -56,12 +65,16 @@ export class VirtualControls {
     if (this.hit(this.attackBtn, x, y)) {
       if (this.attackPointerId === null) {
         this.attackHeld = true;
+        this.attackPressed = true;
+        this.onActionPress?.('attack', p.event?.timeStamp);
         this.attackPointerId = p.id;
       }
     } else if (this.hit(this.dashBtn, x, y)) {
       this.dashPressed = true;
+      this.onActionPress?.('dash', p.event?.timeStamp);
     } else if (this.hit(this.skillBtn, x, y)) {
       this.skillPressed = true;
+      this.onActionPress?.('skill', p.event?.timeStamp);
     }
   };
 
@@ -115,7 +128,7 @@ export class VirtualControls {
     }
   };
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, private readonly onActionPress?: (action: AmbushAction, timeStamp: number) => void) {
     this.scene = scene;
     this.root = scene.add.container(0, 0).setScrollFactor(0).setDepth(1000);
 
@@ -126,14 +139,15 @@ export class VirtualControls {
     const w = GAME_WIDTH;
 
     // Bigger touch targets for phones.
-    this.base = scene.add.circle(100, h - 100, 64, 0xffffff, 0.14).setStrokeStyle(2, 0xffffff, 0.28);
-    this.knob = scene.add.circle(100, h - 100, 30, 0xffffff, 0.32);
+    this.base = scene.add.circle(100, h - 100, 64, UI.bg, 0.65).setStrokeStyle(2, UI.rootLight, 0.65);
+    this.knob = scene.add.circle(100, h - 100, 30, UI.teal, 0.32).setStrokeStyle(1, UI.teal, 0.6);
     this.stickOrigin.set(100, h - 100);
     this.root.add([this.base, this.knob]);
 
-    this.attackBtn = this.makeButton(w - 90, h - 90, 48, 0xff6b6b, t('btn_atk'));
-    this.dashBtn = this.makeButton(w - 175, h - 140, 40, 0x4ecdc4, t('btn_dash'));
-    this.skillBtn = this.makeButton(w - 175, h - 55, 40, 0xb794f6, t('btn_skill'));
+    this.attackBtn = this.makeButton(w - 90, h - 90, 48, UI.bone, t('btn_atk'));
+    this.dashBtn = this.makeButton(w - 175, h - 140, 40, UI.teal, t('btn_dash'));
+    this.skillBtn = this.makeButton(w - 175, h - 55, 40, UI.accent, t('btn_skill'));
+    this.skillText = this.skillBtn.list[2] as Phaser.GameObjects.Text;
     this.root.add([this.attackBtn, this.dashBtn, this.skillBtn]);
 
     this.attackKnob = scene.add
@@ -155,7 +169,47 @@ export class VirtualControls {
     return this.enabled;
   }
 
+  /** Visual only: do not change the gesture hit radii, pointer owners or controls. */
+  updateCooldowns(progress: readonly number[]): void {
+    const colors = [UI.bone, UI.teal, UI.accent];
+    progress.forEach((value, i) => {
+      const step = Math.round(Phaser.Math.Clamp(value, 0, 1) * 100);
+      if (!this.cooldownBars[i] || this.cooldownSteps[i] === step) return;
+      this.cooldownSteps[i] = step;
+      const width = i === 0 ? 48 : 40;
+      const g = this.cooldownBars[i];
+      g.clear().fillStyle(UI.panelAlt, 1).fillRect(-width/2, 16, width, 3);
+      g.fillStyle(colors[i], step === 100 ? 1 : 0.55).fillRect(-width/2, 16, width*step/100, 3);
+    });
+  }
+
+  /** Text/color only. Geometry, alpha, gesture ownership and handlers are untouched. */
+  updateSkillCue(label: string, emphasis = false): void {
+    if (this.skillText.text !== label) {
+      this.skillText.setText(label).setFontSize(13);
+      if (this.skillText.width > 64) this.skillText.setFontSize(11);
+    }
+    const color = emphasis ? '#e5dda0' : '#ffffff';
+    if (this.skillText.style.color !== color) this.skillText.setColor(color);
+  }
+
+  /** Only reduce opaque fills: outlines, labels, cooldowns and gesture ownership stay intact. */
+  updateCombatFocus(focus: readonly FocusRect[], delta: number, enabled = true): void {
+    for(const entry of this.combatPeeks){
+      const r=entry.button.getData('hitRadius') as number;
+      const bounds={x:entry.button.x-r,y:entry.button.y-r,width:r*2,height:r*2};
+      entry.peek.update(focus.some(rect=>focusOverlaps(rect,bounds)),delta,enabled&&this.enabled);
+      entry.outer.setFillStyle(UI.bg,0.88*entry.peek.alpha(0.12));
+      entry.inner.setFillStyle(UI.panel,0.4*entry.peek.alpha(0.08));
+    }
+    const stick={x:this.base.x-64,y:this.base.y-64,width:128,height:128};
+    this.stickPeek.update(focus.some(rect=>focusOverlaps(rect,stick)),delta,enabled&&this.enabled);
+    this.base.setFillStyle(UI.bg,0.65*this.stickPeek.alpha(0.14));
+    this.knob.setFillStyle(UI.teal,0.32*this.stickPeek.alpha(0.20));
+  }
+
   consumePresses(): void {
+    this.attackPressed = false;
     this.dashPressed = false;
     this.skillPressed = false;
   }
@@ -176,6 +230,7 @@ export class VirtualControls {
     this.root.setVisible(false);
     this.stickVec.set(0, 0);
     this.attackHeld = false;
+    this.attackPressed = false;
     this.dashPressed = false;
     this.skillPressed = false;
     this.resetAimKnob();
@@ -205,15 +260,21 @@ export class VirtualControls {
     label: string,
   ): Phaser.GameObjects.Container {
     const c = this.scene.add.container(x, y);
-    const circle = this.scene.add.circle(0, 0, r, color, 0.38).setStrokeStyle(2, color, 0.85);
+    const circle = this.scene.add.circle(0, 0, r, UI.bg, 0.88).setStrokeStyle(2, color, 0.65);
+    const inner = this.scene.add.circle(0, 0, r-6, UI.panel, 0.4).setStrokeStyle(1, UI.root, 0.65);
+    const cooldown = this.scene.add.graphics();
+    this.cooldownBars.push(cooldown);
     const text = this.scene.add
-      .text(0, 0, label, {
+      .text(0, -5, label, {
         fontSize: '13px',
         color: '#ffffff',
+        stroke: '#070a10',
+        strokeThickness: 2,
         fontFamily: 'Segoe UI, Microsoft YaHei, sans-serif',
       })
       .setOrigin(0.5);
-    c.add([circle, text]);
+    c.add([circle, inner, text, cooldown]);
+    this.combatPeeks.push({button:c,outer:circle,inner,peek:new HudPeek()});
     // Inflated hit size
     c.setSize(r * 2.4, r * 2.4);
     c.setData('hitRadius', r);

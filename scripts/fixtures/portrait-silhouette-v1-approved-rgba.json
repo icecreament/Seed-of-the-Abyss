@@ -1,0 +1,13 @@
+{
+  "scope": "Portrait-silhouette-v1 reviewed exploration-2 actual RGBA. Intentional portrait revision ONLY; combat-presence-v1 hero golden and historical before fixtures remain unchanged.",
+  "hashes": {
+    "portrait_reaver": "f3152d340ad4aaae87f9888872ed054925388712acb0fbb892668b2e40206bfc",
+    "portrait_reaver_awakened": "f0d61f093e048601b1a379a55c7f2fc1190f91001bbf2875a43f22f9ce576fdf",
+    "portrait_shade": "404ac3b4ad676fd0b082fe77905d74608803db32ae0a4aa519ae64d57008560c",
+    "portrait_shade_awakened": "20a0cd0832799b70e59b387fc4e3247d8f9753192e7de02cc344042f66d9203d",
+    "portrait_thorn": "de1c5a7690e0d38c15d8c99af926da7dc7d23dbf3eaea9729735ec9460f28479",
+    "portrait_thorn_awakened": "b816f19f9d51ad0236de35124be90333223fefb550366530b28e052878cec9f7",
+    "portrait_warden": "d4f1bcc7beea2cfd2ac6433240f93e10da9d7b3543a70bd3899921f8adc15815",
+    "portrait_warden_awakened": "8c0e873cc78f8d876e1381c0cf2bd9e4baa858d04aebdd17d63a981c7424cf9e"
+  }
+}

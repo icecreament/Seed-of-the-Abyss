@@ -1,0 +1,22 @@
+{
+  "strike_shade_ambush": {
+    "w": 128,
+    "h": 32,
+    "sha256": "329f64e55f9a1ee14c0ae120da8b32be2d305dcbcf9c02f0dc69f28a42582436"
+  },
+  "strike_shade_ambush_awakened": {
+    "w": 128,
+    "h": 32,
+    "sha256": "f3e2e42fe76d630038305d47e549f1c799eecaf8ad86ec083fa4bd550a49a651"
+  },
+  "step_shade_return": {
+    "w": 64,
+    "h": 32,
+    "sha256": "c8fbcef0fd0e5df58a1391f7d0d06321b8ba3a69c61e51829ee141f4ff86739e"
+  },
+  "step_shade_return_awakened": {
+    "w": 64,
+    "h": 32,
+    "sha256": "f29b6378cc488affaf3dcfbd461d81f6fff65247298a04a817389ba131c57785"
+  }
+}

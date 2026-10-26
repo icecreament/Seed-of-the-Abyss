@@ -32,23 +32,28 @@ export class SettingsScene extends Phaser.Scene {
     createSceneTitle(this, t('settings_title'), 64, '30px');
 
     const desktop = window.seedDesktop;
-    createPanel(this, GAME_WIDTH / 2, 300, 720, 250, {
+    createPanel(this, GAME_WIDTH / 2, 310, 720, 350, {
       color: UI.panel,
       stroke: UI.stroke,
       alpha: 0.9,
     });
 
-    this.buildResolutionRow(245, desktop);
+    this.buildResolutionRow(200, desktop);
     if (desktop) {
-      this.buildDisplayRow(desktop, 325);
+      this.buildDisplayRow(desktop, 265);
     } else {
       this.add
-        .text(GAME_WIDTH / 2, 330, t('settings_browser_hint'), bodyStyle('15px', UI.textDim))
+        .text(GAME_WIDTH / 2, 265, t('settings_browser_hint'), bodyStyle('15px', UI.textDim))
         .setOrigin(0.5);
     }
 
+    this.rowLabel(340, 'settings_sfx');
+    createDropdown(this, GAME_WIDTH/2+160, 340, [0,0.25,0.55,0.8,1].map(v=>({label:v===0?t('sfx_off'):`${Math.round(v*100)}%`,value:String(v)})), String(saveSystem.feedback.sfxVolume), value=>saveSystem.setFeedback({sfxVolume:Number(value)}));
+    this.rowLabel(415, 'settings_impact');
+    createDropdown(this, GAME_WIDTH/2+160, 415, [{label:t('feedback_full'),value:'on'},{label:t('feedback_calm'),value:'off'}],saveSystem.feedback.impactMotion?'on':'off',value=>saveSystem.setFeedback({impactMotion:value==='on'}));
+
     this.add
-      .text(GAME_WIDTH / 2, 480, t('settings_hint'), bodyStyle('12px', UI.textMute))
+      .text(GAME_WIDTH / 2, 520, t('settings_hint'), bodyStyle('12px', UI.textMute))
       .setOrigin(0.5);
 
     createTextButton(

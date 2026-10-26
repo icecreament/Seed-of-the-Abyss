@@ -60,3 +60,8 @@ npm-*-out.log
 npm-*-err.log
 .electron-builder*
 dist_electron/
+
+# Local playtest builds, validation evidence and screenshots
+/output/
+/.scan-mcp/
+/.scan-shots/

@@ -1,0 +1,386 @@
+{
+  "scope": "Pre-silhouette-v1 actual generated RGBA captured before portrait changes. Geometry, foot anchors and non-portrait preservation only; not a beauty or fun score.",
+  "baselineSourceHashes": {
+    "src/assets/HeroPortraits.ts": "3b0219a653ace7a4c15c6a0d855076d09bf1f95b68ffd98a50e9bdb3ff980b8a",
+    "src/assets/HeroAwakening.ts": "724158bd836021204b00e934bdefb60d9899510239bd07deb873b74cc8b001e8"
+  },
+  "alphaPacking": "128x160 row-major; one occupancy bit per pixel, MSB first; base64.",
+  "faceRegions": {
+    "warden": [
+      56,
+      32,
+      14,
+      10
+    ],
+    "reaver": [
+      70,
+      40,
+      16,
+      8
+    ],
+    "shade": [
+      62,
+      42,
+      14,
+      10
+    ],
+    "thorn": [
+      55,
+      32,
+      16,
+      16
+    ]
+  },
+  "portraits": {
+    "portrait_warden": {
+      "size": [
+        128,
+        160
+      ],
+      "sourcePngSHA256": "c36da6201c9df4d510789d2dc97cced892175a8164d56c817ac8b8d8d5067a83",
+      "rgbaSHA256": "2f0075fb236be8a026e0f451685f666c13b711420d2caf06d5f8e4ea007c7b90",
+      "alphaMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeAAAAAAAAAAAAAAAAAAAD/4AAAAAAAAAAAAAAAAAAH//gAAAAAAAAAAAAAAAAAD//+AAAAAAAAAAAAAAAAAB///wAAAAAAAAAAAAAAAAA///+AAAAAAAAAAAAAAAAAf///gAAAAAAAAAAAAAAAAP///8AAAAAAAAAAAAAAAAD////AAAAAAAAAAAAAAAAA////4AAAAAAAAAAAAAAAAf///+AAAAAAAAAAAAAAAAH////wAAAAAAAAAAAAIAAB////8AAAAAAAAAAAADAAAf////AAAAAAAAAAAAA4AAP////wAAAAAAAAAAAAPAAD////4AAAAAAAAAAAAD4AA////+AAAAAAAAAAAAA/AAP////gAAAAAAAAAAAAPwAD////4AAAAAAAAAAAAD8AAf///+AAAAAAAAAAAAg/AAH////AAAAAAAAAAAAcfwAB////wAAAAAAAAAAAHv+AAf///8AAAAAAAAAAAB//4AH///+AAAAAAAAAAAA///AA////AAAAAAAAAAAAP//8AP///gAAAAAAAAAAAD///wD///wAAAAAAAAAAAB///+Af//8AAAAAAAAAAAAf///wD//+AAAAAAAAAAAAH///+Af//AAAAAAAAAAAMD////wD//gAAAAAAAAAAB8////+Af/wAAAAAAAAAAAf/////wD//4AAAAAAAAAAD/////8P///AAAAAAAAAAAf//////////AAAAAAAAAAH//////////4AAAAAAAAAA//////////+AAAAAAAAAAP//////////wAAAAAAAAAB//////////+AAAAAAAAAAP//////////4AAAAAAAAAD///////////4AAAAAAAAA////////////wAAAAAAAAP////////////AAAAAAAAD////////////4AAAAAAAA////////////+AAAAAAAAP////////////wAAAAAAAD////////////8AAAAAAAA/////////////AAAAAAAAP////////////4AAAAAAAB////////////+AAAAAAAAf////////////wAAAAAAAH////////////8AAAAAAAB/////////////gAAAAAAAf////////////4AAAAAAAD////////////+AAAAAAAA/////////////wAAAAAAAP////////////8AAAAAAAB////////////+AAAAAAAAP////////////gAAAAAAAB////////////wAAAAAAAAf///////////8AAAAAAAAH///////////+AAAAAAAAD////////////gAAAAAAAA////////////wAAAAAAAAP///////////8AAAAAAAAH////////////gAAAAAAAB////////////8AAAAAAAAf////////////gAAAAAAAP////////////4AAAAAAAD/////////////AAAAAAAA/////////////4/wAAAAAP/////////////P8AAAAAD/////////////7/gAAAAA///////////////4AAAAAP//////////////+AAAAAD///////////////gAAAAA///////////////8AAAAAP///////////////AAAAAD///////////////+AAAAA/////////////////AAAAP////////////////8AAAD///////////7/////AAAA///////////+f////wAAAP///////////j////8AAAD///////////4f///8AAAAf//////////+D///gAAAAD///////////gH//AAAAAAf//////////4A//wAAAAAD//////////+AD/8AAAAAAf//////////gAf/gAAAAAD//////////4AD/4AAAAAAf/////////+AA/+AAAAAAH//////////gAP/gAAAAAB//////////4AD/4AAAAAA//////////+AA/+AAAAAAP//////////wAP/gAAAAAD//////////8AD/8AAAAAB///////////AA//AAAAAAf//////////wAP/wAAAAAP//////////8AD/8AAAAAD///////////AAf/AAAAAA///////////wAH/wAAAAAf//////////8AB/+AAAAAH///////////AAf/gAAAAB7//////////wAH/4AAAAAx//////////8AB/+AAAAAAf//////////AAf/gAAAAAP/////////3wAH/4AAAAAD/////////8cAB/+AAAAAA/9////////BAAf/wAAAAAf8f///////wAAH/8AAAAAH8P///////8AAB//AAAAAD+D////////AAAf/wAAAAA+A/////7//wAAH/8AAAAAfAH////8//8AAB/+AAAAAHAD////+P//AAAf/gAAAABAA/////D//wAAH/4AAAAAgAP////g//8AAB/+AAAAAAAD////wP//AAAf/AAAAAAAA////4D//wAAD/wAAAAAAAH//+8A//8AAA/8AAAAAAAB///mAP//AAAP+AAAAAAAAf//wAD//4AAD/gAAAAAAAP//8AA///AAA/4AAAAAAAD///AAP//4AAP+AAAAAAAA///4AD///AAD/AAAAAAAAP//+AA///8AA/wAAAAAAAD///wAP///gAP8AAAAAAAB///8AD///8AD/AAAAAAAAf///gA////gAfgAAAAAAAH///4AP///8AD4AAAAAAAB////AD////AAeAAAAAAAAf///wA////wADAAAAAAAAP///4AP///8AAQAAAAAAAD////AD////AAAAAAAAAAA////wA////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+      "footRegion": [
+        32,
+        134,
+        64,
+        16
+      ],
+      "footRGBAHash": "cb8424714d570ed59aff65850bde34f93f78e4445a9d4c83256ab9a263cca05c"
+    },
+    "portrait_warden_awakened": {
+      "size": [
+        128,
+        160
+      ],
+      "sourcePngSHA256": "e81396c82506d1e8bb79344f4b40eb3feab60bb66d1bff1aa39684afead7f9ad",
+      "rgbaSHA256": "22eb9c4618971c0a58660fef8323312042c333e3ce98e726caa2311deada510d",
+      "alphaMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAAAAAAAcAAQAAAAAAAAAAAAAAAAAPgAMAAAAAAAAAAAAAAAIAD8AHAAAAAAAAAAAAAAADAB/ADwAAAAAAAAAAAAAAAYAf4D8AAAAAAAAAAAAAAAHAP/B+AAAAAAAAAAAAAAAB8D/4/gAAAAAAAAAAAAAAAPh//f4AAAAAAAAAAAAAAAD8f//+AAAAAAAAAAAAAAAA/v///gAAAAAAAAAAAAAAAH////4AAAAAAAAAAAAAAAB////+AAAAAAAAAAAAAAAAf////gAAAAAAAAAAAAAAAD////4AAAAAAAAAAAAAAAA////+AAAAAAAAAAAIAAAAP////AAAAAAAAAAAHAAAAD////wAAAAAAAAAABwAIAA////8AAAAAAAAAAAeAGAAf////AAAAAAAAAAAHgBwAH////wAAAAAAAAAAB8IeAB////8AAAAAAAAAAA/jPgAf////AAAAAAAAAAAP478AP////wAAAAAAAAAAD/P/AD////4AAAAAAAAAAA/7/4A////+AAAAAAAAAAAP+/+AP////gAAAAAAAAAAH///wD////4AAAAAAAAAAB///8Af///+AAAAAAAAAIAf///gH////AAAAAAAAADgH///8B////wAAAAAAAAA8B////Af///8AAAAAAAAAHw////4H///+AAAAAAAAAB/P///+A////AAAAAAAAAAf7////wP///gAAAAAAAAAH/////8D///wAAAAAAAAAB//////Af//8AAAAAAAAAAP/////4D//+AAAAAAAAAAD/////+Af//AAAAAAAAAAA//////wD//gAAAAAAAAAAP/////+Af/wAAAAAAAAAAD//////wD//4AAAAAAAAAA//////8P///AAAAAAAAAAH///////////AAAAAAAAAB///////////4AAAAAAAAAf//////////+AHAAAAAAAH///////////wD/AAAAAAB///////////+B/8AAAAAAP///////////4//AAAAAAD//////////////wAAAAAA//////////////8AAAAAAP//////////////AAAAAAB//////////////wAAAAAAP/////////////8AAAAAAB//////////////AAAAAAAP/////////////wAAAAAAB/////////////4AAAAAAAP////////////8AAAAAAAB////////////+AAAAAAAAf////////////wAAAAAAAH////////////8AAAAAAAB/////////////gAAAAAAAf////////////4AAAAAAAD////////////+AAAAAAAA/////////////wAAAAAAAP////////////8AAAAAAAB////////////+AAAAAAAAP////////////gAAAAAAAB////////////wAAAAAAAAf///////////8AAAAAAAAH///////////+AAAAAAAAD////////////gAAAAAAAA////////////wAAAAAAAAP///////////8AAAAAAAAH////////////gAAAAAAAB////////////8AAAAAAAAf////////////gAAAAAAAP////////////4AAAAAAAD/////////////AAAAAAAA/////////////4/wAAAAAP/////////////P8AAAAAD/////////////7/gAAAAA///////////////4AAAAAP//////////////+AAAAAD///////////////gAAAAA///////////////8AAAAAP///////////////AAAAAD///////////////+AAAAA/////////////////AAAAP////////////////8AAAD///////////7/////AAAA///////////+f////wAAAP///////////j////8AAAD///////////4f///8AAAAf//////////+D///gAAAAD///////////gH//AAAAAAf//////////4A//wAAAAAD//////////+AD/8AAAAAAf//////////gAf/gAAAAAD//////////4AD/4AAAAAAf/////////+AA/+AAAAAAH//////////gAP/gAAAAAB//////////4AD/4AAAAAA//////////+AA/+AAAAAAP//////////wAP/gAAAAAD//////////8AD/8AAAAAB///////////AA//AAAAAAf//////////wAP/wAAAAAP//////////8AD/8AAAAAD///////////AAf/AAAAAA///////////wAH/wAAAAAf//////////8AB/+AAAAAH///////////AAf/gAAAAB7//////////wAH/4AAAAAx//////////8AB/+AAAAAAf//////////AAf/gAAAAAP/////////3wAH/4AAAAAD/////////8cAB/+AAAAAA/9////////BAAf/wAAAAAf8f///////wAAH/8AAAAAH8P///////8AAB//AAAAAD+D////////AAAf/wAAAAA+A/////7//wAAH/8AAAAAfAH////8//8AAB/+AAAAAHAD////+P//AAAf/gAAAABAA/////D//wAAH/4AAAAAgAP////g//8AAB/+AAAAAAAD////wP//AAAf/AAAAAAAA////4D//wAAD/wAAAAAAAH//+8A//8AAA/8AAAAAAAB///mAP//AAAP+AAAAAAAAf//wAD//4AAD/gAAAAAAAP//8AA///AAA/4AAAAAAAD///AAP//4AAP+AAAAAAAA///4AD///AAD/AAAAAAAAP//+AA///8AA/wAAAAAAAD///wAP///gAP8AAAAAAAB///8AD///8AD/AAAAAAAAf///gA////gAfgAAAAAAAH///4AP///8AD4AAAAAAAB////AD////AAeAAAAAAAAf///wA////wADAAAAAAAAP///4AP///8AAQAAAAAAAD////AD////AAAAAAAAAAA////wA////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+      "footRegion": [
+        32,
+        134,
+        64,
+        16
+      ],
+      "footRGBAHash": "cb8424714d570ed59aff65850bde34f93f78e4445a9d4c83256ab9a263cca05c"
+    },
+    "portrait_reaver": {
+      "size": [
+        128,
+        160
+      ],
+      "sourcePngSHA256": "31c53e836f6d886bd2cb3591359c5a71c3c3490fe0c791897ec3dc1961a5f4a9",
+      "rgbaSHA256": "798ef9d1d771a41fab4841678628a9a54a30c8802ed6ffece54e38dd0859d555",
+      "alphaMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAgAAAAAAAA8AAAAAAAAAAAcAAAAAAAAfAAAAAAAAAAAHAAAAAAAAPwAAAAAAAAAAB4AAAAAAAH8AAAAAAAAAAAeAAAAAAAD/AAAAAAAAAAAHwABAAAAB/4AAAAAAAAAAD+AAwAAAA/+AAAAAAAAAAA/gAeAAAAf/gAAAAAAAAAAP8APgAAAP/4AAAAAAAAAAD/gH4AAAH/+AAAAAAAAAAA/8D+AAAD//gAAAAAAAAAAP/x/gAAB//4AAAAAAAAAAB/+/8AAA//+AAAAAAAAAAAf///AAAf//gAAAAAAAAAAH///wAAP//4AAAAAAAAAAB///+AAH//+AAAAAAAAAAAf///wAD///gAAAAAAAAAAH///+AB///4AAAABgAAAAA////wA///+AAAAAcAAAAAP///+Af///gAAAAHgAAAAD////wP///4AAAAD8AAAAA////8H////AAAAA/AAAAAP////D////wAAAAP4AAAAH////4////8AAAAH/AAAAB////+P////AAAgB/4AAAAf////j////wAAHAf/gAAAH////4////8AAB8P///gAD/////f////AAAP7///8AA/////3////wAAD/////gAP////9////8AAAf////8AB////+f///+AAAH/////gAP////H////gAAA/////+AB////h////wAAAP/////wAf///wf///8AAAB///////////4H///+AAAAf//////////8B////gAAAD//////////+A///wwAAAA//////////+AP//8AAAAAP//////////AD//+AAAAAD//////////gA///gAAAAB///////////gP//4AAAAAf///////////D//+AAAAAH///////////5///gAAAAB////////////f//wAAAAAf///////////3//8AAAAAH///////////////gAAAAD///////////////+AAAAA////////////////wAAAAP///////////////4AAAAD///////////////+AAAAAf///////////////AAAAAD///////////////wAAAAAf//////////////4AAAAAH//////////////+AAAAAA///////////////gAAAAAH//////////////wAAAAAA//////////////8AAAAAAH/////////////+AAAAAAAf/////////////gAAAAAAP/////////////wAAAAAAH/////////////8AAAAAAB/////////////+AAAAAAA//////////////gAAAAAAf/////////////wAAAAAAH/////////////8AAAAAAD/////////////+AAAAAAB//////////////gAAAAAA//////////////4AAAAAAP/////////////8AAAAAAH//////////////AAAAAAD//////////////gAAAAAA//////////////4AAAAAAP/////////////8AAAAAAH//////////////AAAAAAB//////////////gAAAAAAf/////////////wAAAAAAH/////////////8AAAAAAB/////////////+AAAAAAA//////////////AAAAAAAP/////////////wAAAAAAD/////////////4AAAAAAA/////////////+AAAAAAAH/////////////wAAAAAAA/////////////8AAAAAAAH/////////////AAAAAAAA/////////////gAAAAAAAH////////////4AAAAAAAA//9/////////+AAAAAAAAH/4f/////////AAAAAAAAA/gP////////+AAAAAAAAAHAD/////////wAAAAAAAAAAB/////////8AAAAAAAAAAAf/////////gAAAAAAAAAAH/////////8AAAAAAAAAAD////////8/AAAAAAAAAAA////////+B4AAAAAAAAAAP////////wDAAAAAAAAAAH////////8AAAAAAAAAAAB/////////AAAAAAAAAAAA/////////4AAAAAAAAAAAP////////+AAAAAAAAAAAD/////////wAAAAAAAAAAB/////////8AAAAAAAAAAAf/////////gAAAAAAAAAAP/////////4AAAAAAAAAAD////5/////AAAAAAAAAAA////8P///fwAAAAAAAAAAf///8B///x8AAAAAAAAAAH///+AH//8HgAAAAAAAAAB////AA///AYAAAAAAAAAAj///gAH//wBAAAAAAAAAAB///4AB//+AAAAAAAAAAAAf//+AAf//gAAAAAAAAAAAP///AAH//4AAAAAAAAAAAH///wAB//+AAAAAAAAAAAB///8AAf//gAAAAAAAAAAA///+AAH//4AAAAAAAAAAAP///gAB//+AAAAAAAAAAAD///wAAf//wAAAAAAAAAAAf//8AAD//4AAAAAAAAAAAH///AAA///AAAAAAAAAAAB///gAAP//wAAAAAAAAAAAf//4AAD//8AAAAAAAAAAAH//+AAA///AAAAAAAAAAAD///AAAP//wAAAAAAAAAAA///wAAD//+AAAAAAAAAAAf//+AAA///8AAAAAAAAAAH///gAAH///wAAAAAAAAAD///8AAB////gAAAAAAAAA////AAAf///8AAAAAAAAAP///4AAH////gAAAAAAAAH///+AAB////8AAAAAAAAB////wAAf////AAAAAAAAAf///8AAH////4AAAAAAAAH////AAA/////AAAAAAAAD////wAAP////wAAAAAAAA////8AAD////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+      "footRegion": [
+        32,
+        134,
+        76,
+        16
+      ],
+      "footRGBAHash": "566d80a7f7dee315453dd368dbd869d30f6b40c2feffc550a7c3ce58e5e72993"
+    },
+    "portrait_reaver_awakened": {
+      "size": [
+        128,
+        160
+      ],
+      "sourcePngSHA256": "ed94a8afa34c425cc0963a812dcd3763d27a8bc0b7220355bb621590873cfb0f",
+      "rgbaSHA256": "e674c8a218126675cb26e82a538fee3949f1a2bcb63e3a68273bbd2be88e25f8",
+      "alphaMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAAAAAAAAA+AAAAAAAAAAAAAAAAAAAAPgAAAAAAAAAAAAAAAAAAgD8ABAAAAAEAAAAAAAAAAMB/AAwAAAADAAAAAAAAAABgf4AcAAAABwAAAAAAAAAAen+APAAAAA8AAAAAAAAAAH//wPwAAAAfAAAAAAAAAAB//+H4AAAAPwAAAAAAAAAAf//j+AAAAH8AAAAAAAAAAD//9/gAAAD/AAAAAAAAAAA////4AAAB/4AAAAAAAAAAP///+AAAA/+AAAAAAAAAAD////gAAAf/gAAACAAAAAAf///4AAAP/4AAABwAAAAAH///+AAAH/+AAAAcAAAAAB////gAAD//gAAAHgAAAAAf///wAAB//4AAAB4AAAAAH///8AAA//+ACAA/AAAAAA////AAA///gAwAP4AAAAAP///wAAf//4AOAD+AAAAAB///+AAP//+ABwA/wAAAAAf///wAD///gAeAf8AAAAAH///+AB///4AH4H/gBgAAA////wA///+AB/B/8A8AAAP///+Af///gAf4f/gPAAAD////wP///4AH/P/8H4AAA////8H////AB/7//B/AAAP////D////wAP///4/wAAH////4////8AD////f+AAB////+P////AA//////gAAf////j////wAP/////8AAH////4////8AD//////gAD/////f////AA//////8AA/////3////wAH//////gAP////9////8AB//////8AB////+f///+AAf//////gAP////H////gAH//////+AB////h////wAB///////wAf///wf///8AAf////////////4H///+AAH////////////8B////gAA////////////+A///wwAAP///////////+Af//8AAAD////////////AP//+AAAA////////////gP///gAAAH////////////n///4AAAA////////////////+AAAAH////////////////gAAAA////////////////wAAAAH////////////3//8AAAAA////////////////gAAAAH///////////////+AAAAA////////////////wAAAAP///////////////4AAAAD///////////////+AAAAAf///////////////AAAAAD///////////////wAAAAAf//////////////4AAAAAH//////////////+AAAAAA///////////////gAAAAAH//////////////wAAAAAA//////////////8AAAAAAH/////////////+AAAAAAAf/////////////gAAAAAAP/////////////wAAAAAAH/////////////8AAAAAAB/////////////+AAAAAAA//////////////gAAAAAAf/////////////wAAAAAAH/////////////8AAAAAAD/////////////+AAAAAAB//////////////gAAAAAA//////////////4AAAAAAP/////////////8AAAAAAH//////////////AAAAAAD//////////////gAAAAAA//////////////4AAAAAAP/////////////8AAAAAAH//////////////AAAAAAB//////////////gAAAAAAf/////////////wAAAAAAH/////////////8AAAAAAB/////////////+AAAAAAA//////////////AAAAAAAP/////////////wAAAAAAD/////////////4AAAAAAA/////////////+AAAAAAAH/////////////wAAAAAAA/////////////8AAAAAAAH/////////////AAAAAAAA/////////////gAAAAAAAH////////////4AAAAAAAA//9/////////+AAAAAAAAH/4f/////////AAAAAAAAA/gP////////+AAAAAAAAAHAD/////////wAAAAAAAAAAB/////////8AAAAAAAAAAAf/////////gAAAAAAAAAAH/////////8AAAAAAAAAAD////////8/AAAAAAAAAAA////////+B4AAAAAAAAAAP////////wDAAAAAAAAAAH////////8AAAAAAAAAAAB/////////AAAAAAAAAAAA/////////4AAAAAAAAAAAP////////+AAAAAAAAAAAD/////////wAAAAAAAAAAB/////////8AAAAAAAAAAAf/////////gAAAAAAAAAAP/////////4AAAAAAAAAAD////5/////AAAAAAAAAAA////8P///fwAAAAAAAAAAf///8B///x8AAAAAAAAAAH///+AH//8HgAAAAAAAAAB////AA///AYAAAAAAAAAAj///gAH//wBAAAAAAAAAAB///4AB//+AAAAAAAAAAAAf//+AAf//gAAAAAAAAAAAP///AAH//4AAAAAAAAAAAH///wAB//+AAAAAAAAAAAB///8AAf//gAAAAAAAAAAA///+AAH//4AAAAAAAAAAAP///gAB//+AAAAAAAAAAAD///wAAf//wAAAAAAAAAAAf//8AAD//4AAAAAAAAAAAH///AAA///AAAAAAAAAAAB///gAAP//wAAAAAAAAAAAf//4AAD//8AAAAAAAAAAAH//+AAA///AAAAAAAAAAAD///AAAP//wAAAAAAAAAAA///wAAD//+AAAAAAAAAAAf//+AAA///8AAAAAAAAAAH///gAAH///wAAAAAAAAAD///8AAB////gAAAAAAAAA////AAAf///8AAAAAAAAAP///4AAH////gAAAAAAAAH///+AAB////8AAAAAAAAB////wAAf////AAAAAAAAAf///8AAH////4AAAAAAAAH////AAA/////AAAAAAAAD////wAAP////wAAAAAAAA////8AAD////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+      "footRegion": [
+        32,
+        134,
+        76,
+        16
+      ],
+      "footRGBAHash": "566d80a7f7dee315453dd368dbd869d30f6b40c2feffc550a7c3ce58e5e72993"
+    },
+    "portrait_shade": {
+      "size": [
+        128,
+        160
+      ],
+      "sourcePngSHA256": "102024b9e74eb372860b0ac6db0ea2c0b068ce9849ab42d132f3c31e3336f2e3",
+      "rgbaSHA256": "85595f5aaa8dd2c1102e42b4f8a4b202dabd986e2009173a3fd309318314f93b",
+      "alphaMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAeAAAAAAAAAAAAAAAAAAAAHwAAAAAAAAAAAAAAAAAAAB/AAAAAAAAAAAAAAAAAAAA/8AAAAAAAAAAAAAAAAAAAP/gAAAAAAAAAAAAAAAAAAD/8AAAAAAAAAAAAAAAAAAB//gAAAAAAAAAAAAAAAAAAf/4AAAAAAAAAAAAAAAAAAH/+AAAAAAAAAAAAAAAAAAD//wAAAAAAAAAAAAAAAAAA//8AAAAAAAAAAAAAAAAAAP//gAAAAAAAAAAAAAAAAAH//4AAAAAAAAAAAAAAAAAD//+AAAAAAAAAAAAAAAAAB///wAAAAAAAAAAAAAAAAA///+AAAAAAAAAAAAAAAAAP///wAAAAAAAAAgAAAAAAH///+AAAAAAAAAGAAAAAAD////wAAAAAAAABwAAAAAB////+AAAAAAAAAfAAAAAA/////wAAAAAAAAD8AHgAAP////+AAAAAAAAA/h/8AAD/////wAAAAAAAAH///gAA/////8AAAAAAAAB///8AAf/////AAAAAAAAAP///gAH/////wAAAAAAAAD///8AB/////8AAAAAAAAA////gAf/////AAAAAAAAAH///8AH/////wAAAAAAAAB////gB/////8AAAAAAAAAP///8A//////AAAAAAAAAB////gP/////wAAAAAAAAAH///8D/////8AAAAAAAAgAP///g//////AAAAAAAAMAA////H/////wAAAAAAABgAD/////////8AAAAAAAAcAAH////////+AAAAAAAAHgAB/////////AAAAAAAAB8AA/////////gAAAAAAAAPgAf////////wAAAAAAAAD8AP////////8AAAAAAAAA/AH////////+AAAAAAAAAH4D/////////AAAAAAAAAB+AB////////gAAAAAAAAAPwAAB//////wAAAAAAAAAD+AAAAf////+AAAAAAAAAAfgAAAD/////wAAAAAAAAAD8AAAB/////+AAAAAAAAAA/AAAA//////wAAAAAAAAAH4AAAf/////+AAAAAAAAAB+AAB///////4AAAAAAAAAPwAD////////AAAAAAAAAD+B/////////4AAAAAAAAAfz/////////+AAAAAAAAAH9//////////wAAAAAAAAA///////////8AAAAAAAAAH///////////gAAAAAAAAB///////////4AAAAAAAAAP///////////AAAAAAAAAD///////////wAAAAAAAAA///////////+AAAAAAAAAP///////////gAAAAAAAAB///////////8AAAAAAAAAf///////////AAAAAAAAAD///////////wAAAAAAAAA///////////8AAAAAAAAAP/////////v/AAAAAAAAAB/////////7/wAAAAAAAAAP////////+/8AAAAAAAAAA/n///////v/AAAAAAAAAAHD/////////wAAAAAAAAAAA/////////8AAAAAAAAAAAP/////////AAAAAAAAAAAD/////////4AAAAAAAAAAB//////////AAAAAAAAAAAf/////////4AAAAAAAAAAH//////////AAAAAAAAAAB//////////4AAAAAAAAAAf//////////AAAAAAAAAAP//////////wAAAAAAAAAD//////////8AAAAAAAAAA///////////AAAAAAAAAAf//////////wAAAAAAAAAH//////////+AAAAAAAAAB///////////gAAAAAAAAA///////////8AAAAAAAAAP///////////AAAAAAAAAH///////////4AAAAAAAAB///////////+AAAAAAAAAf///////////wAAAAAAAAP///////////+AAAAAAAAD////////////gAAAAAAAA//////////9/8AAAAAAAAf//////////v/gAAAAAAAH//////////5/8AAAAAAAD//////////+P/gAAAAAAA///////////x/8AAAAAAAP//////////8P/gAAAAAAH//////////+B/8AAAAAAB///////////gP/gAAAAAA///////////wB/8AAAAAAP//////////8AP/gAAAAAD///////////gB/8AAAAAB///////////4Af/gAAAAAf///////////AD/8AAAAAH///////////wAf/AAAAAD///////////4AD/wAAAAA////+//////+AAf4AAAAAf////H//////AAD+AAAAAH////g//////wAAfgAAAAD////4H/////4AAD4AAAAA////8A/////+AAAMAAAAAP////AH/9///AAABAAAAAH////gA/wf//wAAAAAAAAB////wAHAH//4AAAAAAAAA////8AAAD//+AAAAAAAAAP///+AAAA//5AAAAAAAAAH////AAAAP/+AAAAAAAAAB////gAAAD//gAAAAAAAAAf///wAAAB//wAAAAAAAAAPg//8AAAAf/8AAAAAAAAAAA//+AAAAH//gAAAAAAAAAAf//AAAAB//+AAAAAAAAAAf//gAAAA///wAAAAAAAAAP//wAAAAP///AAAAAAAAAP//8AAAAD///8AAAAAAAAH///gAAAA////gAAAAAAAD///4AAAAH///+AAAAAAAB///+AAAAB////wAAAAAAAf///wAAAAf///+AAAAAAAH///8AAAAH////wAAAAAAD////AAAAA////8AAAAAAA////wAAAAP////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+      "footRegion": [
+        14,
+        134,
+        84,
+        16
+      ],
+      "footRGBAHash": "9703fa6244e431426e7a075be6aed2a7ac3c3f5d043a2cdfaa4c171aa099e98f"
+    },
+    "portrait_shade_awakened": {
+      "size": [
+        128,
+        160
+      ],
+      "sourcePngSHA256": "16e80c9c2c0fb9af8febd1b6f60e7093fc744c2f9a554da38004317d781d901f",
+      "rgbaSHA256": "651696800ca4555d1c89a462a327791b146be7f6934968ea3c8d07341ac96d8d",
+      "alphaMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAAAAAAAAA+AAAAAAAAAAAAAAAAAAAAPwAAAAAAAAAAAAAAAAAAAH/AAAAAAAAAAAAAAAAAAAB/8AAAAAAAAAAAAAAAAAAA//gAAAAAAAAAAAAAAAAAAP/8AAAAAAAAAAAAAAAAAAD//gAAAAAAAAAAAAAAAAAB//4AAAAAAAAAAAAAAAAAAf/+AAAAAAAAAAAAAAAAAAH//wAAAAAAAAAAAAAAAAAD//8AAAAAAAAAAAAAAAAAA///gAAAAAAAAAAAAAAAAAP//4AAAAAAAAAAAAAAAAAD//+AAAAAAAAAAAAAAAAAB///wAAAAAAAAAAAAAAAAA///+AAAAAAAAAAAAAAAAAP///wAAAAAAAAAgAAAAAAH///+AAAAAAAAAGAAAAAAD////wAAAAAAAABwAAAAAB////+AAAAAAAAAfAAAAAA/////wAAAAAAAAD8AHgAAP////+AAAAAAAAA/h/8AAD/////wAAAAAAAAH///gAA/////8AAAAAAAAB///8AAf/////AAAAAAAAAP///gAH/////wAAAAAAAAD///8AB/////8AAAAAAAAA////gAf/////AAAAAAAAAH///8AH/////wAAAAAAAAB////gB/////8AAAAAAAAAP///8A//////AAAAAAAAAB////gP/////wAAAAAAAAAH///8D/////8AAAAAAAAgAP///g//////AAAAAAAAMAA////H/////wAAAAAAABgAD/////////8AAAAAAAAcAAH////////+AAAAAAAAHgAB/////////AfgAAAAAB8AA/////////gP//gAAAAPgAf////////wH///wAAAD8AP////////8H///4AAAA/AH////////+D///8AAAAH4H/////////B///+AAAAB+P/////////h////AAAAAP//////////w////gAAAAD/////f////+f///wAAAAAf//////////////4AAAAAD//////////////8AAAAAB//////////////+AAAAAAf//////////////wAAAAAP///////////////gAAAAH////////////////AAAAB////////////////+AAAA/////////////////8AAAf/////////////////4AAP/////////////////+AAD/H///////////////+AAB8B///////////////8AAAwAP//////////////8AAAAAH//////////////8AAAAAB//////////////4AAAAAA//////////////8AAAAAAf//////////////gAAAAAH//////////////8AAAAAD///////////////gAAAAA///////////////8AAAAAf//////////v////gAAAAP//////////7/+P/4AAAAD//////////+/8Af/AAAAB///////////v/AA/4AAAAf/nP/////////wAA/AAAAP/AB/////////8AAB4AAAH8AAP/////////AAADAAAB4AAD/////////4AAAAAAAwAAB//////////AAAAAAAAAAAf/////////4AAAAAAAAAAH//////////AAAAAAAAAAB//////////4AAAAAAAAAAf//////////AAAAAAAAAAP//////////wAAAAAAAAAD//////////8AAAAAAAAAA///////////AAAAAAAAAAf//////////wAAAAAAAAAH//////////+AAAAAAAAAB///////////gAAAAAAAAA///////////8AAAAAAAAAP///////////AAAAAAAAAH///////////4AAAAAAAAB///////////+AAAAAAAAAf///////////wAAAAAAAAP///////////+AAAAAAAAD////////////gAAAAAAAA//////////9/8AAAAAAAAf//////////v/gAAAAAAAH//////////5/8AAAAAAAD//////////+P/gAAAAAAA///////////x/8AAAAAAAP//////////8P/gAAAAAAH//////////+B/8AAAAAAB///////////gP/gAAAAAA///////////wB/8AAAAAAP//////////8AP/gAAAAAD///////////gB/8AAAAAB///////////4Af/gAAAAAf///////////AD/8AAAAAH///////////wAf/AAAAAD///////////4AD/wAAAAA////+//////+AAf4AAAAAf////H//////AAD+AAAAAH////g//////wAAfgAAAAD////4H/////4AAD4AAAAA////8A/////+AAAMAAAAAP////AH/9///AAABAAAAAH////gA/wf//wAAAAAAAAB////wAHAH//4AAAAAAAAA////8AAAD//+AAAAAAAAAP///+AAAA//5AAAAAAAAAH////AAAAP/+AAAAAAAAAB////gAAAD//gAAAAAAAAAf///wAAAB//wAAAAAAAAAPg//8AAAAf/8AAAAAAAAAAA//+AAAAH//gAAAAAAAAAAf//AAAAB//+AAAAAAAAAAf//gAAAA///wAAAAAAAAAP//wAAAAP///AAAAAAAAAP//8AAAAD///8AAAAAAAAH///gAAAA////gAAAAAAAD///4AAAAH///+AAAAAAAB///+AAAAB////wAAAAAAAf///wAAAAf///+AAAAAAAH///8AAAAH////wAAAAAAD////AAAAA////8AAAAAAA////wAAAAP////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+      "footRegion": [
+        14,
+        134,
+        84,
+        16
+      ],
+      "footRGBAHash": "9703fa6244e431426e7a075be6aed2a7ac3c3f5d043a2cdfaa4c171aa099e98f"
+    },
+    "portrait_thorn": {
+      "size": [
+        128,
+        160
+      ],
+      "sourcePngSHA256": "1791bb14378a7b77d6de5c343371db31b68eba490160a09534f0d8b2d0a95906",
+      "rgbaSHA256": "619be212bb4872c4f1a33f0571f4470f4845ff7f277d6aaaf1ef2e8e5db2198f",
+      "alphaMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAHgAAAAAAAAAAAAAAADAAAD/wAAAAAAAAAACAAADwAAB//gAAAAAAAAAAwAAB4AAB//8AAAAAACAAAOAAA+AAA///gAAAAAAQAADwAAPgAAf//8AAAAAAHAAA+AAH4AAP///gAAAAAA4AAPwAB+AAH///8AAAAAAPAAD8AAfAAB////gAAAAAB4AA/AAHwAA////8AAAAAAfAAPwAB8AAP////AAAAAADwAD8AA+AAH////wAAAAAA+AA/BwPAAB////8AAAAAAHwAHz/jwAA////+AAAAAAB+AB///4AAf////gAAAAAAP4Af//+AAP////4AAAAAAB/gH///wAH////+AAAAAAAH+H///+AH/////gAAAAAAAfz////wH+////wAAAAAAAB/////8H/H///8AAAAAAAAP/////j/h////AAAAAAAAB/////5/wP///gAAAAAAAAf//////wD///wAAAAAAAAD//////4Af//4AAAAAAAAAf/////8AD//8AAAAAAAAAP/////+AAf/+AAAAAAAAAD//////AAD//AAAAAAAAAB//////gAAf/gAAAAAAAAAf/////4AAD/wAAAAAAAAAP/////8AAAf8AAAAAAAAAD//////AAAH/AAAAAAAAAA//////0AAB/wAAAAAAAAAP//////gAAf8AAAAAAAAAB//////4AAH/AAAAAAAAAAf/////+AAB/gAAAAAAAAAH//////gAA/4AAAAAAAIAB//////4AAP+AAAAAAADgAf//////AAD/gAAAAAAA+AH//////wAA/4AAAAAAAH4A//////8AAP+AAAAAAAB/gP//////AAD/gAAAAAAAf8D//////gAB/4AAAAABgH/w//////wAAf8AAAAAA8B/+H/////8AAH/AAAAAAfgP/8/////+AAB/wAAAAAP8D////////AAAf8AAAAAD/Af/////////AP/AAAAAA/wD/////////4D/wAAAAAP8Af/////////A/8AAAAAD/AB/////////4P+AAAAAA/wAP////////+D/gAAAAAP8AB/////////w/4AAAAGD/AAf////////+f+AAAADwfgAD/////////3/gAAAA+HwAA/////////9/4AAAAP3/wAP////////+f+AAAAB///AD/////////n/AAAAAf//4A/////////z/wAAAAH///Af////////4/8AAAAB///wf////////+P/AAAAAP//+P/////////D/wAAAAD///3/////////w/8AAAAA/////////////4P/AAAAAH////////////8D/wAAAAA////////////+A/4AAAAAH////////////Af+AAAAAAf///////////8H/gAAAAAD////////////B/4AAAAAAH///////////4f+AAAAAAAZ//////////+H/gAAAAAAAP//////////h/4AAAAAAAB//////////4f+AAAAAAAAP/////////+H/AAAAAAAAB//////////x/wAAAAAAAAD/////////8f8AAAAAAAAA//////////P/AAAAAAAAAP/////////z/wAAAAAAAAD/////////8/8AAAAAAAAA/////////+P/AAAAAAAAAP/////////j/wAAAAAAAAD/////////4/4AAAAAAAAB/////////+P+AAAAAAAAAf/////////D/gAAAAAAAAH/////////w/4AAAAAAAAB/////////+P+AAAAAAAAAf/////////3/gAAAAAAAAH///////////4AAAAAAAAB///////////+AAAAAAAAAf///////////AAAAAAAAAH///////////wAAAAAAAAB///////////8AAAAAAAAAf///////////AAAAAAAAAH///////////wAAAAAAAAB////////3//8AAAAAAAAAf///////+///AAAAAAAAAH////////v//wAAAAAAAAD////////5//4AAAAAAAAA/////////P/+AAAAAAAAAP////////x//gAAAAAAAAD////////8P/4AAAAAAAAA/////////gP+AAAAAAAAAP////////4D/gAAAAAAAAD////////+A/4AAAAAAAAA/////////gP8AAAAAAAAAP////////8D/AAAAAAAAAD/////////B/wAAAAAAAAB/////////wf8AAAAAAAAAf////////+H/AAAAAAAAAH/////////h/wAAAAAAAAD/////////4f8AAAAAAAAA//////////H+AAAAAAAAAP/////////x/gAAAAAAAAD/////////8f4AAAAAAAAB//////////H+AAAAAAAAAf/////////5/gAAAAAAAAH/////////+f4AAAAAAAAB//////////v+AAAAAAAAA////////////gAAAAAAAAP///////////wAAAAAAAAD///////////8AAAAAAAAB////////////AAAAAAAAAf///////////wAAAAAAAAH///////////8AAAAAAAAB////////////AAAAAAAAA////////////wAAAAAAAAP///////////4AAAAAAAAB///////////+AAAAAAAAAP///////////gAAAAAAAAB/////////f/4AAAAAAAAAP////////g/+AAAAAAAAAA////////wB/gAAAAAAAAAH///////4Af4AAAAAAAAAA///////+AH8AAAAAAAAAAG///9///AB/AAAAAAAAAAAf/++f//gAfwAAAAAAAAAAP//mH/+QAH8AAAAAAAAAAP//8D//wAB/AAAAAAAAAAH///A//8AA/gAAAAAAAAAD///4P//gAP4AAAAAAAAAB///+D///AD8AAAAAAAAAA////g///8A/AAAAAAAAAAP///8P///4PgAAAAAAAAAD////D////B4AAAAAAAAAA////g////wEAAAAAAAAAAP///8P////AAAAAAAAAAAD////D////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+      "footRegion": [
+        32,
+        134,
+        66,
+        16
+      ],
+      "footRGBAHash": "9d53a1c8ce1ea55ad2d7a9bc80fa1c5379a4a8895eb53ea66248d029f4d1d77b"
+    },
+    "portrait_thorn_awakened": {
+      "size": [
+        128,
+        160
+      ],
+      "sourcePngSHA256": "db9c763ac202cbb1f3f3ddb313f15688d6cbc2c6c3397bb52f28de22daa09932",
+      "rgbaSHA256": "7e3630eff7291f700342fc8add790c3b421052c7a3e5cb3011cb7b6bbad0f4f1",
+      "alphaMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAHgAAAAAAAAIAAAAAADBAAD/wAAAAAAAHAADAAADwwAB//gAAAAAAB4AB4AAB4cAB//8AAAAAACeAAfAAA+PgA///gAAAAAAXwAPwAAPn4Af//8AAAAAAH+AH+AAH5+AP///gAAAAAA/wD/wAB+/gH///8AAACAAP8A/8AYff4R////gAAAQAD/gH/APH/+O////8AAAHAA/8D/wH5//n/////AAAA4Af/g/8H///7/////wAAAPAH/4f/D/////////8AAAB8B//H/z/////////+AAAAfgf/5////////////gAAAD+H//////////////4AAAA/z//////////////+AAAAH+///////////////gAAAB////////////////wAAAAP///////////////8AAAAD////////////////AAAAAf///////////////gAAAAH///////////////wAAAAA///////////////4AAAAAP//////////////8AAAAAB//////////////+AAAAAAf//////////////AAAAAAD//////////////gAAAAAA//////////////wAAAAAAH/////////////8AAAAAAB//////////////AAAAAAAP///////////9/wAAAAAAB///////////+f8AAAAAAAH///////////H/AAAAAAAA///////////B/gAAAAAAAD//////////g/4AAAAAAAIP/////////wP+AAAAAAADg/////////wD/gAAAAAAA+D////////4A/4AAAAAAAH4f///////8AP+AAAAAAAB/h///////+AD/gAAAAAAAf8H//////+AB/4AAAAABgH/w///////AAf8AAAAAA8B/+H//////gAH/AAAAAAfgP/8/////+AAB/wAAAAAP8D////////AAAf8AAAAAD/Af/////////AP/AAAAAA/wD/////////4D/wAAAAAP8Af/////////A/8AAAAAD/AB/////////4P+AAAAAA/wAP////////+D/gAAAAAP8AB/////////w/4AAAAGD/AAf////////+f+AAAADwfgAD/////////3/gAAAA+HwAA/////////9/4AAAAP3/wAP////////+f+AAAAB///AD/////////n/AAAAAf//4A/////////z/wAAAAH///Af////////4/8AAAAB///wf////////+P/AAAAAP//+P/////////D/wAAAAD///3/////////w/8AAAAA/////////////4P/AAAAAH////////////8D/wAAAAA////////////+A/4AAAAAH////////////Af+AAAAAAf///////////8H/gAAAAAD////////////B/4AAAAAAH///////////4f+AAAAAAAZ//////////+H/gAAAAAAAP//////////h/4AAAAAAAB//////////4f+AAAAAAAAP/////////+H/AAAAAAAAB//////////x/wAAAAAAAAD/////////8f8AAAAAAAAA//////////P/AAAAAAAAAP/////////z/wAAAAAAAAD/////////8/8AAAAAAAAA/////////+P/AAAAAAAAAP/////////j/wAAAAAAAAD/////////4/4AAAAAAAAB/////////+P+AAAAAAAAAf/////////D/gAAAAAAAAH/////////w/4AAAAAAAAB/////////+P+AAAAAAAAAf/////////3/gAAAAAAAAH///////////4AAAAAAAAB///////////+AAAAAAAAAf///////////AAAAAAAAAH///////////wAAAAAAAAB///////////8AAAAAAAAAf///////////AAAAAAAAAH///////////wAAAAAAAAB////////3//8AAAAAAAAAf///////+///AAAAAAAAAH////////v//wAAAAAAAAD////////5//4AAAAAAAAA/////////P/+AAAAAAAAAP////////x//gAAAAAAAAD////////8P/4AAAAAAAAA/////////gP+AAAAAAAAAP////////4D/gAAAAAAAAD////////+A/4AAAAAAAAA/////////gP8AAAAAAAAAP////////8D/AAAAAAAAAD/////////B/wAAAAAAAAB/////////wf8AAAAAAAAAf////////+H/AAAAAAAAAH/////////h/wAAAAAAAAD/////////4f8AAAAAAAAA//////////H+AAAAAAAAAP/////////x/gAAAAAAAAD/////////8f4AAAAAAAAB//////////H+AAAAAAAAAf/////////5/gAAAAAAAAH/////////+f4AAAAAAAAB//////////v+AAAAAAAAA////////////gAAAAAAAAP///////////wAAAAAAAAD///////////8AAAAAAAAB////////////AAAAAAAAAf///////////wAAAAAAAAH///////////8AAAAAAAAB////////////AAAAAAAAA////////////wAAAAAAAAP///////////4AAAAAAAAB///////////+AAAAAAAAAP///////////gAAAAAAAAB/////////f/4AAAAAAAAAP////////g/+AAAAAAAAAA////////wB/gAAAAAAAAAH///////4Af4AAAAAAAAAA///////+AH8AAAAAAAAAAG///9///AB/AAAAAAAAAAAf/++f//gAfwAAAAAAAAAAP//mH/+QAH8AAAAAAAAAAP//8D//wAB/AAAAAAAAAAH///A//8AA/gAAAAAAAAAD///4P//gAP4AAAAAAAAAB///+D///AD8AAAAAAAAAA////g///8A/AAAAAAAAAAP///8P///4PgAAAAAAAAAD////D////B4AAAAAAAAAA////g////wEAAAAAAAAAAP///8P////AAAAAAAAAAAD////D////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+      "footRegion": [
+        32,
+        134,
+        66,
+        16
+      ],
+      "footRGBAHash": "9d53a1c8ce1ea55ad2d7a9bc80fa1c5379a4a8895eb53ea66248d029f4d1d77b"
+    }
+  },
+  "nonPortraitTextures": {
+    "cast_thorn_bloom": {
+      "width": 128,
+      "height": 32,
+      "sha256": "6dec125c47b3119e3204ba137ef5e36c8d5aa8dd866a5d5b8736054b9c738163"
+    },
+    "cast_thorn_bloom_awakened": {
+      "width": 128,
+      "height": 32,
+      "sha256": "1fb423ce1a6a34d70d0e47f14e9d3eb2b75417404d541c8a0b00f18cb1e3fd89"
+    },
+    "enemy_brute": {
+      "width": 192,
+      "height": 32,
+      "sha256": "8a5c83480eae332979c6d8f4541334730fd74b95983b60253ada7797a757875b"
+    },
+    "enemy_brute_open": {
+      "width": 160,
+      "height": 32,
+      "sha256": "a0467b1a10f64234fcc87e255b9d907edaa5786275345e98acfa0b82bf17bc54"
+    },
+    "enemy_crawler": {
+      "width": 192,
+      "height": 32,
+      "sha256": "aacd2bb3954634c1160bc484ffd558420ce9c2296a4f484a6f8376f72e71827a"
+    },
+    "enemy_root_hammer": {
+      "width": 192,
+      "height": 32,
+      "sha256": "87d3aefb1a1da534e902c1de68accf447d8e587dc0133cc1ceadcbbd5184f8b8"
+    },
+    "enemy_spitter": {
+      "width": 192,
+      "height": 32,
+      "sha256": "5d9159c2947beebe7a3d7f17070cc255f408276e20ffd016fde5a117d385cb32"
+    },
+    "fx_nova": {
+      "width": 144,
+      "height": 48,
+      "sha256": "268ad3882fb3cbcf7191bd0d754831b6d96a9de3987f935a467f307433657dbe"
+    },
+    "fx_ring_reaver": {
+      "width": 48,
+      "height": 24,
+      "sha256": "080555fa599feb400cdf1ee54a56a0a0b1b79b978e1f164d17b3671032d7fde5"
+    },
+    "fx_ring_shade": {
+      "width": 48,
+      "height": 24,
+      "sha256": "786bfab0a38b781a0645fc96bebde9723e358e7a4093992602994b5d91d010bb"
+    },
+    "fx_ring_warden": {
+      "width": 48,
+      "height": 24,
+      "sha256": "d2006c8eddfc7121ebb2f3b6a2066143be87b2a8a00bfd2cccb56b8fc646c1e1"
+    },
+    "fx_slash_reaver": {
+      "width": 96,
+      "height": 32,
+      "sha256": "5bc4d747070ff358d72de903638d177c0cf24b3830e6f8c41f3e3c4ec7acab0a"
+    },
+    "fx_slash_shade": {
+      "width": 96,
+      "height": 32,
+      "sha256": "363519ced13cdfeb6d89d492a9a66d6425768665b9668b8785f42729b79bce14"
+    },
+    "fx_slash_thorn": {
+      "width": 96,
+      "height": 32,
+      "sha256": "91cab60221eafd3b6d3d294535b875389ec74ceaefb3d7352001a7182e3b93cc"
+    },
+    "fx_slash_warden": {
+      "width": 96,
+      "height": 32,
+      "sha256": "cc532960f1bcc2c502b51eec9e153b99f4058add24d14d1ce5ba23628081c13d"
+    },
+    "hero_reaver": {
+      "width": 448,
+      "height": 32,
+      "sha256": "f2eb406f2f03abb913264c0c60db8b7cc51c10b854cf817614b1b15c414d09cb"
+    },
+    "hero_reaver_awakened": {
+      "width": 448,
+      "height": 32,
+      "sha256": "ef4b2a6d2ffa3d2917e4d330da033583037e8173ab46c9901654b8e4ba0e6f64"
+    },
+    "hero_shade": {
+      "width": 448,
+      "height": 32,
+      "sha256": "9d29df5f910200542404ae8ff6fd9a8e49591b6b2984b8ab35bec6097daa3470"
+    },
+    "hero_shade_awakened": {
+      "width": 448,
+      "height": 32,
+      "sha256": "f6d41580083122646328597c86c41d3b6b2e3a2f41cfcf1e5a9290b1ba9f5998"
+    },
+    "hero_thorn": {
+      "width": 448,
+      "height": 32,
+      "sha256": "4ba38b06b1e81ad9b7d1d32b51c872f692d7a83cce3b15bb1dbfdb124d84d6b9"
+    },
+    "hero_thorn_awakened": {
+      "width": 448,
+      "height": 32,
+      "sha256": "c270ef3662ebdab6c23c4ee6ac7c7068f96f5125e6a60d27fe58569243c2e79a"
+    },
+    "hero_warden": {
+      "width": 448,
+      "height": 32,
+      "sha256": "376c269ed4c3456137de116d709d1ed189997600347e594fa830d4dc2b216e7c"
+    },
+    "hero_warden_awakened": {
+      "width": 448,
+      "height": 32,
+      "sha256": "01d2137fcd84c7c502ce5fc709e8500bf4ff711b56abdbed4c91ccd32df911e9"
+    },
+    "icon_essence": {
+      "width": 16,
+      "height": 8,
+      "sha256": "740c0bf23c044df704ba2210010ba11f7e3ca6d5502bbda64bb733fabefab876"
+    },
+    "icon_seed": {
+      "width": 32,
+      "height": 32,
+      "sha256": "558a43389f92b7a7a119204091faca27f8bd5380bd00a33b4a342114919a8317"
+    },
+    "pixel": {
+      "width": 1,
+      "height": 1,
+      "sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+    },
+    "pounce_reaver": {
+      "width": 192,
+      "height": 32,
+      "sha256": "5595d0cf54e07eea5d91d9410c832a2dd6d5e84031a976d28229eb05c1a8c41b"
+    },
+    "pounce_reaver_awakened": {
+      "width": 192,
+      "height": 32,
+      "sha256": "6f5bf04f33f29a482350a637ca6b1d6a927d95a2d80256f22b71c15f438b12a2"
+    },
+    "proj_ember": {
+      "width": 8,
+      "height": 8,
+      "sha256": "0720b1097433f295c367ba1c4943717e84b7d1bb97b9ca4b4d1f9f22d1182d20"
+    },
+    "proj_seed": {
+      "width": 8,
+      "height": 8,
+      "sha256": "5891ed09ea93228904a248dfee5c0415fe04013c6b5ec5e169f780c664639137"
+    },
+    "shadow": {
+      "width": 8,
+      "height": 5,
+      "sha256": "e6088f764609c8788531206155e540f8bdb2b06aa8199763644e5fed7735a773"
+    },
+    "step_shade_return": {
+      "width": 64,
+      "height": 32,
+      "sha256": "c8fbcef0fd0e5df58a1391f7d0d06321b8ba3a69c61e51829ee141f4ff86739e"
+    },
+    "step_shade_return_awakened": {
+      "width": 64,
+      "height": 32,
+      "sha256": "f29b6378cc488affaf3dcfbd461d81f6fff65247298a04a817389ba131c57785"
+    },
+    "strike_shade_ambush": {
+      "width": 128,
+      "height": 32,
+      "sha256": "329f64e55f9a1ee14c0ae120da8b32be2d305dcbcf9c02f0dc69f28a42582436"
+    },
+    "strike_shade_ambush_awakened": {
+      "width": 128,
+      "height": 32,
+      "sha256": "f3e2e42fe76d630038305d47e549f1c799eecaf8ad86ec083fa4bd550a49a651"
+    },
+    "strike_warden_reprisal": {
+      "width": 128,
+      "height": 32,
+      "sha256": "1769eebebd8ecaed9b860143e4d0cd38a7faaab819292382abb1266b0a4951ec"
+    },
+    "strike_warden_reprisal_awakened": {
+      "width": 128,
+      "height": 32,
+      "sha256": "8c1c7ce4b2d5b1a327fe9f6b38b26d89c8f8ae296d5992a75b334ebc125fce48"
+    },
+    "tile_floor_0": {
+      "width": 16,
+      "height": 16,
+      "sha256": "d5d108a70c59e93588596dfa499652de3609cf19845d6f61be1cdf9d7b1ad6c5"
+    },
+    "tile_floor_1": {
+      "width": 16,
+      "height": 16,
+      "sha256": "30591ba19e82ddc986645811c5dfde7c29fd1d27cc90f3bba071a60b934aa89b"
+    },
+    "tile_floor_2": {
+      "width": 16,
+      "height": 16,
+      "sha256": "b589e7444f8fe59c43c46db42451b71917fec825bb47fc3a5e5c82b338a87437"
+    },
+    "tile_floor_3": {
+      "width": 16,
+      "height": 16,
+      "sha256": "6fab35a931c2b6fb889a33716d16f282f9c73d1afbe2949f296b18f67a1b82d1"
+    },
+    "tile_wall": {
+      "width": 16,
+      "height": 16,
+      "sha256": "f31393589d8ae3d3e36fe12bc5f53a2d954bcd1c518ea61dd05152c9359478ed"
+    },
+    "ui_heart": {
+      "width": 7,
+      "height": 6,
+      "sha256": "df01071a7d4bdeaa7a680a0e7a4966aa4ce69f44a5bf61982d036277f3f0c3ec"
+    },
+    "ui_panel": {
+      "width": 32,
+      "height": 16,
+      "sha256": "f91cc091ab57be2bff541547a285cdf39fde312caf1d44592d41fd5234111900"
+    }
+  }
+}

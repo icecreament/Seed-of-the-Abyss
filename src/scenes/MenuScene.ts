@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { PORTRAIT_MENU_SCALE } from '../assets/HeroPortraits';
 import { GAME_HEIGHT, GAME_WIDTH } from '../game/config';
 import { CLASS_LIST, HERO_TEXTURES } from '../data/classes';
 import { saveSystem } from '../systems/SaveSystem';
@@ -57,9 +58,9 @@ export class MenuScene extends Phaser.Scene {
       createPortraitPlinth(this, x, y, cls.color, plinthW);
       const portraitKey = `portrait_${cls.id}`;
       if (this.textures.exists(portraitKey)) {
-        this.add.image(x, y - 70, portraitKey).setScale(2).setDepth(4);
+        this.add.image(x, y - 70, portraitKey).setScale(PORTRAIT_MENU_SCALE).setDepth(4);
       } else {
-        // TODO(art): 棘语者暂无与三职业同风格的 64×80 肖像，先用战斗立绘顶替。
+        // Defensive fallback if a display portrait is unavailable.
         const heroKey = HERO_TEXTURES[cls.id];
         const stand = this.add
           .sprite(x, y + 10, heroKey, 0)

@@ -1,0 +1,159 @@
+{
+  "scope": "Intentional hit/crit material update and 3 new earned-contact accents. Historical bloom fixture remains intact.",
+  "rows": [
+    {
+      "type": "hit",
+      "id": "warden",
+      "rate": 22050,
+      "frames": 1985,
+      "hash": "03fa88d454c15178246c2b9587325828d35e57d7a0380a315f32ad508823144b"
+    },
+    {
+      "type": "hit",
+      "id": "warden",
+      "rate": 48000,
+      "frames": 4320,
+      "hash": "d2eca549f9662ccdeae39f61b3cba806b2daca6485bd8e653a327d1c518a54e5"
+    },
+    {
+      "type": "hit",
+      "id": "reaver",
+      "rate": 22050,
+      "frames": 1985,
+      "hash": "c912d1d0867614827e938da42513e6e853f2d9a3d8e020c59170a6e6513a44f8"
+    },
+    {
+      "type": "hit",
+      "id": "reaver",
+      "rate": 48000,
+      "frames": 4320,
+      "hash": "c09e40f0f3f34bd006367d94a2b690aa5822e1490850cf8a745baa8dac02ac2f"
+    },
+    {
+      "type": "hit",
+      "id": "shade",
+      "rate": 22050,
+      "frames": 1985,
+      "hash": "6b1df893ef9deecc6c7f1dc17fa957bd33f0c76829fbab9f479e0deea490d6b1"
+    },
+    {
+      "type": "hit",
+      "id": "shade",
+      "rate": 48000,
+      "frames": 4320,
+      "hash": "1bb85814c24632deada8a3ec771328a1de630778ba667d9966f52141f2084b7f"
+    },
+    {
+      "type": "hit",
+      "id": "thorn",
+      "rate": 22050,
+      "frames": 1985,
+      "hash": "fb39f5bf936203fd8d09d5d1f240362ba0cc124d24de6787b184ba8303d793b2"
+    },
+    {
+      "type": "hit",
+      "id": "thorn",
+      "rate": 48000,
+      "frames": 4320,
+      "hash": "ff8d98bb12b2c5eec53facf39dd7f193f6d1e4e7f831a4b974cf3b1e75e04972"
+    },
+    {
+      "type": "crit",
+      "id": "warden",
+      "rate": 22050,
+      "frames": 3749,
+      "hash": "b033bdafd3f859a71a566a24c4aaf92e2b0f287df9a2c2841b637ddaad509c0a"
+    },
+    {
+      "type": "crit",
+      "id": "warden",
+      "rate": 48000,
+      "frames": 8161,
+      "hash": "9e85a835879b883e4d8be1fecc40d5686219134e52b4514ff3adac9c2ce36a5a"
+    },
+    {
+      "type": "crit",
+      "id": "reaver",
+      "rate": 22050,
+      "frames": 3749,
+      "hash": "f620432d0e2ebf7102393741e970735d35f0055f456dbde9f9c3e32781f169a2"
+    },
+    {
+      "type": "crit",
+      "id": "reaver",
+      "rate": 48000,
+      "frames": 8161,
+      "hash": "3fe76a0967c316ba3cf9436f6b256e34c669e48cdeac082b126e39935b00d03a"
+    },
+    {
+      "type": "crit",
+      "id": "shade",
+      "rate": 22050,
+      "frames": 3749,
+      "hash": "6504b22de80e54fd6a725e4cfdbfd81b2ba798b99d4580b2d7da8c77db89b51a"
+    },
+    {
+      "type": "crit",
+      "id": "shade",
+      "rate": 48000,
+      "frames": 8161,
+      "hash": "47ff74fe433d833f46365a4405b1d0d8a70132883103e3f165584a5cf32d5cd9"
+    },
+    {
+      "type": "crit",
+      "id": "thorn",
+      "rate": 22050,
+      "frames": 3749,
+      "hash": "c2d5608fbfc310ca4ab2bd789f6118ed4fcd6d7e446bec34cd61dd3f72af6555"
+    },
+    {
+      "type": "crit",
+      "id": "thorn",
+      "rate": 48000,
+      "frames": 8161,
+      "hash": "ad08256bc6b6c93ea921988a033370059cbccf0a8d7c42ac1edb7f80f64167cb"
+    },
+    {
+      "type": "reprisal",
+      "id": "warden",
+      "rate": 22050,
+      "frames": 5292,
+      "hash": "399b40edf5c26dda662970a54a1ef0a71d9214942e74eae2ee50267b17047994"
+    },
+    {
+      "type": "reprisal",
+      "id": "warden",
+      "rate": 48000,
+      "frames": 11520,
+      "hash": "b1ac92f102e1794e87c109ea842f1e260adea3da0805edd15fdfacbc21b77dd7"
+    },
+    {
+      "type": "rip",
+      "id": "reaver",
+      "rate": 22050,
+      "frames": 4190,
+      "hash": "51a6d9d9c4dbaf64996f79af907d1600e9946add63be33b38523dd05216847f4"
+    },
+    {
+      "type": "rip",
+      "id": "reaver",
+      "rate": 48000,
+      "frames": 9120,
+      "hash": "1173abc1f272224ad16e7025c3456d2d28491035b449159f112c21f33ab38c4c"
+    },
+    {
+      "type": "ambush",
+      "id": "shade",
+      "rate": 22050,
+      "frames": 3528,
+      "hash": "9036b1718d18ddab0a7c1e3d1788ce72bcf11914c96973f6d30289ae1e258e22"
+    },
+    {
+      "type": "ambush",
+      "id": "shade",
+      "rate": 48000,
+      "frames": 7680,
+      "hash": "4edf665704ad57624645daa18266c129c68aeadfea831efc771cef88151cd34b"
+    }
+  ]
+}

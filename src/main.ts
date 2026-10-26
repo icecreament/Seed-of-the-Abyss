@@ -7,7 +7,8 @@ import {
   isTouchLikeDevice,
 } from './game/config';
 import { saveSystem } from './systems/SaveSystem';
-import { t } from './i18n/i18n';
+import { runState } from './systems/RunState';
+import { t, i18n } from './i18n/i18n';
 import type { RunScene } from './scenes/RunScene';
 
 const game = new Phaser.Game(gameConfig);
@@ -18,6 +19,8 @@ if (import.meta.env.DEV) {
   (window as unknown as { __seedDev: unknown }).__seedDev = {
     applyRenderScale: (s: number) => applyRenderScale(game, s),
     saveSystem,
+    runState,
+    i18n,
     syncPortraitOverlay,
   };
 }

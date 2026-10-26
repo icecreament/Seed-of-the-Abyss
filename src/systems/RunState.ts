@@ -6,6 +6,11 @@ export interface RunMetrics {
   timeAliveSec: number;
   damageDealt: number;
   classId: ClassId;
+  /** Missing in legacy callers means a death. */
+  outcome?: 'death' | 'abandoned' | 'victory';
+  mutations?: string[];
+  bestChain?: number;
+  eliteBreaks?: number;
 }
 
 /** Ephemeral state shared between Run and Death scenes. */

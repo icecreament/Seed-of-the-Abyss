@@ -1,0 +1,17 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),ts=require('typescript');
+function load(file){const m={exports:{}};vm.runInThisContext(`(function(module,exports){${ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.CommonJS}}).outputText}\n})`)(m,m.exports);return m.exports;}
+const {THORN_BLOOM:T,seedCount,bloomSummary,seedMarkLayout}=load('src/systems/ThornBloom.ts');
+const OUT=path.resolve(process.env.SEED_BLOOM_OUTPUT||'output/thorn-bloom-v1/checks');fs.mkdirSync(OUT,{recursive:true});const checks=[];
+function check(name,fn){fn();checks.push({name,passed:true});console.log('PASS',name);}
+check('原植种上限3和每层90%伤害不变',()=>assert.deepEqual(T,{maxSeeds:3,damageRatio:.9}));
+check('非法/负数/超量计数不会显示虚构层数',()=>{for(const n of [NaN,Infinity,-1,0])assert.equal(seedCount(n),0);assert.equal(seedCount(2.9),2);assert.equal(seedCount(8),3);});
+check('提示只计真实可命中的已植种目标，满种和总层数区分',()=>{const a={ready:true},b={ready:true},c={ready:false},d={ready:true};const marks=new Map([[a,{seeds:1}],[b,{seeds:3}],[c,{seeds:3}],[d,{seeds:0}]]);assert.deepEqual(bloomSummary(marks,e=>e.ready),{targets:2,seeds:4,ripe:1});assert.deepEqual([...marks.values()].map(x=>x.seeds),[1,3,3,0]);});
+check('种荚3个固定槽位，空状态和非法几何不画标记',()=>{const g=seedMarkLayout(10,20,14,2);assert.equal(g.slots.length,3);assert.equal(g.count,2);assert.equal(g.full,false);assert.ok(seedMarkLayout(10,20,14,3).full);for(const a of [[0,0,14,0],[NaN,0,14,1],[0,0,-1,1],[0,0,Infinity,1]])assert.equal(seedMarkLayout(...a),undefined);});
+check('10000个位置的种荚边界不覆盖原血条和精英名条',()=>{let seed=0x51eed;for(let i=0;i<10000;i++){seed=(Math.imul(seed,1664525)+1013904223)>>>0;const x=seed/2**32*4000,y=(i*17)%4000,r=14+(i%31),g=seedMarkLayout(x,y,r,1+i%3);assert.ok(g.bounds.left>x+14);assert.ok(g.bounds.top>y-39);assert.ok(g.bounds.bottom<y-18);assert.ok(g.slots.every(s=>Number.isFinite(s.x+s.y)));}});
+const old=load('scripts/fixtures/combat-audio-before-bloom.ts').renderCombatSound,current=load('src/systems/CombatAudio.ts').renderCombatSound;
+check('原12类四职业逐一守护：10类历史PCM不变，hit/crit精确匹配已登记材质基线',()=>{const golden=require('./fixtures/impact-audio-pcm.json'),hash=a=>require('node:crypto').createHash('sha256').update(Buffer.from(a.buffer)).digest('hex');for(const type of ['attack','hit','crit','kill','dash','skill','hurt','combo','victory','break','parry','tell'])for(const id of ['warden','reaver','shade','thorn']){const a=current(type,id,3);if(type==='hit'||type==='crit')assert.equal(hash(a),golden.rows.find(r=>r.type===type&&r.id===id&&r.rate===22050).hash);else assert.deepEqual(a,old(type,id,3));}});
+check('新满种/引爆PCM可重复、有限且不削波，彼此不同',()=>{let arrays=[];for(const type of ['seed','bloom']){const a=current(type,'thorn');assert.deepEqual(a,current(type,'thorn'));assert.ok(a.every(n=>Number.isFinite(n)&&Math.abs(n)<=.86001));assert.ok(a.some(n=>Math.abs(n)>.1));assert.ok(a[0]===0);assert.ok(Math.abs(a.at(-1))<.01);arrays.push(a);}assert.notDeepEqual(arrays[0],arrays[1]);});
+check('一万次只读汇总不种植、不消费、不更改目标',()=>{const target={hp:100},mark={seeds:3},marks=new Map([[target,mark]]);for(let i=0;i<10000;i++)assert.deepEqual(bloomSummary(marks,e=>e.hp>0),{targets:1,seeds:3,ripe:1});assert.equal(target.hp,100);assert.equal(mark.seeds,3);assert.equal(marks.size,1);});
+fs.writeFileSync(path.join(OUT,'bloom-model.json'),JSON.stringify({checks},null,2));console.log(`Thorn bloom model: ${checks.length}/${checks.length}`);
+

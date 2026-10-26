@@ -1,0 +1,9 @@
+{
+  "scope": "Intentional same-size native recoil and charging-brace cells; original cell prefix independently protected by enemy-reaction-before.json.",
+  "hashes": {
+    "enemy_crawler": "aacd2bb3954634c1160bc484ffd558420ce9c2296a4f484a6f8376f72e71827a",
+    "enemy_spitter": "5d9159c2947beebe7a3d7f17070cc255f408276e20ffd016fde5a117d385cb32",
+    "enemy_brute": "8a5c83480eae332979c6d8f4541334730fd74b95983b60253ada7797a757875b",
+    "enemy_brute_open": "a0467b1a10f64234fcc87e255b9d907edaa5786275345e98acfa0b82bf17bc54"
+  }
+}

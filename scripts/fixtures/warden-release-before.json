@@ -1,0 +1,140 @@
+[
+  {
+    "key": "hero_warden",
+    "width": 448,
+    "height": 32,
+    "hash": "376c269ed4c3456137de116d709d1ed189997600347e594fa830d4dc2b216e7c"
+  },
+  {
+    "key": "hero_warden_awakened",
+    "width": 448,
+    "height": 32,
+    "hash": "01d2137fcd84c7c502ce5fc709e8500bf4ff711b56abdbed4c91ccd32df911e9"
+  },
+  {
+    "key": "hero_reaver",
+    "width": 448,
+    "height": 32,
+    "hash": "f2eb406f2f03abb913264c0c60db8b7cc51c10b854cf817614b1b15c414d09cb"
+  },
+  {
+    "key": "hero_reaver_awakened",
+    "width": 448,
+    "height": 32,
+    "hash": "ef4b2a6d2ffa3d2917e4d330da033583037e8173ab46c9901654b8e4ba0e6f64"
+  },
+  {
+    "key": "hero_shade",
+    "width": 448,
+    "height": 32,
+    "hash": "9d29df5f910200542404ae8ff6fd9a8e49591b6b2984b8ab35bec6097daa3470"
+  },
+  {
+    "key": "hero_shade_awakened",
+    "width": 448,
+    "height": 32,
+    "hash": "f6d41580083122646328597c86c41d3b6b2e3a2f41cfcf1e5a9290b1ba9f5998"
+  },
+  {
+    "key": "hero_thorn",
+    "width": 448,
+    "height": 32,
+    "hash": "4ba38b06b1e81ad9b7d1d32b51c872f692d7a83cce3b15bb1dbfdb124d84d6b9"
+  },
+  {
+    "key": "hero_thorn_awakened",
+    "width": 448,
+    "height": 32,
+    "hash": "c270ef3662ebdab6c23c4ee6ac7c7068f96f5125e6a60d27fe58569243c2e79a"
+  },
+  {
+    "key": "portrait_warden",
+    "width": 128,
+    "height": 160,
+    "hash": "2f0075fb236be8a026e0f451685f666c13b711420d2caf06d5f8e4ea007c7b90"
+  },
+  {
+    "key": "portrait_warden_awakened",
+    "width": 128,
+    "height": 160,
+    "hash": "22eb9c4618971c0a58660fef8323312042c333e3ce98e726caa2311deada510d"
+  },
+  {
+    "key": "portrait_reaver",
+    "width": 128,
+    "height": 160,
+    "hash": "798ef9d1d771a41fab4841678628a9a54a30c8802ed6ffece54e38dd0859d555"
+  },
+  {
+    "key": "portrait_reaver_awakened",
+    "width": 128,
+    "height": 160,
+    "hash": "e674c8a218126675cb26e82a538fee3949f1a2bcb63e3a68273bbd2be88e25f8"
+  },
+  {
+    "key": "portrait_shade",
+    "width": 128,
+    "height": 160,
+    "hash": "85595f5aaa8dd2c1102e42b4f8a4b202dabd986e2009173a3fd309318314f93b"
+  },
+  {
+    "key": "portrait_shade_awakened",
+    "width": 128,
+    "height": 160,
+    "hash": "651696800ca4555d1c89a462a327791b146be7f6934968ea3c8d07341ac96d8d"
+  },
+  {
+    "key": "portrait_thorn",
+    "width": 128,
+    "height": 160,
+    "hash": "619be212bb4872c4f1a33f0571f4470f4845ff7f277d6aaaf1ef2e8e5db2198f"
+  },
+  {
+    "key": "portrait_thorn_awakened",
+    "width": 128,
+    "height": 160,
+    "hash": "7e3630eff7291f700342fc8add790c3b421052c7a3e5cb3011cb7b6bbad0f4f1"
+  },
+  {
+    "key": "enemy_crawler",
+    "width": 192,
+    "height": 32,
+    "hash": "aacd2bb3954634c1160bc484ffd558420ce9c2296a4f484a6f8376f72e71827a"
+  },
+  {
+    "key": "enemy_spitter",
+    "width": 192,
+    "height": 32,
+    "hash": "5d9159c2947beebe7a3d7f17070cc255f408276e20ffd016fde5a117d385cb32"
+  },
+  {
+    "key": "enemy_brute",
+    "width": 192,
+    "height": 32,
+    "hash": "8a5c83480eae332979c6d8f4541334730fd74b95983b60253ada7797a757875b"
+  },
+  {
+    "key": "enemy_brute_open",
+    "width": 160,
+    "height": 32,
+    "hash": "a0467b1a10f64234fcc87e255b9d907edaa5786275345e98acfa0b82bf17bc54"
+  },
+  {
+    "key": "enemy_root_hammer",
+    "width": 192,
+    "height": 32,
+    "hash": "87d3aefb1a1da534e902c1de68accf447d8e587dc0133cc1ceadcbbd5184f8b8"
+  },
+  {
+    "key": "cast_thorn_bloom",
+    "width": 128,
+    "height": 32,
+    "hash": "6dec125c47b3119e3204ba137ef5e36c8d5aa8dd866a5d5b8736054b9c738163"
+  },
+  {
+    "key": "cast_thorn_bloom_awakened",
+    "width": 128,
+    "height": 32,
+    "hash": "1fb423ce1a6a34d70d0e47f14e9d3eb2b75417404d541c8a0b00f18cb1e3fd89"
+  }
+]

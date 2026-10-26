@@ -5,6 +5,9 @@ export const UI_FONT = 'Segoe UI, Microsoft YaHei, sans-serif';
 
 export const UI = {
   bg: 0x0b0914,
+  root: 0x555744,
+  rootLight: 0x92916e,
+  bone: 0xe8e0c9,
   panel: 0x14101f,
   panelAlt: 0x1a1528,
   panelActive: 0x241a38,
